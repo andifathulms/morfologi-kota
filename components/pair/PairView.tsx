@@ -85,7 +85,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
           {percent(bundle.walkOnly.shareOfWalk)}
         </dd>
       </dl>
-      <figcaption className="mt-2 max-w-prose font-sans text-xs leading-snug text-ink-muted">
+      <figcaption className="mt-2 max-w-prose font-sans text-base leading-snug text-ink-muted">
         {d('differenceCaption', locale)}
       </figcaption>
     </figure>

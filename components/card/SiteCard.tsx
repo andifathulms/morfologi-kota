@@ -91,7 +91,9 @@ export function SiteCard({
         ]}
       />
 
-      <p className="m-0 max-w-prose font-serif text-xs leading-snug text-ink-muted">
+      {/* DESIGN.md §7 — 14px is captions, units and citations. This is a
+          sentence about the place, so it is body size. */}
+      <p className="m-0 max-w-prose font-serif text-base leading-snug text-ink-muted">
         {t(entry.note, locale)}
       </p>
 

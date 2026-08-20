@@ -112,7 +112,7 @@ export function PlateGrid({
       <fieldset className="plate-controls m-0 mb-6 border-0 p-0">
         <legend className="p-0 font-sans text-base font-semibold">{sortLabel}</legend>
         {note !== undefined ? (
-          <p className="m-0 mb-3 mt-1 max-w-prose font-sans text-xs leading-snug text-ink-subtle">
+          <p className="m-0 mb-3 mt-1 max-w-prose font-sans text-base leading-snug text-ink-subtle">
             {note}
           </p>
         ) : null}

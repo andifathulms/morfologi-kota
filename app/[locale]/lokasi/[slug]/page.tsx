@@ -88,7 +88,7 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
         <p className="m-0 mt-1">
           {d('extractVersion', locale)} {bundle.extractVersion}
         </p>
-        <p className="m-0 mt-1 max-w-prose font-sans text-xs leading-snug text-ink-subtle">
+        <p className="m-0 mt-1 max-w-prose font-sans text-base leading-snug text-ink-subtle">
           {d('extractVersionNote', locale)}
         </p>
       </div>

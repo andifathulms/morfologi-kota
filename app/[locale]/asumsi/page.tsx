@@ -318,7 +318,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
               <h3 className="mt-8 font-serif text-lg font-semibold">
                 {locale === 'id' ? 'Angka di bawah pemetaan ini' : 'The numbers under this mapping'}
               </h3>
-              <p className="m-0 max-w-prose font-sans text-xs text-ink-subtle">
+              <p className="m-0 max-w-prose font-sans text-base text-ink-subtle">
                 {locale === 'id'
                   ? 'Selisih dihitung terhadap pemetaan baku. Angkanya memang bergerak; itulah maksudnya.'
                   : 'Differences are against the default mapping. The numbers do move; that is the point.'}

@@ -117,7 +117,7 @@ export default function LocaleLayout({
                 >
                   {d('siteTitle', locale)}
                 </Link>
-                <p className="m-0 mt-1 max-w-prose font-sans text-xs leading-snug text-ink-subtle">
+                <p className="m-0 mt-1 max-w-prose font-sans text-base leading-snug text-ink-subtle">
                   {d('tagline', locale)}
                 </p>
               </div>
