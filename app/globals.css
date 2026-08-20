@@ -76,8 +76,9 @@ body {
 }
 
 .rose-bar {
-  transform-box: fill-box;
-  transform-origin: center bottom;
+  /* The rose viewBox is centred on 0 0, so a bin grows out of the origin. */
+  transform-box: view-box;
+  transform-origin: 0 0;
   animation: fill-bin var(--dur-state) var(--ease-house) backwards;
 }
 
