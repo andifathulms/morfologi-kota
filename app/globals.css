@@ -73,8 +73,15 @@ body {
   font-feature-settings: 'tnum' 1;
 }
 
-/* DESIGN.md §10 — focus visible at 3px. */
-:where(a, button, [tabindex]):focus-visible {
+/*
+ * DESIGN.md §10 — focus visible at 3px.
+ *
+ * `summary` and `input` were missing, which meant sixteen rose-table
+ * disclosures per plate page and every sort radio fell back to the browser's
+ * default ring. Not invisible, but the project defines a ring and then did not
+ * apply it to two of the four control types it actually uses.
+ */
+:where(a, button, summary, input, [tabindex]):focus-visible {
   outline: 3px solid var(--ink);
   outline-offset: 2px;
 }
