@@ -103,8 +103,13 @@ export function SiteCard({
           {d('radius', locale)} {entry.radiusM} m · 36 bin
         </p>
         <CoverageBadge coverage={entry.coverage} locale={locale} />
+        {/* Named with the site. Sixteen cards each carried the same link text,
+            which reads fine inside a card and is useless in the links list
+            many readers navigate by. WCAG 2.4.9. */}
         <p className="mt-1">
-          <Link href={`/${locale}/lokasi/${entry.slug}`}>{d('openPair', locale)}</Link>
+          <Link href={`/${locale}/lokasi/${entry.slug}`}>
+            {d('openPair', locale)} — {entry.name}
+          </Link>
         </p>
       </footer>
     </article>

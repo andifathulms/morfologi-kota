@@ -198,7 +198,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
                 ? `${hero.row.site.name}, ${hero.row.site.city}. Lingkaran yang sama, jari-jari ${hero.bundle.radiusM} m, ekstrak yang sama — ${kilometres(hero.row.site.drive.totalLengthM)} jalan bila Anda mengemudi, ${kilometres(hero.row.site.walk.totalLengthM)} bila Anda berjalan kaki. Selisih itulah yang diukur di sini, untuk setiap lokasi, dengan cara yang sama.`
                 : `${hero.row.site.name}, ${hero.row.site.city}. The same disc, ${hero.bundle.radiusM} m radius, the same extract — ${kilometres(hero.row.site.drive.totalLengthM)} of street if you drive, ${kilometres(hero.row.site.walk.totalLengthM)} if you walk. That difference is what is measured here, for every site, the same way.`}{' '}
               <Link href={`/${locale}/lokasi/${hero.row.site.slug}`}>
-                {d('openPair', locale)}
+                {d('openPair', locale)} — {hero.row.site.name}
               </Link>
             </figcaption>
           </figure>
