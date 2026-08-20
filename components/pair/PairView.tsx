@@ -54,7 +54,8 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
           <NetworkDrawing
             geometry={drive.geometry}
             radiusM={radiusM}
-            size={340}
+            size={420}
+            responsive
             mode="drive"
             label={`${bundle.site.name} — ${d('drive', locale)}`}
           />
@@ -77,7 +78,8 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
           <NetworkDrawing
             geometry={walk.geometry}
             radiusM={radiusM}
-            size={340}
+            size={420}
+            responsive
             mode="walk"
             label={`${bundle.site.name} — ${d('walk', locale)}`}
           />

@@ -45,13 +45,15 @@ const config: Config = {
     },
     fontWeight: { normal: '400', semibold: '600' },
     borderRadius: { none: '0', DEFAULT: '2px', sm: '2px' }, // §1 — radius 2px only
+    // §1 — hairline 0.5px is the edge in the house layer, so it is the default
+    // width rather than something a component has to remember to ask for.
+    borderWidth: { DEFAULT: '0.5px', 0: '0px', hairline: '0.5px', 2: '2px' },
     extend: {
       fontFamily: {
         serif: ['var(--font-serif)', 'Georgia', 'serif'],
         sans: ['var(--font-sans)', 'system-ui', 'sans-serif'],
         mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
-      borderWidth: { hairline: '0.5px' },
       transitionTimingFunction: { house: 'cubic-bezier(0.2,0,0,1)' },
       transitionDuration: { fast: '120ms', state: '240ms', draw: '600ms' },
       maxWidth: { plate: '1440px', prose: '68ch' },

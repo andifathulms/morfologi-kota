@@ -30,6 +30,12 @@ export interface NetworkDrawingProps {
   readonly label: string
   /** How many groups the drawing is staggered across. */
   readonly buckets?: number
+  /**
+   * Scale to the column rather than to a fixed pixel size. `size` then bounds
+   * it: a card is narrower than 200 px on a phone and wider on a desktop, and
+   * the drawing should follow the column either way.
+   */
+  readonly responsive?: boolean
 }
 
 /**
@@ -82,6 +88,7 @@ export function NetworkDrawing({
   animate = true,
   label,
   buckets = 8,
+  responsive = false,
 }: NetworkDrawingProps) {
   const clipId = `clip-${label.replace(/[^a-z0-9]/gi, '')}`
   // A hairline at the drawn size, expressed in the metres of the viewBox.
@@ -98,8 +105,9 @@ export function NetworkDrawing({
   return (
     <svg
       viewBox={`${-radiusM} ${-radiusM} ${radiusM * 2} ${radiusM * 2}`}
-      width={size}
-      height={size}
+      width={responsive ? undefined : size}
+      height={responsive ? undefined : size}
+      style={responsive ? { width: '100%', maxWidth: size, height: 'auto' } : undefined}
       role="img"
       aria-label={label}
     >

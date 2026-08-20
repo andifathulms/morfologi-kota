@@ -42,17 +42,19 @@ export function SiteCard({
         </p>
       </header>
 
+      <NetworkDrawing
+        geometry={geometry}
+        radiusM={entry.radiusM}
+        size={320}
+        responsive
+        mode={mode}
+        label={`${entry.name} — ${d(mode === 'drive' ? 'drive' : 'walk', locale)}`}
+      />
+
       <div className="flex flex-wrap items-start gap-4">
-        <NetworkDrawing
-          geometry={geometry}
-          radiusM={entry.radiusM}
-          size={200}
-          mode={mode}
-          label={`${entry.name} — ${d(mode === 'drive' ? 'drive' : 'walk', locale)}`}
-        />
         <Rose
           locale={locale}
-          size={150}
+          size={160}
           series={[
             {
               shares: entry.drive.rose.shares,
