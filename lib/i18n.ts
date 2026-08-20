@@ -133,6 +133,10 @@ const dictionary = {
     id: 'Tabel, dapat digeser mendatar',
     en: 'Table, scrolls horizontally',
   },
+  roseTableCaption: {
+    id: 'Bagian panjang jaringan per bin arah selebar 10°, untuk kendara dan jalan kaki.',
+    en: 'Share of network length per 10° bearing bin, for drive and walk.',
+  },
   walkOnlyShare: { id: 'Bagian dari jaringan jalan kaki', en: 'Share of walking network' },
 
   /* Provenance. */

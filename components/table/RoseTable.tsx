@@ -41,7 +41,10 @@ export function RoseTable({ locale, series, label }: RoseTableProps) {
         className="mt-2 overflow-x-auto"
       >
         <table className="tabular w-full border-collapse font-mono text-xs">
-          <caption className="sr-only">{label}</caption>
+          {/* Describes the table. It used to repeat the site name, which the
+            summary directly above already carries — a second, worse copy of
+            a name rather than a statement of what the rows are. */}
+        <caption className="sr-only">{d('roseTableCaption', locale)}</caption>
           <thead>
             <tr className="border-b border-rule-strong text-left">
               <th scope="col" className="py-1 pr-4 font-normal">

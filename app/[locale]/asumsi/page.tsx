@@ -490,8 +490,20 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                             responsive
                             animate={false}
                             mode={mode}
-                            label={`${bundle.site.name} — ${d(mode, locale)} — ${alternate.mappingId}`}
-                            instanceId={`map-${alternate.mappingId}`}
+                            /* Named by the mapping alone: the site is the h3
+                               above and the mode is the h4, so the other two
+                               thirds of this name were already in the reading
+                               context. */
+                            label={
+                              mapping === undefined
+                                ? alternate.mappingId
+                                : t(mapping.label, locale)
+                            }
+                            /* The clip id is derived from the label, and the
+                               label is now just the mapping — so the parts
+                               that make it unique move here, which is what
+                               this prop is for. */
+                            instanceId={`${slug}-${mode}-${alternate.mappingId}`}
                           />
                           <p className="tabular m-0 mt-1 font-mono text-xs">
                             {mapping === undefined ? alternate.mappingId : t(mapping.label, locale)}
