@@ -156,12 +156,17 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
 
       {hero !== undefined ? (
         <section className="mb-12" aria-labelledby="contoh">
-          <h2
-            id="contoh"
-            className="m-0 font-mono text-xs uppercase tracking-wide text-ink-subtle"
-          >
+          {/*
+            A label, not a heading. It introduces one figure rather than a
+            section, and as an h2 it was a third visual treatment for a level
+            the page already rendered two ways — 14px mono against 22px serif,
+            same structural rank. The figure is titled by its caption, which is
+            what figcaption is for; the section still takes its name from this
+            text, so the region is announced either way.
+          */}
+          <p id="contoh" className="m-0 font-mono text-xs uppercase tracking-wide text-ink-subtle">
             {d('exampleHeading', locale)}
-          </h2>
+          </p>
           <figure className="m-0 mt-3">
             {/*
               Paired down to 640 px and stacked below it. Side by side is the
@@ -219,7 +224,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
             heading of its own, rather than as the third paragraph of the
             introduction. */}
         <aside className="mt-4 border-l-2 border-ink-subtle pl-4" aria-labelledby="peringatan">
-          <h2 id="peringatan" className="m-0 font-sans text-base font-semibold">
+          <h2 id="peringatan" className="m-0 font-serif text-lg font-semibold">
             {d('caveatHeading', locale)}
           </h2>
           <p className="mt-2 font-serif text-md leading-relaxed">

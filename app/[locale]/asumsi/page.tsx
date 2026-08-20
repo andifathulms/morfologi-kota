@@ -203,7 +203,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
               */}
               <div className="mt-4 grid gap-6 md:grid-cols-2">
                 <div>
-                  <h3 className="m-0 font-sans text-base font-semibold" style={{ color: 'var(--drive)' }}>
+                  <h3 className="m-0 font-serif text-md font-semibold" style={{ color: 'var(--drive)' }}>
                     {d('drive', locale)} — highway · {t(mapping.label, locale)}
                   </h3>
                   <p className="m-0 font-mono text-xs leading-relaxed">
@@ -211,7 +211,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                   </p>
                 </div>
                 <div>
-                  <h3 className="m-0 font-sans text-base font-semibold" style={{ color: 'var(--walk)' }}>
+                  <h3 className="m-0 font-serif text-md font-semibold" style={{ color: 'var(--walk)' }}>
                     {d('walk', locale)} — highway · {t(mapping.label, locale)}
                   </h3>
                   <p className="m-0 font-mono text-xs leading-relaxed">
@@ -241,7 +241,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                 )
                 return (
                   <>
-                    <h3 className="mt-8 font-serif text-lg font-semibold">
+                    <h3 className="mt-8 font-serif text-md font-semibold">
                       {locale === 'id'
                         ? `Metrik mana yang bertahan — ${t(mapping.label, locale)}`
                         : `Which metrics survive — ${t(mapping.label, locale)}`}
@@ -347,7 +347,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                 )
               })()}
 
-              <h3 className="mt-8 font-serif text-lg font-semibold">
+              <h3 className="mt-8 font-serif text-md font-semibold">
                 {locale === 'id'
                   ? `Angka di bawah pemetaan “${t(mapping.label, locale)}”`
                   : `The numbers under “${t(mapping.label, locale)}”`}

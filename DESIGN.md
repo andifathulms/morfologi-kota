@@ -121,6 +121,10 @@ Light ground, so no dark-mode weight correction. Body 400, headings 600.
 
 It is the only place uppercase or letter-spacing appears. Headings are never uppercase; neither is anything with a verb in it.
 
+**A label is never a heading.** If it introduces one figure rather than a section, it is a `<p>` in this role and the figure is titled by its `<figcaption>`. The plate briefly had three visual treatments for `h2` — 14px mono, 16px sans and 22px serif — which tells a sighted reader three different things about one structural rank.
+
+**One treatment per heading level.** `h1` 36 serif, `h2` 22 serif, `h3` 18 serif or 16 sans where it sits inside a card, `h4` 16 sans. A heading that wants to look smaller than its level is a label; a heading that wants to look bigger is at the wrong level.
+
 **Tabular figures on every metric, without exception.** The metric columns are read down and compared across cards; proportional figures would break the alignment that makes that possible.
 
 ## 8. Motion
