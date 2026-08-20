@@ -328,7 +328,14 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
           : `The plate — ${manifest.sites.length} sites, r = ${manifest.radiusM} m`}
       </h2>
 
-      <ModeKey locale={locale} className="mb-6 mt-4 max-w-prose" />
+      <ModeKey locale={locale} className="mt-4 max-w-prose" />
+
+      {/* Stated once for the whole plate rather than sixteen times on sixteen
+          cards — but stated on the page where the roses are, not on /metode. */}
+      <p className="mb-6 mt-3 max-w-prose font-sans text-base leading-snug text-ink-muted">
+        {d('roseMethod', locale)} {d('roseSymmetryNote', locale)}{' '}
+        <span className="font-mono text-xs">Boeing 2019 §3</span>
+      </p>
 
       <PlateGrid
         sites={sites}

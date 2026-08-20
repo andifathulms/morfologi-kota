@@ -133,6 +133,21 @@ const dictionary = {
     id: 'Tabel, dapat digeser mendatar',
     en: 'Table, scrolls horizontally',
   },
+  /*
+   * The method, at the point the method is applied. It used to live only on
+   * /metode, which is a page a reader has to choose to visit — so the rose
+   * appeared everywhere in the product with no statement of how the bars
+   * become the number printed under them.
+   */
+  roseMethod: {
+    id: 'Arah tiap ruas jalan dikelompokkan ke 36 bin selebar 10°, ditimbang menurut panjang: jalan 500 m menyumbang sepuluh kali lipat gang 50 m. Panjang batang adalah bagian panjang jaringan pada arah itu, bukan jumlah ruasnya.',
+    en: 'Each street segment’s bearing goes into one of 36 bins of 10°, weighted by length: a 500 m road counts ten times a 50 m gang. Bar length is the share of network length running that way, not a count of segments.',
+  },
+  roseSymmetryNote: {
+    id: 'Rose selalu simetris 180°, karena satu ruas yang ditempuh dua arah berbeda tepat 180°.',
+    en: 'The rose is always 180°-symmetric, because one segment traversed both ways differs by exactly 180°.',
+  },
+  roseWeight: { id: 'Panjang tertimbang', en: 'Weighted length' },
   roseTableCaption: {
     id: 'Bagian panjang jaringan per bin arah selebar 10°, untuk kendara dan jalan kaki.',
     en: 'Share of network length per 10° bearing bin, for drive and walk.',

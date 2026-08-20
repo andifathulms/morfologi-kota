@@ -43,6 +43,12 @@ export interface RoseProps {
   readonly animate?: boolean
   /** Rendered under the rose. Required for a single series; §12. */
   readonly caption?: boolean
+  /**
+   * The one-paragraph statement of what the bars are. On by default; the plate
+   * turns it off, because sixteen cards do not need sixteen copies of one
+   * paragraph — the plate states it once, next to its rose key.
+   */
+  readonly method?: boolean
 }
 
 function wedgePath(index: number, radius: number): string {
@@ -70,7 +76,14 @@ function overlaid(mode: Mode): { fillOpacity: number; strokeWidth: number } {
   return mode === 'drive' ? { fillOpacity: 0.6, strokeWidth: 0.5 } : { fillOpacity: 0.14, strokeWidth: 2 }
 }
 
-export function Rose({ series, locale, size = 180, animate = true, caption = true }: RoseProps) {
+export function Rose({
+  series,
+  locale,
+  size = 180,
+  animate = true,
+  caption = true,
+  method = true,
+}: RoseProps) {
   // The smaller series is drawn in front, so neither hides the other
   // (DESIGN.md §4).
   const ordered = [...series].sort(
@@ -170,6 +183,20 @@ export function Rose({ series, locale, size = 180, animate = true, caption = tru
               H {fixed(s.orientationEntropy, 3)} · φ {fixed(s.orientationOrder, 2)}
             </span>
           ))}
+        </figcaption>
+      ) : null}
+
+      {/*
+        The method, next to the figure that uses it.
+        Boeing 2019 §3 fixes the 36 bins and the length weighting; both were
+        stated only on the method page, so a reader met the rose everywhere in
+        the product with no way to know what the bars measure. A caption, not a
+        tooltip — a tooltip is invisible on touch and unsearchable.
+      */}
+      {caption && method ? (
+        <figcaption className="mt-2 max-w-prose font-sans text-base leading-snug text-ink-muted">
+          {d('roseMethod', locale)} {d('roseSymmetryNote', locale)}{' '}
+          <span className="font-mono text-xs">Boeing 2019 §3</span>
         </figcaption>
       ) : null}
     </figure>

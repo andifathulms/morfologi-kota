@@ -60,6 +60,7 @@ export function SiteCard({
         <Rose
           locale={locale}
           size={160}
+          method={false}
           series={[
             {
               shares: entry.drive.rose.shares,
