@@ -94,7 +94,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
   return (
     <div>
       <div className="flex snap-x snap-mandatory gap-8 overflow-x-auto pb-4 md:grid md:grid-cols-[1fr_auto_1fr] md:items-start md:gap-6 md:overflow-visible md:pb-0">
-        <section className="min-w-[85vw] shrink-0 snap-center md:col-start-1 md:min-w-0">
+        <section className="min-w-pane shrink-0 snap-center md:col-start-1 md:min-w-0">
           <h2 className="m-0 font-sans text-lg font-semibold" style={{ color: 'var(--drive)' }}>
             {d('drive', locale)}
           </h2>
@@ -118,7 +118,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
           {delta}
         </div>
 
-        <section className="min-w-[85vw] shrink-0 snap-center md:col-start-3 md:min-w-0">
+        <section className="min-w-pane shrink-0 snap-center md:col-start-3 md:min-w-0">
           <h2 className="m-0 font-sans text-lg font-semibold" style={{ color: 'var(--walk)' }}>
             {d('walk', locale)}
           </h2>

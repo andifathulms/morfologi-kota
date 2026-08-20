@@ -169,7 +169,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
               on a 360 px phone two discs are 150 px each and the fine grain
               that is the whole point of the figure stops resolving.
             */}
-            <div className="grid max-w-[42rem] grid-cols-1 gap-6 sm:grid-cols-2">
+            <div className="grid max-w-figure grid-cols-1 gap-6 sm:grid-cols-2">
               {(['drive', 'walk'] as const).map((mode) => (
                 <div key={mode}>
                   <p className="m-0 mb-1 flex items-center gap-2 font-sans text-base font-semibold">

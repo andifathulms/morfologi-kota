@@ -67,7 +67,18 @@ const config: Config = {
       },
       transitionTimingFunction: { house: 'cubic-bezier(0.2,0,0,1)' },
       transitionDuration: { fast: '120ms', state: '240ms', draw: '600ms' },
-      maxWidth: { plate: '1440px', prose: '68ch' },
+      /*
+       * `figure` is the width a paired figure reads at: two discs side by side
+       * with room for a caption under them, a little wider than `prose`
+       * because the caption is measured against the pair rather than the page.
+       *
+       * Named because CLAUDE.md asks for the tokens exactly as DESIGN.md has
+       * them, and an arbitrary value in one component is how a scale stops
+       * being one.
+       */
+      maxWidth: { plate: '1440px', prose: '68ch', figure: '42rem' },
+      /* The width a pane occupies in the pair view's narrow-screen swipe. */
+      minWidth: { pane: '85vw' },
     },
   },
   plugins: [],
