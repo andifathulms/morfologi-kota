@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { loadManifest, loadSurvey } from '@/lib/data'
-import { LOCALES, d, isLocale, t, type Locale, type Bilingual } from '@/lib/i18n'
+import { LOCALES, SITE_TYPE_LABEL, d, isLocale, t, type Locale, type Bilingual } from '@/lib/i18n'
 import { DEFAULT_TAG_MAPPING } from '@/lib/tags'
 import { GOOD_COVERAGE_THRESHOLD, THIN_COVERAGE_THRESHOLD } from '@/lib/morphology'
 import { percent } from '@/lib/format'
@@ -25,6 +25,28 @@ export function generateMetadata({ params }: { params: { locale: string } }): Me
  * sampling radius, the ODbL attribution, and every one of the honesty
  * constraints in §4, stated rather than implied.
  */
+
+/**
+ * Coverage confidence in words.
+ *
+ * The same three values the coverage table on the assumptions page prints, and
+ * they must read the same on both pages: the survey and the comparison set are
+ * measured against one threshold, so they cannot be labelled two ways.
+ */
+function confidenceLabel(confidence: 'thin' | 'moderate' | 'good', locale: Locale): string {
+  switch (confidence) {
+    case 'thin':
+      return d('coverageThin', locale)
+    case 'moderate':
+      return d('coverageModerate', locale)
+    case 'good':
+      return d('coverageGood', locale)
+    default: {
+      const never: never = confidence
+      throw new Error(`unknown confidence: ${String(never)}`)
+    }
+  }
+}
 
 const definitions: readonly { term: string; body: Bilingual }[] = [
   {
@@ -263,13 +285,28 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
                 <tr key={candidate.label} className="border-b border-rule-faint">
                   <th scope="row" className="py-px pr-4 text-left font-normal">
                     {candidate.label}
-                    <span className="ml-2 text-ink-subtle">{candidate.note}</span>
+                    {/*
+                      The survey notes are written in English in the source
+                      data, so they are marked as English rather than left for
+                      a screen reader to pronounce as Indonesian. Translating
+                      them properly means widening the survey schema to a
+                      bilingual field and re-running the survey — a data
+                      change, not a presentation one.
+                    */}
+                    <span lang="en" className="ml-2 text-ink-subtle">
+                      {candidate.note}
+                    </span>
                   </th>
-                  <td className="py-px pr-4 text-ink-subtle">{candidate.type}</td>
+                  <td className="py-px pr-4 text-ink-subtle">
+                    {t(
+                      SITE_TYPE_LABEL[candidate.type] ?? { id: candidate.type, en: candidate.type },
+                      locale,
+                    )}
+                  </td>
                   <td className="py-px pr-4 text-right">{percent(candidate.pedestrianShare)}</td>
                   <td className="py-px pr-4">
                     {candidate.confidence === 'thin' ? '⚑ ' : ''}
-                    {candidate.confidence}
+                    {confidenceLabel(candidate.confidence, locale)}
                   </td>
                   <td className="py-px pr-4">
                     {candidate.adoptedAs === null ? (
