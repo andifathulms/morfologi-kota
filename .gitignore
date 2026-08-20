@@ -1,8 +1,9 @@
 node_modules/
 .next/
-out/
+/out/
 .DS_Store
 *.tsbuildinfo
 next-env.d.ts
+# Raw extracts are never committed; the derived bundles in data/out are.
 data/cache/
 coverage/
