@@ -77,7 +77,17 @@ body {
 .network-ink {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  animation: draw-network var(--dur-draw) var(--ease-house) backwards;
+  /*
+   * `both`, and it has to be both.
+   *
+   * `backwards` alone holds the hidden from-state through the stagger delay
+   * but hands the property back to the declared value when the animation ends
+   * — and the declared value here is a full dash offset, so the network draws
+   * over 600 ms and then erases itself, leaving the sampling circle empty.
+   * `forwards` alone would hold the drawn end-state but let a delayed path
+   * flash at full length before it starts.
+   */
+  animation: draw-network var(--dur-draw) var(--ease-house) both;
 }
 
 /* The stagger: the drawing spreads across the disc rather than arriving at once. */
