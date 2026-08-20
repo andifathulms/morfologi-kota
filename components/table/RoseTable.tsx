@@ -47,7 +47,9 @@ export function RoseTable({ locale, series, label }: RoseTableProps) {
             const range = binRangeDeg(index)
             return (
               <tr key={index} className="border-b border-rule/40">
-                <td className="py-px pr-4">{String(index).padStart(2, '0')}</td>
+                <th scope="row" className="py-px pr-4 text-left font-normal">
+                  {String(index).padStart(2, '0')}
+                </th>
                 <td className="py-px pr-4">
                   {range.startDeg.toFixed(0)}°–{range.endDeg.toFixed(0)}°
                 </td>

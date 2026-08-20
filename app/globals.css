@@ -34,19 +34,6 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* Visually hidden, still reachable by keyboard and by a screen reader. */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border-width: 0;
-}
-
 /* DESIGN.md §7 — tabular figures on every metric, without exception. */
 .tabular {
   font-variant-numeric: tabular-nums;

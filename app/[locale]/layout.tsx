@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation'
 import '../globals.css'
 import { LOCALES, d, isLocale, type Locale } from '@/lib/i18n'
 import { loadManifest } from '@/lib/data'
+import { NavLink } from '@/components/nav/NavLink'
 
 /*
  * DESIGN.md §7. Self-hosted: next/font fetches at build time and serves the
@@ -56,31 +57,51 @@ export default function LocaleLayout({
   return (
     <html lang={locale} className={`${serif.variable} ${sans.variable} ${mono.variable}`}>
       <body className="bg-plate text-ink font-serif text-base">
+        {/* First stop for a keyboard: past the navigation, into the figure. */}
+        <a
+          href="#utama"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:border focus:border-ink focus:bg-plate focus:px-4 focus:py-2 focus:font-sans"
+        >
+          {locale === 'id' ? 'Langsung ke isi' : 'Skip to content'}
+        </a>
         <div className="mx-auto max-w-plate px-4">
           <header className="flex flex-wrap items-baseline justify-between gap-4 border-b border-rule py-6">
             <div className="flex flex-wrap items-baseline gap-6">
               <Link href={`/${locale}/lempeng`} className="font-serif text-lg font-semibold no-underline">
                 {d('siteTitle', locale)}
               </Link>
-              <nav className="flex items-baseline gap-6 font-sans text-base">
-                <Link href={`/${locale}/lempeng`}>{d('navPlate', locale)}</Link>
-                <Link href={`/${locale}/asumsi`}>{d('navAssumptions', locale)}</Link>
-                <Link href={`/${locale}/metode`}>{d('navMethod', locale)}</Link>
+              <nav
+                aria-label={locale === 'id' ? 'Bagian utama' : 'Sections'}
+                className="flex items-baseline gap-6 font-sans text-base"
+              >
+                <NavLink href={`/${locale}/lempeng`}>{d('navPlate', locale)}</NavLink>
+                <NavLink href={`/${locale}/asumsi`}>{d('navAssumptions', locale)}</NavLink>
+                <NavLink href={`/${locale}/metode`}>{d('navMethod', locale)}</NavLink>
               </nav>
             </div>
-            <Link href={`/${other}/lempeng`} className="font-mono text-xs uppercase tracking-wide">
+            <Link
+              href={`/${other}/lempeng`}
+              lang={other}
+              hrefLang={other}
+              className="font-mono text-xs uppercase tracking-wide"
+            >
               {other === 'en' ? 'English' : 'Bahasa Indonesia'}
             </Link>
           </header>
 
-          <main className="py-8">{children}</main>
+          <main id="utama" className="py-8">
+            {children}
+          </main>
 
           {/*
             DESIGN.md §9 and PRD §7 — attribution is structural, not a footnote
             nobody reads. The radius, the bin count and the tag mapping are
             stated wherever a number is, and they are stated again here.
           */}
-          <footer className="mt-16 border-t border-rule py-6 font-mono text-xs leading-relaxed">
+          <footer
+            className="mt-16 border-t border-rule py-6 font-mono text-xs leading-relaxed"
+            aria-label={locale === 'id' ? 'Sumber data dan parameter' : 'Data source and parameters'}
+          >
             <p>{manifest.attribution}</p>
             <p>
               {manifest.method.citation} DOI {manifest.method.doi}

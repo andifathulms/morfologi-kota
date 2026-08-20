@@ -55,6 +55,9 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
       </section>
 
       <section className="mt-12">
+        <h2 className="m-0 mb-4 font-serif text-lg font-semibold">
+          {locale === 'id' ? 'Pemetaan tag' : 'The tag mapping'}
+        </h2>
         <style dangerouslySetInnerHTML={{ __html: rules }} />
         {TAG_MAPPINGS.map((mapping) => (
           <input
@@ -121,6 +124,11 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
 
               <div className="mt-4 overflow-x-auto">
                 <table className="tabular w-full border-collapse font-mono text-xs">
+                  <caption className="sr-only">
+                    {locale === 'id'
+                      ? `Angka setiap lokasi di bawah pemetaan ${mapping.id}, dengan selisih terhadap pemetaan baku.`
+                      : `Every site's numbers under the ${mapping.id} mapping, with differences against the default.`}
+                  </caption>
                   <thead>
                     <tr className="border-b border-rule text-left">
                       <th scope="col" className="py-1 pr-4 font-normal">
@@ -155,11 +163,11 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                       if (here === undefined || base === undefined) return null
                       return (
                         <tr key={bundle.site.slug} className="border-b border-rule/40">
-                          <td className="py-px pr-4">
+                          <th scope="row" className="py-px pr-4 text-left font-normal">
                             <Link href={`/${locale}/lokasi/${bundle.site.slug}`}>
                               {bundle.site.name}
                             </Link>
-                          </td>
+                          </th>
                           <td className="py-px pr-4 text-right">
                             {fixed(here.drive.orientationEntropy, 3)}
                           </td>
@@ -200,6 +208,11 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
         </p>
         <div className="mt-4 overflow-x-auto">
           <table className="tabular w-full border-collapse font-mono text-xs">
+            <caption className="sr-only">
+              {locale === 'id'
+                ? 'Cakupan gang per lokasi, dengan keyakinan dan kerapatannya.'
+                : 'Footway coverage per site, with its confidence and density.'}
+            </caption>
             <thead>
               <tr className="border-b border-rule text-left">
                 <th scope="col" className="py-1 pr-4 font-normal">
@@ -219,9 +232,9 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
             <tbody>
               {manifest.sites.map((entry) => (
                 <tr key={entry.slug} className="border-b border-rule/40">
-                  <td className="py-px pr-4">
+                  <th scope="row" className="py-px pr-4 text-left font-normal">
                     <Link href={`/${locale}/lokasi/${entry.slug}`}>{entry.name}</Link>
-                  </td>
+                  </th>
                   <td className="py-px pr-4 text-right">{percent(entry.coverage.pedestrianShare)}</td>
                   <td className="py-px pr-4">
                     {entry.coverage.confidence.type === 'thin' ? '⚑ ' : ''}

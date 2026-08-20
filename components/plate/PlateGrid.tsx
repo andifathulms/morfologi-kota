@@ -94,7 +94,7 @@ export function PlateGrid({
           name="plate-sort"
           id={`sort-${option.key}`}
           defaultChecked={option.key === NAME_KEY}
-          className="sr-only absolute h-px w-px overflow-hidden"
+          className="sr-only"
         />
       ))}
 

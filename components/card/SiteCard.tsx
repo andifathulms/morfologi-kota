@@ -4,6 +4,7 @@ import { NetworkDrawing } from '@/components/network/NetworkDrawing'
 import { Rose } from '@/components/rose/Rose'
 import { MetricColumn } from '@/components/metrics/MetricColumn'
 import { CoverageBadge } from '@/components/metrics/CoverageBadge'
+import { RoseTable } from '@/components/table/RoseTable'
 import { SITE_TYPE_LABEL, d, t, type Locale } from '@/lib/i18n'
 import type { Mode } from '@/lib/tags'
 
@@ -73,6 +74,18 @@ export function SiteCard({
       </div>
 
       <MetricColumn metrics={metrics} mode={mode} locale={locale} />
+
+      {/* DESIGN.md §10 — every rose has a table equivalent, always available.
+          Collapsed so it does not crowd the plate, present so it is never a
+          fallback: it is also what someone would paste into a message. */}
+      <RoseTable
+        locale={locale}
+        label={entry.name}
+        series={[
+          { mode: 'drive', shares: entry.drive.rose.shares },
+          { mode: 'walk', shares: entry.walk.rose.shares },
+        ]}
+      />
 
       <p className="m-0 max-w-prose font-serif text-xs leading-snug text-ink/80">
         {t(entry.note, locale)}
