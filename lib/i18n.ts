@@ -107,8 +107,8 @@ const dictionary = {
     en: 'All of the above, plus gang, footpaths and steps.',
   },
   sortNotRanking: {
-    id: 'Mengurutkan ulang memunculkan pola pada keseluruhan set. Ini bukan peringkat: tidak ada posisi yang lebih baik daripada posisi lain.',
-    en: 'Re-sorting makes a pattern across the set visible. It is not a ranking: no position in the order is better than another.',
+    id: 'Mengurutkan ulang memunculkan pola pada keseluruhan set. Ini bukan peringkat: tidak ada posisi yang lebih baik daripada posisi lain. Alamat di bilah URL mengikuti pilihan Anda, jadi urutan yang layak ditunjukkan dapat dikirim sebagai tautan.',
+    en: 'Re-sorting makes a pattern across the set visible. It is not a ranking: no position in the order is better than another. The address bar follows your choice, so a sort worth showing someone can be sent as a link.',
   },
   exampleHeading: { id: 'Contoh', en: 'For example' },
   caveatHeading: {

@@ -1,3 +1,4 @@
+import { UrlState } from '@/components/controls/UrlState'
 import type { Locale } from '@/lib/i18n'
 
 /**
@@ -143,6 +144,17 @@ export function PlateGrid({
           ))}
         </div>
       </fieldset>
+
+      {/* After the radios, before the grid: the radio is set before a single
+          card has parsed, so a shared link opens already sorted rather than
+          re-sorting in front of the reader. */}
+      <UrlState
+        param="urut"
+        name="plate-sort"
+        idPrefix="sort-"
+        keys={all.map((option) => option.key)}
+        defaultKey={NAME_KEY}
+      />
 
       <div className="plate-grid grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
         {children.map((child, index) => {

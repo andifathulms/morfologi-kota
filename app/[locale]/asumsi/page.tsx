@@ -7,6 +7,7 @@ import { LOCALES, d, isLocale, t, type Locale } from '@/lib/i18n'
 import { TAG_MAPPINGS, DEFAULT_TAG_MAPPING } from '@/lib/tags'
 import { MAPPING_EXEMPLAR_SLUGS, ROBUST_THRESHOLD, SENSITIVE_THRESHOLD } from '@/data/sites'
 import { NetworkDrawing } from '@/components/network/NetworkDrawing'
+import { UrlState } from '@/components/controls/UrlState'
 import { fixed, kilometres, percent, signed } from '@/lib/format'
 
 /**
@@ -187,6 +188,14 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
             ))}
           </div>
         </fieldset>
+
+        <UrlState
+          param="peta"
+          name="mapping"
+          idPrefix="map-"
+          keys={TAG_MAPPINGS.map((mapping) => mapping.id)}
+          defaultKey={DEFAULT_TAG_MAPPING.id}
+        />
 
         <div className="mappings">
 
