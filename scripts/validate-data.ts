@@ -56,6 +56,30 @@ function scanForForbiddenKeys(value: unknown, path: string): void {
   }
 }
 
+/**
+ * The decomposition the page shows a reader must add up to the number the page
+ * prints beside it. If it ever does not, the rose table is quietly teaching
+ * arithmetic that is not the arithmetic the metric came from.
+ */
+function checkEntropyDecomposition(
+  contributions: readonly number[],
+  entropy: number,
+  label: string,
+): void {
+  check(
+    contributions.length === 36,
+    `${label}: entropy decomposition has ${contributions.length} terms, not 36`,
+  )
+  const sum = contributions.reduce((total, term) => total + term, 0)
+  check(
+    Math.abs(sum - entropy) < 1e-5,
+    `${label}: the 36 per-bin entropy terms sum to ${sum.toFixed(6)}, but H is ${entropy.toFixed(6)} — the page would show a decomposition that is not the measurement`,
+  )
+  for (const term of contributions) {
+    check(term >= -1e-12, `${label}: a negative entropy term (${term}) — −P·ln P is never below zero for P in [0, 1]`)
+  }
+}
+
 function checkRose(shares: readonly number[], label: string): void {
   check(shares.length === 36, `${label}: rose must have 36 bins, has ${shares.length}`)
   const total = shares.reduce((sum, share) => sum + share, 0)
@@ -87,6 +111,11 @@ function checkBundle(bundle: SiteBundle): void {
     )
     check(metrics.degrees.nodeCount > 0, `${slug}/${mode}: empty graph`)
     checkRose(metrics.rose.shares, `${slug}/${mode}`)
+    checkEntropyDecomposition(
+      metrics.rose.binContributions,
+      metrics.orientationEntropy,
+      `${slug}/${mode}`,
+    )
     check(metrics.edgeCircuity >= 1 - 1e-9, `${slug}/${mode}: edge circuity ${metrics.edgeCircuity} < 1`)
     check(
       metrics.sampledCircuity >= 1 - 1e-9,

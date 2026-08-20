@@ -98,6 +98,20 @@ export function orientationEntropy(rose: Rose): number {
   return sum
 }
 
+/**
+ * What each bin contributes to H: −P(i)·ln P(i), in the bin order of the rose.
+ *
+ * The same sum `orientationEntropy` performs, kept term by term so the page
+ * can show a reader that thirty-six numbers add up to the figure printed under
+ * the drawing. A rose and an entropy sitting side by side with no visible step
+ * between them asks to be taken on trust.
+ *
+ * Empty bins contribute exactly zero, by the same limit.
+ */
+export function binContributions(rose: Rose): readonly number[] {
+  return rose.shares.map((share) => (share > 0 ? -share * Math.log(share) : 0))
+}
+
 /** Entropy as a share of its maximum — dimensionless, in [0, 1]. */
 export function normalisedEntropy(rose: Rose): number {
   return orientationEntropy(rose) / MAX_ENTROPY

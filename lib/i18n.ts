@@ -177,6 +177,12 @@ const dictionary = {
     id: 'Pasangan yang tidak terhubung sama sekali dikeluarkan dari rata-rata. Jumlahnya besar berarti jaringan ini terpecah — sinyal tentang datanya, bukan tentang tempatnya.',
     en: 'Pairs with no route between them at all are excluded from the mean. A large count means this network is fragmented — a signal about the data, not about the place.',
   },
+  entropyTerm: { id: '−P·ln P', en: '−P·ln P' },
+  entropyTotal: { id: 'Jumlah = H', en: 'Sum = H' },
+  entropyDerivation: {
+    id: 'Kolom terakhir adalah sumbangan tiap bin pada H = −Σ P(i)·ln P(i). Jumlahkan ketiga puluh enam angkanya dan hasilnya adalah H yang tercetak di bawah rose. Bin yang kosong menyumbang nol.',
+    en: 'The last column is each bin’s term in H = −Σ P(i)·ln P(i). Add the thirty-six of them and you get the H printed under the rose. An empty bin contributes zero.',
+  },
   roseTableCaption: {
     id: 'Bagian panjang jaringan per bin arah selebar 10°, untuk kendara dan jalan kaki.',
     en: 'Share of network length per 10° bearing bin, for drive and walk.',

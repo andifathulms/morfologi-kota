@@ -47,6 +47,15 @@ export const polylineSchema = z.array(z.tuple([z.number(), z.number()])).min(2)
 export const roseSchema = z.object({
   binCentresDeg: z.array(z.number()).length(36),
   shares: z.array(z.number().min(0).max(1)).length(36),
+  /**
+   * Each bin's term in H = −Σ P(i)·ln P(i), in bin order.
+   *
+   * Emitted rather than derived in the page, because deriving a metric in a
+   * component is exactly what Invariants §16 forbids — and because a
+   * decomposition the validator can check against the headline number is worth
+   * more than one the page asserts.
+   */
+  binContributions: z.array(z.number()).length(36),
   totalWeight: z.number().min(0),
 })
 
@@ -78,6 +87,13 @@ export const modeMetricsSchema = z.object({
   medianSegmentLengthM: z.number().min(0),
   totalLengthM: z.number().min(0),
 })
+
+/**
+ * The emitted metric column. Wider than `lib/morphology`'s `ModeMetrics`: the
+ * rose carries its per-bin entropy terms as well, because the page shows the
+ * decomposition and the validator checks it sums to the headline number.
+ */
+export type EmittedModeMetrics = z.infer<typeof modeMetricsSchema>
 
 export const coverageSchema = z.object({
   pedestrianShare: z.number().min(0).max(1),

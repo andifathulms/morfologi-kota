@@ -17,6 +17,7 @@ import { join } from 'node:path'
 import {
   buildGraphFromWays,
   clipToRadius,
+  binContributions,
   computeModeMetrics,
   coverageOfWalkGraph,
   edgeLengthM,
@@ -37,6 +38,7 @@ import {
   siteBundleSchema,
   type ManifestEntry,
   type SensitivitySummaryEntry,
+  type EmittedModeMetrics,
   type SensitivityValues,
   type Site,
   type WalkOnly,
@@ -78,12 +80,13 @@ function round(value: number, places: number): number {
   return Object.is(rounded, -0) ? 0 : rounded
 }
 
-function roundMetrics(metrics: ModeMetrics): ModeMetrics {
+function roundMetrics(metrics: ModeMetrics): EmittedModeMetrics {
   return {
     ...metrics,
     rose: {
-      binCentresDeg: metrics.rose.binCentresDeg,
+      binCentresDeg: [...metrics.rose.binCentresDeg],
       shares: metrics.rose.shares.map((share) => round(share, 8)),
+      binContributions: binContributions(metrics.rose).map((term) => round(term, 8)),
       totalWeight: round(metrics.rose.totalWeight, 3),
     },
     orientationEntropy: round(metrics.orientationEntropy, 6),

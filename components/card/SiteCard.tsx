@@ -87,8 +87,18 @@ export function SiteCard({
         locale={locale}
         label={entry.name}
         series={[
-          { mode: 'drive', shares: entry.drive.rose.shares },
-          { mode: 'walk', shares: entry.walk.rose.shares },
+          {
+            mode: 'drive',
+            shares: entry.drive.rose.shares,
+            binContributions: entry.drive.rose.binContributions,
+            orientationEntropy: entry.drive.orientationEntropy,
+          },
+          {
+            mode: 'walk',
+            shares: entry.walk.rose.shares,
+            binContributions: entry.walk.rose.binContributions,
+            orientationEntropy: entry.walk.orientationEntropy,
+          },
         ]}
       />
 

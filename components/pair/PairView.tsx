@@ -174,8 +174,18 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
         locale={locale}
         label={bundle.site.name}
         series={[
-          { mode: 'drive', shares: drive.metrics.rose.shares },
-          { mode: 'walk', shares: walk.metrics.rose.shares },
+          {
+            mode: 'drive',
+            shares: drive.metrics.rose.shares,
+            binContributions: drive.metrics.rose.binContributions,
+            orientationEntropy: drive.metrics.orientationEntropy,
+          },
+          {
+            mode: 'walk',
+            shares: walk.metrics.rose.shares,
+            binContributions: walk.metrics.rose.binContributions,
+            orientationEntropy: walk.metrics.orientationEntropy,
+          },
         ]}
       />
     </div>

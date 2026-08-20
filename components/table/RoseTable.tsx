@@ -1,7 +1,7 @@
-import { binRangeDeg } from "@/lib/morphology";
-import { d, type Locale } from "@/lib/i18n";
-import { percent } from "@/lib/format";
-import type { Mode } from "@/lib/tags";
+import { binRangeDeg } from '@/lib/morphology'
+import { d, type Locale } from '@/lib/i18n'
+import { fixed, percent } from '@/lib/format'
+import type { Mode } from '@/lib/tags'
 
 /**
  * The rose's text equivalent — 36 bins with their bearing ranges and shares.
@@ -11,22 +11,25 @@ import type { Mode } from "@/lib/tags";
  * real table rather than an image description.
  */
 export interface RoseTableProps {
-  readonly locale: Locale;
+  readonly locale: Locale
   readonly series: readonly {
-    readonly mode: Mode;
-    readonly shares: readonly number[];
-  }[];
-  readonly label: string;
+    readonly mode: Mode
+    readonly shares: readonly number[]
+    /** Each bin's term in H. Emitted by the pipeline; summed here for display only. */
+    readonly binContributions: readonly number[]
+    readonly orientationEntropy: number
+  }[]
+  readonly label: string
 }
 
 export function RoseTable({ locale, series, label }: RoseTableProps) {
-  const first = series[0];
-  if (first === undefined) return null;
+  const first = series[0]
+  if (first === undefined) return null
 
   return (
     <details className="mt-2 border-t border-rule-strong pt-2">
       <summary className="cursor-pointer font-sans text-xs">
-        {d("roseTable", locale)} — {label}
+        {d('roseTable', locale)} — {label}
       </summary>
       {/*
         Focusable, because at 320 px this table is wider than its card and
@@ -37,7 +40,7 @@ export function RoseTable({ locale, series, label }: RoseTableProps) {
       <div
         tabIndex={0}
         role="group"
-        aria-label={`${d("roseTable", locale)} — ${label}`}
+        aria-label={`${d('roseTable', locale)} — ${label}`}
         className="mt-2 overflow-x-auto"
       >
         <table className="tabular w-full border-collapse font-mono text-xs">
@@ -48,10 +51,10 @@ export function RoseTable({ locale, series, label }: RoseTableProps) {
           <thead>
             <tr className="border-b border-rule-strong text-left">
               <th scope="col" className="py-1 pr-4 font-normal">
-                {d("bin", locale)}
+                {d('bin', locale)}
               </th>
               <th scope="col" className="py-1 pr-4 font-normal">
-                {d("bearingRange", locale)}
+                {d('bearingRange', locale)}
               </th>
               {series.map((s) => (
                 <th
@@ -59,18 +62,28 @@ export function RoseTable({ locale, series, label }: RoseTableProps) {
                   scope="col"
                   className="py-1 pr-4 text-right font-normal"
                 >
-                  {d(s.mode === "drive" ? "drive" : "walk", locale)}
+                  P — {d(s.mode === 'drive' ? 'drive' : 'walk', locale)}
+                </th>
+              ))}
+              {series.map((s) => (
+                <th
+                  key={`${s.mode}-term`}
+                  scope="col"
+                  className="py-1 pr-4 text-right font-normal"
+                  style={{ color: s.mode === 'drive' ? 'var(--drive)' : 'var(--walk)' }}
+                >
+                  {d('entropyTerm', locale)}
                 </th>
               ))}
             </tr>
           </thead>
           <tbody>
             {first.shares.map((_, index) => {
-              const range = binRangeDeg(index);
+              const range = binRangeDeg(index)
               return (
                 <tr key={index} className="border-b border-rule-faint">
                   <th scope="row" className="py-px pr-4 text-left font-normal">
-                    {String(index).padStart(2, "0")}
+                    {String(index).padStart(2, '0')}
                   </th>
                   <td className="py-px pr-4">
                     {range.startDeg.toFixed(0)}°–{range.endDeg.toFixed(0)}°
@@ -80,12 +93,43 @@ export function RoseTable({ locale, series, label }: RoseTableProps) {
                       {percent(s.shares[index] ?? 0, 2)}
                     </td>
                   ))}
+                  {series.map((s) => (
+                    <td key={`${s.mode}-term`} className="py-px pr-4 text-right">
+                      {fixed(s.binContributions[index] ?? 0, 4)}
+                    </td>
+                  ))}
                 </tr>
-              );
+              )
             })}
           </tbody>
+          {/*
+            The step that was missing. The rose and its H sat side by side with
+            nothing between them; this is the sum, in the same table as the
+            thirty-six numbers it is a sum of. The terms come from the pipeline
+            and data:validate asserts they add to this figure — nothing is
+            computed here (CLAUDE.md, Invariants §16).
+          */}
+          <tfoot>
+            <tr className="border-t border-rule-strong">
+              <th
+                scope="row"
+                colSpan={2 + series.length}
+                className="py-1 pr-4 text-left font-semibold"
+              >
+                {d('entropyTotal', locale)}
+              </th>
+              {series.map((s) => (
+                <td key={`${s.mode}-sum`} className="py-1 pr-4 text-right font-semibold">
+                  {fixed(s.orientationEntropy, 3)}
+                </td>
+              ))}
+            </tr>
+          </tfoot>
         </table>
       </div>
+      <p className="mt-2 max-w-prose font-sans text-base leading-snug text-ink-muted">
+        {d('entropyDerivation', locale)}
+      </p>
     </details>
-  );
+  )
 }
