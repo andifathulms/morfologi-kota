@@ -1,0 +1,90 @@
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { SITES } from '@/data/sites'
+import { loadBundle, loadManifest } from '@/lib/data'
+import { PairView } from '@/components/pair/PairView'
+import { CoverageBadge } from '@/components/metrics/CoverageBadge'
+import { SITE_TYPE_LABEL, LOCALES, d, isLocale, t, type Locale } from '@/lib/i18n'
+import { editorialFor } from '@/lib/editorial'
+import { DEFAULT_TAG_MAPPING } from '@/lib/tags'
+
+export function generateStaticParams(): { locale: Locale; slug: string }[] {
+  return LOCALES.flatMap((locale) => SITES.map((site) => ({ locale, slug: site.slug })))
+}
+
+export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+  const site = SITES.find((candidate) => candidate.slug === params.slug)
+  return { title: site ? `${site.name} — Bentuk Kota` : 'Bentuk Kota' }
+}
+
+/**
+ * The pair (PRD §6.2) — two networks, two roses, two metric columns, and the
+ * delta between them. The gap is the finding, rendered as a comparison rather
+ * than described in a caption.
+ */
+export default function SitePage({ params }: { params: { locale: string; slug: string } }) {
+  if (!isLocale(params.locale)) notFound()
+  const locale: Locale = params.locale
+  const site = SITES.find((candidate) => candidate.slug === params.slug)
+  if (site === undefined) notFound()
+
+  const bundle = loadBundle(site.slug)
+  const manifest = loadManifest()
+  const editorial = editorialFor(site.slug)
+  const thin = bundle.coverage.confidence.type === 'thin'
+
+  return (
+    <article>
+      <p className="m-0 font-sans text-xs">
+        <Link href={`/${locale}/lempeng`}>{d('backToPlate', locale)}</Link>
+      </p>
+
+      <header className="mt-4 max-w-prose">
+        <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">{site.name}</h1>
+        <p className="m-0 font-sans text-base text-ink/70">
+          {site.city} · {t(SITE_TYPE_LABEL[site.type] ?? { id: site.type, en: site.type }, locale)}
+        </p>
+        <p className="mt-4 font-serif text-md leading-relaxed">{t(site.note, locale)}</p>
+      </header>
+
+      {/* DESIGN.md §9 — the legend contract: radius, mode and tag set, coverage. */}
+      <div className="tabular my-6 border-y border-rule py-3 font-mono text-xs">
+        <p className="m-0">
+          {d('radius', locale)} {bundle.radiusM} m · 36 bin · {d('tagMapping', locale)} “
+          {bundle.mappingId}” · {t(DEFAULT_TAG_MAPPING.note, locale)}
+        </p>
+        <div className="mt-1">
+          <CoverageBadge coverage={bundle.coverage} locale={locale} verbose />
+        </div>
+      </div>
+
+      {thin ? (
+        <p className="mb-6 max-w-prose border-l-2 border-ink/40 pl-4 font-serif text-md leading-relaxed">
+          {locale === 'id'
+            ? 'Bacalah kedua kolom di bawah ini sebagai dua pembacaan dari data yang sama, bukan sebagai selisih yang sudah dapat disimpulkan. Gang di lokasi ini belum terpetakan cukup rapat untuk itu.'
+            : 'Read the two columns below as two readings of the same data rather than as a gap that can yet be concluded from. The gang here are not mapped densely enough for that.'}
+        </p>
+      ) : null}
+
+      <PairView bundle={bundle} locale={locale} />
+
+      {editorial.length > 0 ? (
+        <section className="mt-12 max-w-prose">
+          <h2 className="m-0 font-serif text-lg font-semibold">
+            {locale === 'id' ? 'Catatan' : 'Note'}
+          </h2>
+          {editorial.map((paragraph, index) => (
+            <p key={index} className="mt-4 font-serif text-md leading-relaxed">
+              {t(paragraph, locale)}
+            </p>
+          ))}
+        </section>
+      ) : null}
+
+      <p className="tabular mt-12 max-w-prose font-mono text-xs leading-relaxed">
+        {bundle.attribution} · {manifest.method.citation}
+      </p>
+    </article>
+  )
+}
