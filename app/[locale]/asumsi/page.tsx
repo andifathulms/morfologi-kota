@@ -181,10 +181,17 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                 {t(mapping.note, locale)}
               </p>
 
+              {/*
+                Each heading names its mapping. Three mappings rendering the
+                same two headings produced six outline entries reading
+                “Kendara — highway” and “Jalan kaki — highway” with nothing
+                to tell them apart, which makes heading navigation through
+                this section useless.
+              */}
               <div className="mt-4 grid gap-6 md:grid-cols-2">
                 <div>
                   <h3 className="m-0 font-sans text-base font-semibold" style={{ color: 'var(--drive)' }}>
-                    {d('drive', locale)} — highway
+                    {d('drive', locale)} — highway · {t(mapping.label, locale)}
                   </h3>
                   <p className="m-0 font-mono text-xs leading-relaxed">
                     {mapping.drivable.join(' · ')}
@@ -192,7 +199,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                 </div>
                 <div>
                   <h3 className="m-0 font-sans text-base font-semibold" style={{ color: 'var(--walk)' }}>
-                    {d('walk', locale)} — highway
+                    {d('walk', locale)} — highway · {t(mapping.label, locale)}
                   </h3>
                   <p className="m-0 font-mono text-xs leading-relaxed">
                     {mapping.walkable.join(' · ')}
@@ -223,8 +230,8 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                   <>
                     <h3 className="mt-8 font-serif text-lg font-semibold">
                       {locale === 'id'
-                        ? 'Metrik mana yang bertahan terhadap pemetaan ini'
-                        : 'Which metrics survive this mapping'}
+                        ? `Metrik mana yang bertahan — ${t(mapping.label, locale)}`
+                        : `Which metrics survive — ${t(mapping.label, locale)}`}
                     </h3>
                     <p className="mt-2 max-w-prose font-serif text-md leading-relaxed">
                       {locale === 'id'
@@ -316,7 +323,9 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
               })()}
 
               <h3 className="mt-8 font-serif text-lg font-semibold">
-                {locale === 'id' ? 'Angka di bawah pemetaan ini' : 'The numbers under this mapping'}
+                {locale === 'id'
+                  ? `Angka di bawah pemetaan “${t(mapping.label, locale)}”`
+                  : `The numbers under “${t(mapping.label, locale)}”`}
               </h3>
               <p className="m-0 max-w-prose font-sans text-base text-ink-subtle">
                 {locale === 'id'
