@@ -44,7 +44,7 @@ export function generateStaticParams(): { locale: Locale }[] {
  * worse than having none. Set NEXT_PUBLIC_SITE_URL in the workflow to turn the
  * absolute URLs on.
  */
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+import { alternatesFor, openGraphUrl, siteUrl } from '@/lib/metadata'
 
 export function generateMetadata({ params }: { params: { locale: string } }): Metadata {
   const locale: Locale = isLocale(params.locale) ? params.locale : 'id'
@@ -61,14 +61,14 @@ export function generateMetadata({ params }: { params: { locale: string } }): Me
     ...(siteUrl ? { metadataBase: new URL(siteUrl) } : {}),
     title,
     description,
-    alternates: {
-      canonical: `/${locale}/lempeng/`,
-      languages: { id: '/id/lempeng/', en: '/en/lempeng/' },
-    },
+    alternates: alternatesFor(locale, 'lempeng'),
     openGraph: {
       type: 'website',
       title,
       description,
+      ...(openGraphUrl(locale, 'lempeng') === undefined
+        ? {}
+        : { url: openGraphUrl(locale, 'lempeng') }),
       locale: locale === 'id' ? 'id_ID' : 'en_GB',
       alternateLocale: locale === 'id' ? 'en_GB' : 'id_ID',
     },

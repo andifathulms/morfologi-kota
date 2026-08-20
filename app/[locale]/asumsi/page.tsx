@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { loadBundle, loadManifest } from '@/lib/data'
+import { alternatesFor, openGraphUrl } from '@/lib/metadata'
 import { LOCALES, d, isLocale, t, type Locale } from '@/lib/i18n'
 import { TAG_MAPPINGS, DEFAULT_TAG_MAPPING } from '@/lib/tags'
 import { MAPPING_EXEMPLAR_SLUGS, ROBUST_THRESHOLD, SENSITIVE_THRESHOLD } from '@/data/sites'
@@ -39,7 +40,8 @@ export function generateMetadata({ params }: { params: { locale: string } }): Me
   const locale: Locale = isLocale(params.locale) ? params.locale : 'id'
   return {
     title: locale === 'id' ? 'Asumsi — pemetaan tag dan cakupan gang · Bentuk Kota' : 'Assumptions — tag mapping and footway coverage · Bentuk Kota',
-    alternates: { canonical: `/${locale}/asumsi/` },
+    alternates: alternatesFor(locale, 'asumsi'),
+    openGraph: { url: openGraphUrl(locale, 'asumsi') },
   }
 }
 

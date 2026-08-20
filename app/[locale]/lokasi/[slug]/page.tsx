@@ -3,6 +3,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { SITES } from '@/data/sites'
 import { loadBundle, loadManifest } from '@/lib/data'
+import { alternatesFor, openGraphUrl } from '@/lib/metadata'
 import { PairView } from '@/components/pair/PairView'
 import { CoverageBadge } from '@/components/metrics/CoverageBadge'
 import { SITE_TYPE_LABEL, LOCALES, d, isLocale, t, type Locale } from '@/lib/i18n'
@@ -30,14 +31,13 @@ export function generateMetadata({
   return {
     title,
     description,
-    alternates: {
-      canonical: `/${locale}/lokasi/${site.slug}/`,
-      languages: {
-        id: `/id/lokasi/${site.slug}/`,
-        en: `/en/lokasi/${site.slug}/`,
-      },
+    alternates: alternatesFor(locale, `lokasi/${site.slug}`),
+    openGraph: {
+      type: 'article',
+      title,
+      description,
+      url: openGraphUrl(locale, `lokasi/${site.slug}`),
     },
-    openGraph: { type: 'article', title, description },
   }
 }
 

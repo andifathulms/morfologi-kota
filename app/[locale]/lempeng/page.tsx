@@ -4,6 +4,7 @@ import { loadBundle, loadManifest, loadReference } from '@/lib/data'
 import Link from 'next/link'
 import { SiteCard } from '@/components/card/SiteCard'
 import { PlateGrid, type SortOption, type SortableSite } from '@/components/plate/PlateGrid'
+import { alternatesFor, openGraphUrl } from '@/lib/metadata'
 import { LOCALES, d, isLocale, type Locale } from '@/lib/i18n'
 import { manifestDataPath } from '@/lib/paths'
 import { SITE_TYPE_LABEL, t } from '@/lib/i18n'
@@ -28,7 +29,8 @@ export function generateMetadata({ params }: { params: { locale: string } }): Me
       locale === 'id'
         ? `Lempeng — ${count} lokasi, dua jaringan · Bentuk Kota`
         : `The plate — ${count} sites, two networks · Bentuk Kota`,
-    alternates: { canonical: `/${locale}/lempeng/` },
+    alternates: alternatesFor(locale, 'lempeng'),
+    openGraph: { url: openGraphUrl(locale, 'lempeng') },
   }
 }
 

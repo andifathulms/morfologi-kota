@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { loadManifest, loadSurvey } from '@/lib/data'
+import { alternatesFor, openGraphUrl } from '@/lib/metadata'
 import { LOCALES, SITE_TYPE_LABEL, d, isLocale, t, type Locale, type Bilingual } from '@/lib/i18n'
 import { DEFAULT_TAG_MAPPING } from '@/lib/tags'
 import { GOOD_COVERAGE_THRESHOLD, THIN_COVERAGE_THRESHOLD } from '@/lib/morphology'
@@ -16,7 +17,8 @@ export function generateMetadata({ params }: { params: { locale: string } }): Me
   const locale: Locale = isLocale(params.locale) ? params.locale : 'id'
   return {
     title: locale === 'id' ? 'Metode — definisi, batasan, dan lisensi · Bentuk Kota' : 'Method — definitions, limitations and licence · Bentuk Kota',
-    alternates: { canonical: `/${locale}/metode/` },
+    alternates: alternatesFor(locale, 'metode'),
+    openGraph: { url: openGraphUrl(locale, 'metode') },
   }
 }
 
