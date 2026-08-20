@@ -67,6 +67,19 @@ const dictionary = {
   },
   tagMapping: { id: 'Pemetaan tag', en: 'Tag mapping' },
   backToPlate: { id: '← Kembali ke lempeng', en: '← Back to the plate' },
+  downloadSite: {
+    id: 'Unduh data lokasi ini (JSON, ODbL)',
+    en: 'Download this site’s data (JSON, ODbL)',
+  },
+  downloadManifest: {
+    id: 'Unduh manifest — parameter dan metrik seluruh lokasi (JSON, ODbL)',
+    en: 'Download the manifest — parameters and metrics for every site (JSON, ODbL)',
+  },
+  offered: {
+    id: 'Basis data turunan ini ditawarkan di bawah ODbL, sebagaimana share-alike mensyaratkan.',
+    en: 'This derived database is offered under ODbL, as share-alike requires.',
+  },
+  print: { id: 'Cetak halaman ini', en: 'Print this page' },
 } as const
 
 export type DictionaryKey = keyof typeof dictionary

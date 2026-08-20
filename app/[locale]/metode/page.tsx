@@ -4,6 +4,7 @@ import { LOCALES, isLocale, t, type Locale, type Bilingual } from '@/lib/i18n'
 import { DEFAULT_TAG_MAPPING } from '@/lib/tags'
 import { GOOD_COVERAGE_THRESHOLD, THIN_COVERAGE_THRESHOLD } from '@/lib/morphology'
 import { percent } from '@/lib/format'
+import { manifestDataPath, siteDataPath } from '@/lib/paths'
 
 export function generateStaticParams(): { locale: Locale }[] {
   return LOCALES.map((locale) => ({ locale }))
@@ -195,6 +196,35 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
             ? 'Ekstrak diambil pada saat build, tidak pernah saat halaman dibuka. Setelah muat pertama, halaman ini tidak melakukan permintaan jaringan apa pun.'
             : 'Extracts are fetched at build time, never at page load. After the first load this page makes no network request at all.'}
         </p>
+
+        <h3 className="mt-8 font-serif text-md font-semibold">
+          {locale === 'id' ? 'Ambil datanya' : 'Take the data'}
+        </h3>
+        <p className="mt-2 font-serif text-md leading-relaxed">
+          {locale === 'id'
+            ? 'Share-alike berarti basis data turunan ini bukan hanya diatribusikan, melainkan ditawarkan. Berikut berkas yang sama persis dengan yang dipakai merender halaman-halaman ini.'
+            : 'Share-alike means this derived database is not merely attributed but offered. These are the same files these pages were rendered from.'}
+        </p>
+        <ul className="mt-2 list-none p-0 font-mono text-xs leading-relaxed">
+          <li>
+            <a href={manifestDataPath()} download>
+              manifest.json
+            </a>{' '}
+            <span className="text-ink/60">
+              {locale === 'id'
+                ? '— parameter dan metrik seluruh lokasi, tanpa geometri'
+                : '— parameters and metrics for every site, without the geometry'}
+            </span>
+          </li>
+          {manifest.sites.map((site) => (
+            <li key={site.slug}>
+              <a href={siteDataPath(site.slug)} download>
+                {site.slug}.json
+              </a>{' '}
+              <span className="text-ink/60">{site.name}</span>
+            </li>
+          ))}
+        </ul>
       </section>
     </div>
   )

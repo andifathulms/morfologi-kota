@@ -3,6 +3,7 @@ import { loadBundle, loadManifest } from '@/lib/data'
 import { SiteCard } from '@/components/card/SiteCard'
 import { PlateGrid, type SortOption, type SortableSite } from '@/components/plate/PlateGrid'
 import { LOCALES, d, isLocale, type Locale } from '@/lib/i18n'
+import { manifestDataPath } from '@/lib/paths'
 
 export function generateStaticParams(): { locale: Locale }[] {
   return LOCALES.map((locale) => ({ locale }))
@@ -103,8 +104,13 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
         {cards}
       </PlateGrid>
 
-      <p className="tabular mt-8 max-w-prose font-mono text-xs leading-relaxed">
-        {manifest.attribution}
+      <p className="mt-8 max-w-prose font-mono text-xs leading-relaxed">
+        <a href={manifestDataPath()} download>
+          {d('downloadManifest', locale)}
+        </a>
+      </p>
+      <p className="tabular mt-2 max-w-prose font-mono text-xs leading-relaxed">
+        {manifest.attribution} {d('offered', locale)}
       </p>
     </div>
   )

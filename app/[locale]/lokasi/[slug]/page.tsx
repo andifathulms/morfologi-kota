@@ -8,6 +8,7 @@ import { CoverageBadge } from '@/components/metrics/CoverageBadge'
 import { SITE_TYPE_LABEL, LOCALES, d, isLocale, t, type Locale } from '@/lib/i18n'
 import { editorialFor } from '@/lib/editorial'
 import { DEFAULT_TAG_MAPPING } from '@/lib/tags'
+import { siteDataPath } from '@/lib/paths'
 
 export function generateStaticParams(): { locale: Locale; slug: string }[] {
   return LOCALES.flatMap((locale) => SITES.map((site) => ({ locale, slug: site.slug })))
@@ -82,7 +83,14 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
         </section>
       ) : null}
 
-      <p className="tabular mt-12 max-w-prose font-mono text-xs leading-relaxed">
+      {/* ODbL share-alike: the derived database is not only attributed, it is
+          offered. The link is to the same bundle this page was rendered from. */}
+      <p className="mt-12 max-w-prose font-mono text-xs leading-relaxed">
+        <a href={siteDataPath(site.slug)} download>
+          {d('downloadSite', locale)}
+        </a>
+      </p>
+      <p className="tabular mt-2 max-w-prose font-mono text-xs leading-relaxed">
         {bundle.attribution} · {manifest.method.citation}
       </p>
     </article>

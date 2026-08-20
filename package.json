@@ -6,8 +6,8 @@
   "license": "MIT",
   "packageManager": "pnpm@9.15.9",
   "scripts": {
-    "dev": "next dev",
-    "build": "pnpm data:validate && next build && node scripts/postbuild.mjs",
+    "dev": "node scripts/publish-data.mjs && next dev",
+    "build": "pnpm data:validate && node scripts/publish-data.mjs && next build && node scripts/postbuild.mjs",
     "preview": "node scripts/preview.mjs",
     "test": "vitest",
     "test:run": "vitest run",
@@ -17,7 +17,8 @@
     "data:build": "tsx scripts/build-data.ts",
     "data:validate": "tsx scripts/validate-data.ts",
     "typecheck": "tsc --noEmit",
-    "lint": "next lint"
+    "lint": "next lint",
+    "data:publish": "node scripts/publish-data.mjs"
   },
   "dependencies": {
     "next": "14.2.5",
