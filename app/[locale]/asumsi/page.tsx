@@ -324,7 +324,9 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                                   {percent(entry.meanRelativeChange, 1)}
                                 </td>
                                 <td className="py-px pr-4">
-                                  {entry.stability === 'sensitive' ? '⚑ ' : ''}
+                                  {entry.stability === 'sensitive' ? (
+                                    <span aria-hidden="true">⚑ </span>
+                                  ) : null}
                                   {t(
                                     STABILITY_LABEL[entry.stability] ?? {
                                       id: entry.stability,
@@ -547,7 +549,9 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                   </th>
                   <td className="py-px pr-4 text-right">{percent(entry.coverage.pedestrianShare)}</td>
                   <td className="py-px pr-4">
-                    {entry.coverage.confidence.type === 'thin' ? '⚑ ' : ''}
+                    {entry.coverage.confidence.type === 'thin' ? (
+                      <span aria-hidden="true">⚑ </span>
+                    ) : null}
                     {entry.coverage.confidence.type === 'thin'
                       ? d('coverageThin', locale)
                       : entry.coverage.confidence.type === 'moderate'

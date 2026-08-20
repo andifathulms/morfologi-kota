@@ -305,7 +305,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
                   </td>
                   <td className="py-px pr-4 text-right">{percent(candidate.pedestrianShare)}</td>
                   <td className="py-px pr-4">
-                    {candidate.confidence === 'thin' ? '⚑ ' : ''}
+                    {candidate.confidence === 'thin' ? <span aria-hidden="true">⚑ </span> : null}
                     {confidenceLabel(candidate.confidence, locale)}
                   </td>
                   <td className="py-px pr-4">
