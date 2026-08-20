@@ -11,11 +11,17 @@ import { fixed, percent } from '@/lib/format'
  * cardinal ticks, and a hairline circle at the maximum so bar lengths are
  * readable against a bound (DESIGN.md §4).
  *
- * The two series are separated by shape as well as hue: drive is a solid fill,
- * walk is a light fill with a heavy outline. The hues sit at 1.4:1 to each
- * other, so hue alone never distinguished them for a reader who does not
- * separate blue from rust, or for anyone printing in greyscale. The swatches
- * in `ModeKey` draw the same two treatments.
+ * Overlaid series overprint. Both inks multiply against the sheet and against
+ * each other, so where the two networks run the same way the wedge is the
+ * colour the two inks make together — produced rather than declared, and the
+ * same operation a two-colour press performs. Blend order does not matter,
+ * because multiply is commutative; the sort below survives for the fallback
+ * path, where it still does.
+ *
+ * The shape cue stays regardless. Overprint gives the overlap a colour of its
+ * own; it does not make blue and rust separable from *each other*, which they
+ * are not — they sit at 1.4:1. So walk keeps its heavy outline, and a reader
+ * who does not separate the two hues still reads three distinct regions.
  *
  * Symmetric by construction — the assertion lives in the invariant suite and
  * in `data:validate`, so an asymmetric rose cannot reach this component.
@@ -69,8 +75,13 @@ function strokeFor(mode: Mode): string {
 
 /**
  * The non-chromatic half of the distinction, used only where the two series
- * are overlaid: solid for drive, outlined for walk. A single series keeps the
- * plain solid treatment, since there is nothing for it to be confused with.
+ * are overlaid: solid for drive, outlined for walk.
+ *
+ * The fill opacities here are the *fallback*. `globals.css` raises both to 1
+ * and turns on multiply inside `@supports (mix-blend-mode: multiply)`, so a
+ * browser without blending keeps the older transparency treatment and one
+ * with it gets the overprint. Presentation attributes lose to a stylesheet
+ * rule, which is what makes the enhancement work with no script.
  */
 function overlaid(mode: Mode): { fillOpacity: number; strokeWidth: number } {
   return mode === 'drive' ? { fillOpacity: 0.6, strokeWidth: 0.5 } : { fillOpacity: 0.14, strokeWidth: 2 }
@@ -97,6 +108,9 @@ export function Rose({
         viewBox={`${-VIEW} ${-VIEW} ${VIEW * 2} ${VIEW * 2}`}
         width={size}
         height={size}
+        /* Isolated, so the inks multiply with the sheet and each other and not
+           with whatever the page has painted behind the figure. */
+        style={series.length > 1 ? { isolation: 'isolate' } : undefined}
         role="img"
         aria-label={series
           .map(
@@ -147,7 +161,9 @@ export function Rose({
                 stroke={strokeFor(s.mode)}
                 strokeWidth={series.length > 1 ? overlaid(s.mode).strokeWidth : 0.5}
                 strokeLinejoin="round"
-                className={animate ? 'rose-bar' : undefined}
+                className={[series.length > 1 ? 'rose-ink' : '', animate ? 'rose-bar' : '']
+                  .filter(Boolean)
+                  .join(' ')}
                 style={animate ? { animationDelay: `${240 + index * 8}ms` } : undefined}
               >
                 <title>

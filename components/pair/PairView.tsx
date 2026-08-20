@@ -5,6 +5,7 @@ import { MetricColumn } from '@/components/metrics/MetricColumn'
 import { WorkingColumn } from '@/components/metrics/WorkingColumn'
 import { DeltaColumn } from '@/components/metrics/DeltaColumn'
 import { RoseTable } from '@/components/table/RoseTable'
+import { ModeSwatch } from '@/components/legend/ModeKey'
 import { d, type Locale } from '@/lib/i18n'
 import { kilometres, percent } from '@/lib/format'
 
@@ -41,6 +42,16 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
           {locale === 'id' ? 'Kedua rose ditumpuk' : 'Both roses overlaid'}
         </p>
         <Rose locale={locale} size={200} series={[driveRose, walkRose]} />
+        {/* The overprint needs its key wherever the overlay appears, not only
+            on the plate — this is the other place two inks meet. */}
+        <ul className="m-0 mt-1 flex list-none flex-wrap gap-x-3 gap-y-1 p-0 font-mono text-xs">
+          {(['drive', 'walk', 'both'] as const).map((swatch) => (
+            <li key={swatch} className="flex items-center gap-1">
+              <ModeSwatch mode={swatch} />
+              {swatch === 'both' ? d('keyBoth', locale) : d(swatch, locale)}
+            </li>
+          ))}
+        </ul>
       </div>
       <DeltaColumn drive={drive.metrics} walk={walk.metrics} locale={locale} />
     </div>

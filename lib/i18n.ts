@@ -97,6 +97,11 @@ const dictionary = {
     id: 'Jalan yang dapat dilalui kendaraan bermotor.',
     en: 'The streets a motor vehicle can use.',
   },
+  keyBoth: { id: 'Keduanya', en: 'Both' },
+  keyBothGloss: {
+    id: 'Ruas yang ada di kedua jaringan. Warnanya bukan pilihan: itulah yang dihasilkan kedua tinta ketika dicetak bertumpuk.',
+    en: 'Edges present in both networks. The colour is not a choice: it is what the two inks make printed over one another.',
+  },
   keyWalk: {
     id: 'Semua yang di atas, ditambah gang, jalur pejalan kaki dan tangga.',
     en: 'All of the above, plus gang, footpaths and steps.',

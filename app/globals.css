@@ -99,6 +99,30 @@ body {
 }
 
 /*
+ * Overprint.
+ *
+ * Where the two series overlap, both inks multiply — against the sheet and
+ * against each other — so the overlap is the colour the two inks make, the
+ * same operation a two-colour press performs. It is produced, not declared:
+ * `--overprint` exists only so a key can draw a swatch of it.
+ *
+ * Progressive enhancement with no script. The wedges carry fill-opacity as an
+ * SVG presentation attribute, which loses to any stylesheet rule, so a browser
+ * without `mix-blend-mode` keeps the older transparency treatment and one with
+ * it gets full-strength ink.
+ *
+ * The shape cue is not replaced by this. Blue and rust sit at 1.4:1 to each
+ * other, so walk keeps the heavy outline it has: overprint distinguishes the
+ * overlap, the outline distinguishes the two networks.
+ */
+@supports (mix-blend-mode: multiply) {
+  .rose-ink {
+    mix-blend-mode: multiply;
+    fill-opacity: 1;
+  }
+}
+
+/*
  * DESIGN.md §8 — the one orchestrated moment: the network draws while the
  * rose fills bin by bin, so the histogram is visibly derived from the drawing
  * rather than appearing beside it. Pure CSS, so it costs no JavaScript.
