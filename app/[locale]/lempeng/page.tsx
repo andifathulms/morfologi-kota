@@ -1,10 +1,13 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { loadBundle, loadManifest } from '@/lib/data'
+import Link from 'next/link'
 import { SiteCard } from '@/components/card/SiteCard'
 import { PlateGrid, type SortOption, type SortableSite } from '@/components/plate/PlateGrid'
 import { LOCALES, d, isLocale, type Locale } from '@/lib/i18n'
 import { manifestDataPath } from '@/lib/paths'
+import { SITE_TYPE_LABEL, t } from '@/lib/i18n'
+import { kilometres, percent, signed, signedPercent } from '@/lib/format'
 
 export function generateStaticParams(): { locale: Locale }[] {
   return LOCALES.map((locale) => ({ locale }))
@@ -74,6 +77,33 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
 
   const thin = manifest.sites.filter((site) => site.coverage.confidence.type === 'thin').length
 
+  /*
+   * The subset where the comparison is actually readable.
+   *
+   * Everything below is computed from the manifest rather than written down,
+   * so a re-survey or a new site moves the sentence with it. Ordered by how
+   * much walking network the site has over its driving network — a sort, not a
+   * rating (PRD §4): being higher in this list is not being better.
+   */
+  const readable = manifest.sites
+    .filter((site) => site.coverage.confidence.type !== 'thin')
+    .map((site) => ({
+      site,
+      extraLengthM: site.walk.totalLengthM - site.drive.totalLengthM,
+      deadEndChange: site.walk.degrees.proportions.deadEnd - site.drive.degrees.proportions.deadEnd,
+      entropyChange: site.walk.orientationEntropy - site.drive.orientationEntropy,
+    }))
+    .sort((a, b) => b.extraLengthM - a.extraLengthM)
+
+  const kampung = readable.filter((row) => row.site.type === 'kampung')
+  const planned = readable.filter(
+    (row) => row.site.type === 'perumahan' || row.site.type === 'kota-baru',
+  )
+  const range = (rows: typeof readable, pick: (row: (typeof readable)[number]) => number) => ({
+    min: Math.min(...rows.map(pick)),
+    max: Math.max(...rows.map(pick)),
+  })
+
   return (
     <div>
       <section className="mb-12 max-w-prose">
@@ -105,6 +135,80 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
             : `${thin} flagged for thin footway coverage`}
         </p>
       </section>
+
+      {readable.length > 0 && kampung.length > 0 && planned.length > 0 ? (
+        <section className="mb-12">
+          <h2 className="m-0 max-w-prose font-serif text-lg font-semibold">
+            {locale === 'id'
+              ? `Selisihnya, pada ${readable.length} lokasi yang cakupannya memadai`
+              : `The gap, at the ${readable.length} sites where coverage allows it`}
+          </h2>
+          <p className="mt-2 max-w-prose font-serif text-md leading-relaxed">
+            {locale === 'id'
+              ? `Di antara lokasi-lokasi ini, ${kampung.length} kampung memperoleh ${kilometres(range(kampung, (r) => r.extraLengthM).min)}–${kilometres(range(kampung, (r) => r.extraLengthM).max)} jaringan tambahan saat berjalan kaki, dan proporsi jalan buntunya turun ${percent(Math.abs(range(kampung, (r) => r.deadEndChange).max), 1)}–${percent(Math.abs(range(kampung, (r) => r.deadEndChange).min), 1)}. ${planned.length} lokasi terencana memperoleh ${kilometres(range(planned, (r) => r.extraLengthM).min)}–${kilometres(range(planned, (r) => r.extraLengthM).max)}, dengan proporsi jalan buntu bergerak ${signedPercent(range(planned, (r) => r.deadEndChange).min)} sampai ${signedPercent(range(planned, (r) => r.deadEndChange).max)}.`
+              : `Among these, the ${kampung.length} kampung gain ${kilometres(range(kampung, (r) => r.extraLengthM).min)}–${kilometres(range(kampung, (r) => r.extraLengthM).max)} of network on foot, and their dead-end proportion falls by ${percent(Math.abs(range(kampung, (r) => r.deadEndChange).max), 1)}–${percent(Math.abs(range(kampung, (r) => r.deadEndChange).min), 1)}. The ${planned.length} planned sites gain ${kilometres(range(planned, (r) => r.extraLengthM).min)}–${kilometres(range(planned, (r) => r.extraLengthM).max)}, with their dead-end proportion moving ${signedPercent(range(planned, (r) => r.deadEndChange).min)} to ${signedPercent(range(planned, (r) => r.deadEndChange).max)}.`}
+          </p>
+          <p className="mt-2 max-w-prose font-serif text-md leading-relaxed">
+            {locale === 'id'
+              ? `Itu bunyi angkanya di ${readable.length} lokasi ini. Bukan pernyataan tentang bentuk kota Indonesia — untuk itu diperlukan cakupan gang yang jauh lebih luas daripada yang tersedia sekarang, terutama pada perumahan kluster, yang tidak satu pun kandidatnya lolos ambang.`
+              : `That is what the numbers say at these ${readable.length} sites. It is not a statement about Indonesian urban form — that would need far wider gang coverage than currently exists, particularly for perumahan clusters, not one of which cleared the threshold.`}
+          </p>
+          <div className="mt-4 overflow-x-auto">
+            <table className="tabular w-full max-w-prose border-collapse font-mono text-xs">
+              <caption className="sr-only">
+                {locale === 'id'
+                  ? 'Selisih jalan kaki dikurangi kendara pada lokasi dengan cakupan gang memadai, diurutkan menurut tambahan panjang jaringan.'
+                  : 'Walk minus drive at the sites with adequate footway coverage, sorted by network length gained.'}
+              </caption>
+              <thead>
+                <tr className="border-b border-rule text-left">
+                  <th scope="col" className="py-1 pr-4 font-normal">
+                    {locale === 'id' ? 'Lokasi' : 'Site'}
+                  </th>
+                  <th scope="col" className="py-1 pr-4 font-normal">
+                    {locale === 'id' ? 'Jenis' : 'Type'}
+                  </th>
+                  <th scope="col" className="py-1 pr-4 text-right font-normal">
+                    {d('coverage', locale)}
+                  </th>
+                  <th scope="col" className="py-1 pr-4 text-right font-normal">
+                    Δ {d('totalLength', locale)}
+                  </th>
+                  <th scope="col" className="py-1 pr-4 text-right font-normal">
+                    Δ {d('deadEnd', locale)}
+                  </th>
+                  <th scope="col" className="py-1 pr-4 text-right font-normal">
+                    Δ H
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {readable.map((row) => (
+                  <tr key={row.site.slug} className="border-b border-rule/40">
+                    <th scope="row" className="py-px pr-4 text-left font-normal">
+                      <Link href={`/${locale}/lokasi/${row.site.slug}`}>{row.site.name}</Link>
+                    </th>
+                    <td className="py-px pr-4 text-ink/70">
+                      {t(
+                        SITE_TYPE_LABEL[row.site.type] ?? { id: row.site.type, en: row.site.type },
+                        locale,
+                      )}
+                    </td>
+                    <td className="py-px pr-4 text-right">
+                      {percent(row.site.coverage.pedestrianShare)}
+                    </td>
+                    <td className="py-px pr-4 text-right">
+                      {signed(row.extraLengthM / 1000, 1)} km
+                    </td>
+                    <td className="py-px pr-4 text-right">{signedPercent(row.deadEndChange)}</td>
+                    <td className="py-px pr-4 text-right">{signed(row.entropyChange, 3)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      ) : null}
 
       <PlateGrid
         sites={sites}
