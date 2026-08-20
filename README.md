@@ -31,6 +31,19 @@ contributors, available under the **Open Database Licence (ODbL)**.
 The emitted geometry and metrics in `data/out/` are a **derived database** and
 are offered under the **same ODbL terms**. The source code is MIT.
 
+## What it currently shows
+
+Twelve sites at a fixed 800 m radius — kampung kota, perumahan cluster,
+colonial grid, new town, and IKN — each computed for both networks under three
+tag mappings.
+
+**The first finding is a finding about the data.** Nine of the twelve sites
+have thin *gang* coverage in OpenStreetMap: their walking network is nearly
+their driving network, not because the alleys are absent but because they are
+unmapped. Those sites are flagged in the data, on the plate, and above every
+affected comparison. The drive/walk gap at a flagged site is not a statement
+about the place.
+
 ## Development
 
 ```bash

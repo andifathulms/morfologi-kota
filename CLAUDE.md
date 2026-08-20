@@ -158,4 +158,11 @@ The site cites Boeing 2019 for the method, states the sampling radius and tag ma
 
 ## Current state
 
-M0 — not yet scaffolded. Next: the synthetic network generators, then graph construction, bearings, entropy and φ against them. **No pipeline or UI work until `test:synthetic` and `test:invariants` are green.**
+**M0–M5 shipped.** Measures, pipeline, plate, pair, assumptions and method are all in place; 12 sites at r = 800 m, both modes, 3 tag mappings, 201 tests green.
+
+Two things worth knowing before picking up the next task:
+
+- **`data:fetch` uses Overpass, not the Geofabrik PBF.** Twelve discs of a kilometre are a few megabytes against most of a gigabyte, and reading PBF would mean a protobuf dependency for data used once. Build-time only, cached under a git-ignored `data/cache/`, requests sequential and spaced. The invariant that neither service is touched at runtime is unchanged.
+- **Nine of the twelve sites come back flagged for thin footway coverage.** That is the risk the PRD names, measured rather than assumed. The plate and every affected pair say so in prose before a reader can draw a conclusion from the gap. Do not quietly drop the flag to make the headline comparison look stronger.
+
+Next, if continuing: M6 — export and sharing, and a pass over keyboard and screen-reader behaviour. Adding sites is `data/sites/index.ts` then `pnpm data:fetch && pnpm data:build && pnpm data:validate`.

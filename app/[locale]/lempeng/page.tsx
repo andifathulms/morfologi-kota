@@ -79,6 +79,11 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
             ? 'Setiap kartu memakai jari-jari sampel yang sama, mencetak jari-jari itu, dan melaporkan seberapa banyak gang yang sudah terpetakan di OpenStreetMap. Lokasi dapat diurutkan, tetapi tidak dinilai.'
             : 'Every card uses the same sampling radius, prints it, and reports how much of its gang network is mapped in OpenStreetMap. Sites can be sorted; they are not rated.'}
         </p>
+        <p className="mt-4 max-w-prose border-l-2 border-ink/40 pl-4 font-serif text-md leading-relaxed">
+          {locale === 'id'
+            ? `Yang ditemukan lebih dulu adalah temuan tentang datanya: ${thin} dari ${manifest.sites.length} lokasi memiliki cakupan gang yang tipis di OpenStreetMap. Untuk lokasi-lokasi itu, jaringan pejalan kakinya hampir sama dengan jaringan kendaraannya — bukan karena gangnya tidak ada, melainkan karena belum terpetakan. Selisih kendara/jalan kaki di sana tidak dapat dibaca sebagai temuan tentang tempatnya.`
+            : `The first finding is a finding about the data: ${thin} of ${manifest.sites.length} sites have thin gang coverage in OpenStreetMap. For those, the walking network is nearly the driving network — not because the gang are not there, but because they are not mapped. The drive/walk gap at those sites cannot be read as a finding about the place.`}
+        </p>
         <p className="tabular mt-4 font-mono text-xs">
           {manifest.sites.length} {locale === 'id' ? 'lokasi' : 'sites'} · r = {manifest.radiusM} m ·
           36 bin ·{' '}
