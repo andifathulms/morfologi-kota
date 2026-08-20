@@ -122,3 +122,70 @@ body {
     transition-duration: 1ms !important;
   }
 }
+
+/*
+ * Print.
+ *
+ * This app is a research plate, so paper is a real destination rather than an
+ * afterthought — a card printed is what a figure in a method section looks
+ * like. The controls go, the ink stays, and a card is never split across a
+ * page break.
+ */
+@media print {
+  html,
+  body {
+    background: #fff;
+  }
+
+  /* Navigation, sorting and the language switch are not part of the figure. */
+  header nav,
+  .plate-controls,
+  [data-print='hide'] {
+    display: none !important;
+  }
+
+  .plate-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .plate-grid > * {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  article,
+  figure,
+  table {
+    break-inside: avoid;
+  }
+
+  /* The legend contract has to survive the print, or the figure loses its
+     parameters — which is the one thing DESIGN.md §9 will not allow. */
+  footer {
+    break-before: auto;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* A printed citation is worthless without its URL. */
+  main a[href^='http']::after {
+    content: ' (' attr(href) ')';
+    font-size: 0.85em;
+    word-break: break-all;
+  }
+
+  .network-ink,
+  .rose-bar {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+    transform: none !important;
+  }
+}
+
+@page {
+  margin: 16mm;
+}

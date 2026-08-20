@@ -14,9 +14,31 @@ export function generateStaticParams(): { locale: Locale; slug: string }[] {
   return LOCALES.flatMap((locale) => SITES.map((site) => ({ locale, slug: site.slug })))
 }
 
-export function generateMetadata({ params }: { params: { slug: string } }): Metadata {
+export function generateMetadata({
+  params,
+}: {
+  params: { locale: string; slug: string }
+}): Metadata {
   const site = SITES.find((candidate) => candidate.slug === params.slug)
-  return { title: site ? `${site.name} — Bentuk Kota` : 'Bentuk Kota' }
+  if (site === undefined) return { title: 'Bentuk Kota' }
+  const locale: Locale = isLocale(params.locale) ? params.locale : 'id'
+  const title = `${site.name}, ${site.city} — Bentuk Kota`
+  const description =
+    locale === 'id'
+      ? `Jaringan kendaraan dan jaringan pejalan kaki di ${site.name}, ${site.city}, pada jari-jari sampel yang sama, beserta selisih di antara keduanya. ${t(site.note, 'id')}`
+      : `The driving and the walking network at ${site.name}, ${site.city}, at the same sampling radius, with the gap between them. ${t(site.note, 'en')}`
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: `/${locale}/lokasi/${site.slug}/`,
+      languages: {
+        id: `/id/lokasi/${site.slug}/`,
+        en: `/en/lokasi/${site.slug}/`,
+      },
+    },
+    openGraph: { type: 'article', title, description },
+  }
 }
 
 /**

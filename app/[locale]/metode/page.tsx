@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { loadManifest } from '@/lib/data'
 import { LOCALES, isLocale, t, type Locale, type Bilingual } from '@/lib/i18n'
@@ -8,6 +9,14 @@ import { manifestDataPath, siteDataPath } from '@/lib/paths'
 
 export function generateStaticParams(): { locale: Locale }[] {
   return LOCALES.map((locale) => ({ locale }))
+}
+
+export function generateMetadata({ params }: { params: { locale: string } }): Metadata {
+  const locale: Locale = isLocale(params.locale) ? params.locale : 'id'
+  return {
+    title: locale === 'id' ? 'Metode — definisi, batasan, dan lisensi · Bentuk Kota' : 'Method — definitions, limitations and licence · Bentuk Kota',
+    alternates: { canonical: `/${locale}/metode/` },
+  }
 }
 
 /**

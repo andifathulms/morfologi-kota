@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import { loadBundle, loadManifest } from '@/lib/data'
 import { SiteCard } from '@/components/card/SiteCard'
@@ -7,6 +8,17 @@ import { manifestDataPath } from '@/lib/paths'
 
 export function generateStaticParams(): { locale: Locale }[] {
   return LOCALES.map((locale) => ({ locale }))
+}
+
+export function generateMetadata({ params }: { params: { locale: string } }): Metadata {
+  const locale: Locale = isLocale(params.locale) ? params.locale : 'id'
+  return {
+    title:
+      locale === 'id'
+        ? 'Lempeng — dua belas lokasi, dua jaringan · Bentuk Kota'
+        : 'The plate — twelve sites, two networks · Bentuk Kota',
+    alternates: { canonical: `/${locale}/lempeng/` },
+  }
 }
 
 /**

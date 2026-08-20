@@ -1,3 +1,4 @@
+import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { loadBundle, loadManifest } from '@/lib/data'
@@ -7,6 +8,14 @@ import { fixed, kilometres, percent, signed } from '@/lib/format'
 
 export function generateStaticParams(): { locale: Locale }[] {
   return LOCALES.map((locale) => ({ locale }))
+}
+
+export function generateMetadata({ params }: { params: { locale: string } }): Metadata {
+  const locale: Locale = isLocale(params.locale) ? params.locale : 'id'
+  return {
+    title: locale === 'id' ? 'Asumsi — pemetaan tag dan cakupan gang · Bentuk Kota' : 'Assumptions — tag mapping and footway coverage · Bentuk Kota',
+    alternates: { canonical: `/${locale}/asumsi/` },
+  }
 }
 
 /**

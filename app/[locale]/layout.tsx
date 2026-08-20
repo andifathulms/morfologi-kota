@@ -36,10 +36,46 @@ export function generateStaticParams(): { locale: Locale }[] {
   return LOCALES.map((locale) => ({ locale }))
 }
 
-export const metadata: Metadata = {
-  title: 'Bentuk Kota — morfologi jaringan jalan',
-  description:
-    'Entropi orientasi jaringan jalan untuk sejumlah lokasi di Indonesia, dihitung terpisah untuk jaringan kendaraan dan jaringan pejalan kaki.',
+/**
+ * Sharing metadata.
+ *
+ * `metadataBase` is only set when the deploy URL is supplied, because a guessed
+ * origin produces canonical links that point at a site that does not exist —
+ * worse than having none. Set NEXT_PUBLIC_SITE_URL in the workflow to turn the
+ * absolute URLs on.
+ */
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
+
+export function generateMetadata({ params }: { params: { locale: string } }): Metadata {
+  const locale: Locale = isLocale(params.locale) ? params.locale : 'id'
+  const title =
+    locale === 'id'
+      ? 'Bentuk Kota — morfologi jaringan jalan'
+      : 'Bentuk Kota — street network morphology'
+  const description =
+    locale === 'id'
+      ? 'Entropi orientasi jaringan jalan untuk sejumlah lokasi di Indonesia, dihitung terpisah untuk jaringan kendaraan dan jaringan pejalan kaki. Menjelaskan bentuk kota, tidak menilainya.'
+      : 'Street network orientation entropy for a set of Indonesian sites, computed separately for the driving and the walking network. It describes urban form; it does not rate it.'
+
+  return {
+    ...(siteUrl ? { metadataBase: new URL(siteUrl) } : {}),
+    title,
+    description,
+    alternates: {
+      canonical: `/${locale}/lempeng/`,
+      languages: { id: '/id/lempeng/', en: '/en/lempeng/' },
+    },
+    openGraph: {
+      type: 'website',
+      title,
+      description,
+      locale: locale === 'id' ? 'id_ID' : 'en_GB',
+      alternateLocale: locale === 'id' ? 'en_GB' : 'id_ID',
+    },
+    // No preview image: generating one would mean a rendering dependency for a
+    // picture of a figure the page already draws.
+    twitter: { card: 'summary', title, description },
+  }
 }
 
 export default function LocaleLayout({
@@ -60,6 +96,7 @@ export default function LocaleLayout({
         {/* First stop for a keyboard: past the navigation, into the figure. */}
         <a
           href="#utama"
+          data-print="hide"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:border focus:border-ink focus:bg-plate focus:px-4 focus:py-2 focus:font-sans"
         >
           {locale === 'id' ? 'Langsung ke isi' : 'Skip to content'}
@@ -83,6 +120,7 @@ export default function LocaleLayout({
               href={`/${other}/lempeng`}
               lang={other}
               hrefLang={other}
+              data-print="hide"
               className="font-mono text-xs uppercase tracking-wide"
             >
               {other === 'en' ? 'English' : 'Bahasa Indonesia'}
