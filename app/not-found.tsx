@@ -20,8 +20,8 @@ export default function NotFound() {
     <html lang="id">
       <body
         style={{
-          backgroundColor: '#FAF9F6',
-          color: '#14140F',
+          backgroundColor: '#F7F4EC',
+          color: '#16140F',
           fontFamily: 'Georgia, serif',
           lineHeight: 1.55,
           margin: 0,
