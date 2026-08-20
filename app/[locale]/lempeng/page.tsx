@@ -163,7 +163,13 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
             {d('exampleHeading', locale)}
           </h2>
           <figure className="m-0 mt-3">
-            <div className="grid max-w-[42rem] grid-cols-2 gap-6">
+            {/*
+              Paired down to 640 px and stacked below it. Side by side is the
+              comparison, so it is kept as far down as it stays legible — but
+              on a 360 px phone two discs are 150 px each and the fine grain
+              that is the whole point of the figure stops resolving.
+            */}
+            <div className="grid max-w-[42rem] grid-cols-1 gap-6 sm:grid-cols-2">
               {(['drive', 'walk'] as const).map((mode) => (
                 <div key={mode}>
                   <p className="m-0 mb-1 flex items-center gap-2 font-sans text-base font-semibold">
