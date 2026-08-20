@@ -55,7 +55,12 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
    */
   const difference = (
     <figure className="m-0">
-      <h3 className="m-0 font-sans text-base font-semibold">{d('differenceHeading', locale)}</h3>
+      {/*
+        An h2, not an h3: the difference is a peer of the two columns it is
+        derived from, not a subsection of the walking one. As an h3 the
+        document outline filed the product's central figure underneath "walk".
+      */}
+      <h2 className="m-0 font-sans text-lg font-semibold">{d('differenceHeading', locale)}</h2>
       <div className="mt-2">
         <NetworkDifferenceDrawing
           geometry={walk.geometry}
