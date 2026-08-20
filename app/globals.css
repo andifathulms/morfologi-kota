@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * DESIGN.md is authoritative. The tokens are declared here as custom
+ * properties as well as in the Tailwind theme, because the SVG drawings and
+ * the keyframes below need them outside a class attribute.
+ */
+:root {
+  --plate: #faf9f6;
+  --ink: #14140f;
+  --rule: #d8d5cc;
+  --drive: #2a5d7c;
+  --walk: #a85b32;
+
+  --dur-fast: 120ms;
+  --dur-state: 240ms;
+  --dur-draw: 600ms;
+  --ease-house: cubic-bezier(0.2, 0, 0, 1);
+}
+
+html {
+  background-color: var(--plate);
+  color: var(--ink);
+  /* DESIGN.md §7 — light ground, no dark-mode weight correction, no dark mode. */
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--plate);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* DESIGN.md §7 — tabular figures on every metric, without exception. */
+.tabular {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+}
+
+/* DESIGN.md §10 — focus visible at 3px. */
+:where(a, button, [tabindex]):focus-visible {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+/*
+ * DESIGN.md §8 — the one orchestrated moment: the network draws while the
+ * rose fills bin by bin, so the histogram is visibly derived from the drawing
+ * rather than appearing beside it. Pure CSS, so it costs no JavaScript.
+ */
+@keyframes draw-network {
+  from {
+    stroke-dashoffset: var(--dash);
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes fill-bin {
+  from {
+    transform: scale(0.001);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+.network-ink {
+  stroke-dasharray: var(--dash);
+  stroke-dashoffset: var(--dash);
+  animation: draw-network var(--dur-draw) var(--ease-house) forwards;
+}
+
+.rose-bar {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: fill-bin var(--dur-state) var(--ease-house) backwards;
+}
+
+/*
+ * DESIGN.md §8 — reduced motion gets a complete alternative, never a degraded
+ * one. Networks and roses render complete and instant; nothing is lost but the
+ * derivation.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .network-ink,
+  .rose-bar {
+    animation: none !important;
+    stroke-dashoffset: 0 !important;
+    transform: none !important;
+  }
+
+  *,
+  *::before,
+  *::after {
+    transition-duration: 1ms !important;
+  }
+}
