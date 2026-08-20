@@ -70,6 +70,51 @@ export async function writeCachedExtract(extract: CachedExtract): Promise<void> 
   await writeFile(path, JSON.stringify(extract), 'utf8')
 }
 
+const OVERPASS_ENDPOINT = 'https://overpass-api.de/api/interpreter'
+
+/**
+ * One Overpass request, with backoff.
+ *
+ * Sequential and spaced by every caller: Overpass is volunteer-funded and its
+ * operators ask that it not be hammered. Every response is cached, so a second
+ * run of the pipeline touches the service not at all.
+ */
+export async function fetchOverpass(query: string, attempts = 3): Promise<OverpassResponse> {
+  let lastError: unknown
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      const response = await fetch(OVERPASS_ENDPOINT, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'User-Agent': 'morfologi-kota/0.1 (build-time site extract; contact via repository)',
+        },
+        body: new URLSearchParams({ data: query }).toString(),
+      })
+      if (!response.ok) throw new Error(`Overpass responded ${response.status}`)
+      return (await response.json()) as OverpassResponse
+    } catch (error) {
+      lastError = error
+      const backoff = 3000 * 2 ** attempt
+      console.warn(`   attempt ${attempt} failed (${String(error)}); waiting ${backoff}ms`)
+      await new Promise((resolve) => setTimeout(resolve, backoff))
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error(String(lastError))
+}
+
+export async function pause(ms: number): Promise<void> {
+  await new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+/** The extract query for one disc. Shared so a survey samples what a site will. */
+export function extractQuery(latDeg: number, lonDeg: number, radiusM: number): string {
+  return `[out:json][timeout:180];
+way(around:${Math.round(radiusM)},${latDeg},${lonDeg})["highway"];
+(._;>;);
+out body qt;`
+}
+
 /** Split a cached Overpass response into the node index and way list. */
 export function splitElements(response: OverpassResponse): {
   nodes: Map<number, { lonDeg: number; latDeg: number }>

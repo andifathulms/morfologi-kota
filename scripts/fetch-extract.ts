@@ -18,9 +18,7 @@
  */
 
 import { SITES, SAMPLING_RADIUS_M } from '@/data/sites'
-import { hasCachedExtract, writeCachedExtract, type OverpassResponse } from './osm'
-
-const OVERPASS_ENDPOINT = 'https://overpass-api.de/api/interpreter'
+import { extractQuery, fetchOverpass, hasCachedExtract, pause, writeCachedExtract } from './osm'
 
 /**
  * Fetched with a margin beyond the sampling radius so that ways crossing the
@@ -28,42 +26,6 @@ const OVERPASS_ENDPOINT = 'https://overpass-api.de/api/interpreter'
  */
 const FETCH_MARGIN = 1.4
 const PAUSE_MS = 3000
-
-function queryFor(latDeg: number, lonDeg: number): string {
-  const radius = Math.round(SAMPLING_RADIUS_M * FETCH_MARGIN)
-  return `[out:json][timeout:180];
-way(around:${radius},${latDeg},${lonDeg})["highway"];
-(._;>;);
-out body qt;`
-}
-
-async function sleep(ms: number): Promise<void> {
-  await new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-async function fetchWithRetry(query: string, attempts = 3): Promise<OverpassResponse> {
-  let lastError: unknown
-  for (let attempt = 1; attempt <= attempts; attempt += 1) {
-    try {
-      const response = await fetch(OVERPASS_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'User-Agent': 'morfologi-kota/0.1 (build-time site extract; contact via repository)',
-        },
-        body: new URLSearchParams({ data: query }).toString(),
-      })
-      if (!response.ok) throw new Error(`Overpass responded ${response.status}`)
-      return (await response.json()) as OverpassResponse
-    } catch (error) {
-      lastError = error
-      const backoff = PAUSE_MS * 2 ** attempt
-      console.warn(`   attempt ${attempt} failed (${String(error)}); waiting ${backoff}ms`)
-      await sleep(backoff)
-    }
-  }
-  throw lastError instanceof Error ? lastError : new Error(String(lastError))
-}
 
 async function main(): Promise<void> {
   const force = process.argv.includes('--force')
@@ -76,14 +38,18 @@ async function main(): Promise<void> {
       console.log(`·  ${site.slug} — cached`)
       continue
     }
-    const query = queryFor(site.centreLatDeg, site.centreLonDeg)
+    const query = extractQuery(
+      site.centreLatDeg,
+      site.centreLonDeg,
+      SAMPLING_RADIUS_M * FETCH_MARGIN,
+    )
     process.stdout.write(`↓  ${site.slug} … `)
-    const response = await fetchWithRetry(query)
+    const response = await fetchOverpass(query)
     const timestampOsmBase = response.osm3s?.timestamp_osm_base ?? 'unknown'
     await writeCachedExtract({ slug: site.slug, query, timestampOsmBase, response })
     console.log(`${response.elements.length} elements, base ${timestampOsmBase}`)
     fetched += 1
-    if (fetched > 0) await sleep(PAUSE_MS)
+    if (fetched > 0) await pause(PAUSE_MS)
   }
 
   console.log(`\nDone. ${fetched} fetched, ${SITES.length - fetched} already cached.`)

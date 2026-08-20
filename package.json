@@ -18,7 +18,8 @@
     "data:validate": "tsx scripts/validate-data.ts",
     "typecheck": "tsc --noEmit",
     "lint": "next lint",
-    "data:publish": "node scripts/publish-data.mjs"
+    "data:publish": "node scripts/publish-data.mjs",
+    "data:survey": "tsx scripts/survey-coverage.ts"
   },
   "dependencies": {
     "next": "14.2.5",
