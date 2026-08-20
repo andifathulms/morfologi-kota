@@ -218,12 +218,20 @@ export function NetworkDifferenceDrawing({
       </defs>
       <circle cx={0} cy={0} r={radiusM} fill="none" stroke="var(--rule)" style={{ strokeWidth }} />
 
-      {/* The shared network first and receded, so the ink sits on top of it
-          rather than beside it — the figure is an overlay, not a comparison. */}
+      {/*
+        The shared network first and receded, so the ink sits on top of it
+        rather than beside it — the figure is an overlay, not a comparison.
+
+        `--rule-strong` rather than `--rule`: the caption asks the reader to
+        read this layer ("hairline: the network both modes share"), which makes
+        it content rather than decoration, and content has to clear 3:1. It
+        does at 3.4:1; `--rule` sits at 2.1:1, which is the tier for rings and
+        sampling circles that carry nothing.
+      */}
       <g
         clipPath={`url(#${clipId})`}
         fill="none"
-        stroke="var(--rule)"
+        stroke="var(--rule-strong)"
         strokeLinecap="round"
         strokeLinejoin="round"
         style={{ strokeWidth }}
