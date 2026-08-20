@@ -10,7 +10,13 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { SAMPLING_RADIUS_M, SITES, manifestSchema, siteBundleSchema } from '@/data/sites'
+import {
+  SAMPLING_RADIUS_M,
+  SITES,
+  classifyStability,
+  manifestSchema,
+  siteBundleSchema,
+} from '@/data/sites'
 import { TAG_MAPPINGS } from '@/lib/tags'
 
 const OUT = join(process.cwd(), 'data', 'out')
@@ -99,6 +105,41 @@ describe.each(bundles.map((bundle) => [bundle.site.slug, bundle] as const))('%s'
   it('has a plate geometry that is a simplification, not a different drawing', () => {
     expect(bundle.drive.plateGeometry.length).toBeLessThanOrEqual(bundle.drive.geometry.length)
     expect(bundle.walk.plateGeometry.length).toBeLessThanOrEqual(bundle.walk.geometry.length)
+  })
+})
+
+describe('the sensitivity summary', () => {
+  it('covers every metric in both modes for every alternative mapping', () => {
+    const alternatives = TAG_MAPPINGS.filter((mapping) => mapping.id !== 'default')
+    for (const mapping of alternatives) {
+      const rows = manifest.sensitivitySummary.filter((entry) => entry.mappingId === mapping.id)
+      expect(new Set(rows.map((row) => row.metric)).size).toBe(9)
+      expect(new Set(rows.map((row) => row.mode))).toEqual(new Set(['drive', 'walk']))
+    }
+  })
+
+  it('never reports a mean change above the maximum change', () => {
+    for (const entry of manifest.sensitivitySummary) {
+      expect(entry.meanAbsoluteChange).toBeLessThanOrEqual(entry.maxAbsoluteChange + 1e-9)
+    }
+  })
+
+  it('leaves the network a mapping does not touch at exactly zero', () => {
+    // strict-drive changes the drivable set only, narrow-walk the walkable set
+    // only. If either leaked into the other mode, the tag sets would not be
+    // doing what they say.
+    const leaks = manifest.sensitivitySummary.filter(
+      (entry) =>
+        (entry.mappingId === 'strict-drive' && entry.mode === 'walk' && entry.maxAbsoluteChange > 0) ||
+        (entry.mappingId === 'narrow-walk' && entry.mode === 'drive' && entry.maxAbsoluteChange > 0),
+    )
+    expect(leaks).toEqual([])
+  })
+
+  it('classifies stability consistently with the thresholds it reports', () => {
+    for (const entry of manifest.sensitivitySummary) {
+      expect(entry.stability).toBe(classifyStability(entry.meanRelativeChange))
+    }
   })
 })
 

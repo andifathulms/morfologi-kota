@@ -29,9 +29,12 @@ import {
   ODBL_ATTRIBUTION,
   SAMPLING_RADIUS_M,
   SITES,
+  classifyStability,
   manifestSchema,
   siteBundleSchema,
   type ManifestEntry,
+  type SensitivitySummaryEntry,
+  type SensitivityValues,
   type Site,
 } from '@/data/sites'
 import { readCachedExtract, splitElements } from './osm'
@@ -115,6 +118,33 @@ function emitPlateGeometry(graph: StreetGraph): [number, number][][] {
   })
 }
 
+/** Everything the sensitivity summary tracks, pulled off a metric column. */
+function sensitivityValues(metrics: ModeMetrics): SensitivityValues {
+  return {
+    orientationEntropy: round(metrics.orientationEntropy, 6),
+    orientationOrder: round(metrics.orientationOrder, 6),
+    sampledCircuity: round(metrics.sampledCircuity, 6),
+    averageDegree: round(metrics.degrees.averageDegree, 6),
+    fourWayProportion: round(metrics.degrees.proportions.fourWay, 6),
+    deadEndProportion: round(metrics.degrees.proportions.deadEnd, 6),
+    intersectionDensityPerKm2: round(metrics.intersectionDensityPerKm2, 3),
+    medianSegmentLengthM: round(metrics.medianSegmentLengthM, 2),
+    totalLengthM: round(metrics.totalLengthM, 2),
+  }
+}
+
+const SENSITIVITY_METRICS = [
+  'orientationEntropy',
+  'orientationOrder',
+  'sampledCircuity',
+  'averageDegree',
+  'fourWayProportion',
+  'deadEndProportion',
+  'intersectionDensityPerKm2',
+  'medianSegmentLengthM',
+  'totalLengthM',
+] as const satisfies readonly (keyof SensitivityValues)[]
+
 interface ModeResult {
   readonly graph: StreetGraph
   readonly metrics: ModeMetrics
@@ -150,6 +180,10 @@ async function main(): Promise<void> {
 
   const manifestSites: ManifestEntry[] = []
   const extractVersions = new Set<string>()
+  const sensitivityBySite: {
+    slug: string
+    byMapping: Map<string, { drive: SensitivityValues; walk: SensitivityValues }>
+  }[] = []
 
   for (const site of SITES) {
     const cached = await readCachedExtract(site.slug)
@@ -173,19 +207,16 @@ async function main(): Promise<void> {
           : buildMode(extract, site, 'walk', mapping).metrics
       return {
         mappingId: mapping.id,
-        drive: {
-          orientationEntropy: round(d.orientationEntropy, 6),
-          orientationOrder: round(d.orientationOrder, 6),
-          deadEndProportion: round(d.degrees.proportions.deadEnd, 6),
-          totalLengthM: round(d.totalLengthM, 2),
-        },
-        walk: {
-          orientationEntropy: round(w.orientationEntropy, 6),
-          orientationOrder: round(w.orientationOrder, 6),
-          deadEndProportion: round(w.degrees.proportions.deadEnd, 6),
-          totalLengthM: round(w.totalLengthM, 2),
-        },
+        drive: sensitivityValues(d),
+        walk: sensitivityValues(w),
       }
+    })
+
+    sensitivityBySite.push({
+      slug: site.slug,
+      byMapping: new Map(
+        sensitivity.map((entry) => [entry.mappingId, { drive: entry.drive, walk: entry.walk }]),
+      ),
     })
 
     const bundle = siteBundleSchema.parse({
@@ -241,6 +272,58 @@ async function main(): Promise<void> {
     )
   }
 
+  /*
+   * Which metrics survive a change of tag mapping.
+   *
+   * A statement about the method rather than about any site: it tells a reader
+   * which numbers can be compared across sites without knowing the mapping,
+   * and which only mean anything stated alongside it. The per-site numbers are
+   * already emitted; this is the summary a reader would otherwise have to
+   * assemble by eye from three tables (PRD §8 — sensitivity is reported).
+   */
+  const sensitivitySummary: SensitivitySummaryEntry[] = []
+  for (const mapping of TAG_MAPPINGS) {
+    if (mapping.id === DEFAULT_TAG_MAPPING.id) continue
+    for (const mode of ['drive', 'walk'] as const) {
+      for (const metric of SENSITIVITY_METRICS) {
+        let absoluteSum = 0
+        let maxAbsolute = 0
+        let relativeSum = 0
+        let relativeCount = 0
+        let worstSlug = ''
+
+        for (const record of sensitivityBySite) {
+          const base = record.byMapping.get(DEFAULT_TAG_MAPPING.id)?.[mode]
+          const other = record.byMapping.get(mapping.id)?.[mode]
+          if (base === undefined || other === undefined) continue
+          const change = Math.abs(other[metric] - base[metric])
+          absoluteSum += change
+          if (change > maxAbsolute) {
+            maxAbsolute = change
+            worstSlug = record.slug
+          }
+          if (Math.abs(base[metric]) > 1e-9) {
+            relativeSum += change / Math.abs(base[metric])
+            relativeCount += 1
+          }
+        }
+
+        const siteCount = sensitivityBySite.length
+        const meanRelativeChange = relativeCount > 0 ? relativeSum / relativeCount : 0
+        sensitivitySummary.push({
+          metric,
+          mode,
+          mappingId: mapping.id,
+          meanAbsoluteChange: round(siteCount > 0 ? absoluteSum / siteCount : 0, 6),
+          maxAbsoluteChange: round(maxAbsolute, 6),
+          meanRelativeChange: round(meanRelativeChange, 6),
+          worstSlug,
+          stability: classifyStability(meanRelativeChange),
+        })
+      }
+    }
+  }
+
   const manifest = manifestSchema.parse({
     radiusM: SAMPLING_RADIUS_M,
     mappingId: DEFAULT_TAG_MAPPING.id,
@@ -250,6 +333,7 @@ async function main(): Promise<void> {
     attribution: ODBL_ATTRIBUTION,
     licence: 'ODbL-1.0',
     sites: manifestSites,
+    sensitivitySummary,
   })
 
   await writeFile(join(OUT_DIR, 'manifest.json'), JSON.stringify(manifest), 'utf8')

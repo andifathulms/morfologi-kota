@@ -135,6 +135,20 @@ async function main(): Promise<void> {
   )
   scanForForbiddenKeys(manifest, 'manifest')
 
+  // The sensitivity summary must cover every alternative mapping in both
+  // modes, or the assumptions page would silently under-report the dependence.
+  const alternatives = manifest.sensitivitySummary.map((entry) => entry.mappingId)
+  check(
+    new Set(alternatives).size >= 1,
+    'manifest: no tag-mapping sensitivity summary — the assumption would be undocumented',
+  )
+  for (const entry of manifest.sensitivitySummary) {
+    check(
+      entry.meanAbsoluteChange <= entry.maxAbsoluteChange + 1e-9,
+      `sensitivity: ${entry.metric}/${entry.mode}/${entry.mappingId} has a mean above its maximum`,
+    )
+  }
+
   const radii = new Set(manifest.sites.map((site) => site.radiusM))
   check(radii.size === 1, `radius varies across the comparison set: ${[...radii].join(', ')}`)
 

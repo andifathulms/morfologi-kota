@@ -90,22 +90,55 @@ export const coverageSchema = z.object({
   }),
 })
 
-/** One tag mapping's effect on the headline numbers — reported, not asserted. */
+/**
+ * The metrics whose dependence on the tag mapping is tracked. Everything a
+ * card prints, so nothing on the page is left unaccounted for.
+ */
+export const sensitivityValuesSchema = z.object({
+  orientationEntropy: z.number(),
+  orientationOrder: z.number(),
+  sampledCircuity: z.number(),
+  averageDegree: z.number(),
+  fourWayProportion: z.number(),
+  deadEndProportion: z.number(),
+  intersectionDensityPerKm2: z.number(),
+  medianSegmentLengthM: z.number(),
+  totalLengthM: z.number(),
+})
+export type SensitivityValues = z.infer<typeof sensitivityValuesSchema>
+
+/** One tag mapping's effect on one site's numbers — reported, not asserted. */
 export const sensitivityEntrySchema = z.object({
   mappingId: z.string(),
-  drive: z.object({
-    orientationEntropy: z.number(),
-    orientationOrder: z.number(),
-    deadEndProportion: z.number(),
-    totalLengthM: z.number(),
-  }),
-  walk: z.object({
-    orientationEntropy: z.number(),
-    orientationOrder: z.number(),
-    deadEndProportion: z.number(),
-    totalLengthM: z.number(),
-  }),
+  drive: sensitivityValuesSchema,
+  walk: sensitivityValuesSchema,
 })
+
+/**
+ * How far a metric moves when the tag mapping changes, across the whole set.
+ *
+ * This is a statement about the *method*, not about any site: it says which
+ * numbers a reader may take at face value and which ones only mean anything
+ * alongside the mapping that produced them. Nothing here rates a place.
+ */
+export const stabilitySchema = z.enum(['robust', 'moderate', 'sensitive'])
+export type Stability = z.infer<typeof stabilitySchema>
+
+export const sensitivitySummaryEntrySchema = z.object({
+  /** Key into SensitivityValues. */
+  metric: z.string(),
+  mode: z.enum(['drive', 'walk']),
+  /** Which alternative mapping this compares against the default. */
+  mappingId: z.string(),
+  meanAbsoluteChange: z.number().min(0),
+  maxAbsoluteChange: z.number().min(0),
+  /** Mean of |change| ÷ |default value|, over sites where the default is non-zero. */
+  meanRelativeChange: z.number().min(0),
+  /** The site that moves most under this mapping. */
+  worstSlug: z.string(),
+  stability: stabilitySchema,
+})
+export type SensitivitySummaryEntry = z.infer<typeof sensitivitySummaryEntrySchema>
 
 /**
  * A site bundle. Both modes are required: a site with one mode is incomplete,
@@ -149,6 +182,20 @@ export const manifestEntrySchema = z.object({
 })
 export type ManifestEntry = z.infer<typeof manifestEntrySchema>
 
+/**
+ * Thresholds on the mean relative change, chosen so that "robust" means a
+ * reader can compare the number across sites without knowing the mapping, and
+ * "sensitive" means the number is only meaningful stated together with it.
+ */
+export const ROBUST_THRESHOLD = 0.05
+export const SENSITIVE_THRESHOLD = 0.15
+
+export function classifyStability(meanRelativeChange: number): Stability {
+  if (meanRelativeChange < ROBUST_THRESHOLD) return 'robust'
+  if (meanRelativeChange < SENSITIVE_THRESHOLD) return 'moderate'
+  return 'sensitive'
+}
+
 export const manifestSchema = z.object({
   /** Fixed across the comparison set, printed on every card. */
   radiusM: z.number().positive(),
@@ -160,6 +207,8 @@ export const manifestSchema = z.object({
   attribution: z.string().min(10),
   licence: z.literal('ODbL-1.0'),
   sites: z.array(manifestEntrySchema).min(1),
+  /** Which metrics survive a change of tag mapping, and which do not. */
+  sensitivitySummary: z.array(sensitivitySummaryEntrySchema),
 })
 export type Manifest = z.infer<typeof manifestSchema>
 

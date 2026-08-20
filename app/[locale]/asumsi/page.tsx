@@ -4,7 +4,31 @@ import Link from 'next/link'
 import { loadBundle, loadManifest } from '@/lib/data'
 import { LOCALES, d, isLocale, t, type Locale } from '@/lib/i18n'
 import { TAG_MAPPINGS, DEFAULT_TAG_MAPPING } from '@/lib/tags'
+import { ROBUST_THRESHOLD, SENSITIVE_THRESHOLD } from '@/data/sites'
 import { fixed, kilometres, percent, signed } from '@/lib/format'
+
+/**
+ * Metric labels for the stability summary. Kept beside the table rather than
+ * in the dictionary because they are the emitted field names, and a reader
+ * comparing the page against the downloaded JSON should see the same keys.
+ */
+const METRIC_LABEL: Record<string, { id: string; en: string }> = {
+  orientationEntropy: { id: 'Entropi orientasi — H', en: 'Orientation entropy — H' },
+  orientationOrder: { id: 'φ keteraturan', en: 'φ orientation-order' },
+  sampledCircuity: { id: 'Circuity', en: 'Circuity' },
+  averageDegree: { id: 'Derajat simpul rata-rata', en: 'Average node degree' },
+  fourWayProportion: { id: 'Proporsi simpang empat', en: 'Four-way proportion' },
+  deadEndProportion: { id: 'Proporsi jalan buntu', en: 'Dead-end proportion' },
+  intersectionDensityPerKm2: { id: 'Kerapatan simpang', en: 'Intersection density' },
+  medianSegmentLengthM: { id: 'Panjang ruas median', en: 'Median segment length' },
+  totalLengthM: { id: 'Panjang jaringan', en: 'Network length' },
+}
+
+const STABILITY_LABEL: Record<string, { id: string; en: string }> = {
+  robust: { id: 'tahan', en: 'robust' },
+  moderate: { id: 'sedang', en: 'moderate' },
+  sensitive: { id: 'peka', en: 'sensitive' },
+}
 
 export function generateStaticParams(): { locale: Locale }[] {
   return LOCALES.map((locale) => ({ locale }))
@@ -38,6 +62,28 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
   const manifest = loadManifest()
   const bundles = manifest.sites.map((entry) => loadBundle(entry.slug))
 
+  /*
+   * The headline reading of the sensitivity summary, derived here rather than
+   * written down: a metric is called robust only if it stays robust under
+   * every mapping that touches it, and sensitive if any mapping makes it so.
+   * Hard-coding this sentence would mean it could silently go stale the first
+   * time a tag set changed.
+   */
+  const touchedEntries = manifest.sensitivitySummary.filter((entry) => entry.maxAbsoluteChange > 0)
+  const metricKeys = [...new Set(touchedEntries.map((entry) => entry.metric))]
+  const robust = metricKeys.filter((metric) =>
+    touchedEntries
+      .filter((entry) => entry.metric === metric)
+      .every((entry) => entry.stability === 'robust'),
+  )
+  const sensitive = metricKeys.filter((metric) =>
+    touchedEntries.some((entry) => entry.metric === metric && entry.stability === 'sensitive'),
+  )
+  const middling = metricKeys.filter(
+    (metric) => !robust.includes(metric) && !sensitive.includes(metric),
+  )
+  const label = (metric: string) => t(METRIC_LABEL[metric] ?? { id: metric, en: metric }, locale)
+
   const rules = TAG_MAPPINGS.map(
     (mapping) =>
       `#map-${mapping.id}:checked~.mappings [data-mapping="${mapping.id}"]{display:block}` +
@@ -60,6 +106,37 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
           {locale === 'id'
             ? 'Ketiga pemetaan di bawah ini dihitung penuh oleh pipeline saat build. Beralih di antaranya menampilkan angka yang sudah dihitung, bukan menghitung ulang di peramban — halaman ini tidak melakukan permintaan jaringan apa pun.'
             : 'All three mappings below are computed in full by the pipeline at build time. Switching between them shows numbers that already exist rather than recomputing in the browser — this page makes no network request at all.'}
+        </p>
+      </section>
+
+      <section className="mt-12 max-w-prose">
+        <h2 className="m-0 font-serif text-lg font-semibold">
+          {locale === 'id' ? 'Apa yang bertahan, apa yang tidak' : 'What survives, and what does not'}
+        </h2>
+        <p className="mt-2 font-serif text-md leading-relaxed">
+          {locale === 'id'
+            ? 'Kesimpulan dari tabel-tabel di bawah, dihitung bukan dikira-kira. '
+            : 'The conclusion from the tables below, computed rather than guessed. '}
+          <strong className="font-semibold">
+            {locale === 'id'
+              ? `Bertahan: ${robust.map(label).join(', ')}.`
+              : `Robust: ${robust.map(label).join(', ')}.`}
+          </strong>{' '}
+          {middling.length > 0
+            ? locale === 'id'
+              ? `Sedang: ${middling.map(label).join(', ')}. `
+              : `Moderate: ${middling.map(label).join(', ')}. `
+            : null}
+          {sensitive.length > 0
+            ? locale === 'id'
+              ? `Peka: ${sensitive.map(label).join(', ')} — angka-angka itu hanya berarti bila disebutkan bersama pemetaannya, dan tidak boleh dibandingkan dengan angka dari kajian yang memakai pemetaan lain.`
+              : `Sensitive: ${sensitive.map(label).join(', ')} — those only mean anything stated together with their mapping, and must not be compared against figures from a study that used a different one.`
+            : null}
+        </p>
+        <p className="mt-4 font-serif text-md leading-relaxed">
+          {locale === 'id'
+            ? 'Polanya masuk akal. Ukuran yang menjawab “ke arah mana jalan membentang” bertahan, karena menambah atau membuang satu kelas jalan jarang mengubah arah keseluruhan. Ukuran yang menjawab “berapa banyak jalan yang ada” tidak bertahan, karena itu persis yang diubah oleh keputusan pemetaan. φ jatuh di antara keduanya: ia dihitung dari entropi, tetapi kuadrat dalam rumusnya melipatgandakan gerakan kecil.'
+            : 'The pattern makes sense. Measures that answer “which way do the streets run” survive, because adding or removing a class rarely changes the overall directions. Measures that answer “how much street is there” do not, because that is exactly what the mapping decision changes. φ falls between the two: it is derived from entropy, but the square in its formula amplifies a small movement.'}
         </p>
       </section>
 
@@ -121,6 +198,121 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                   </p>
                 </div>
               </div>
+
+              {(() => {
+                const summary = manifest.sensitivitySummary.filter(
+                  (entry) => entry.mappingId === mapping.id,
+                )
+                if (summary.length === 0) {
+                  return (
+                    <p className="mt-8 max-w-prose font-serif text-md leading-relaxed">
+                      {locale === 'id'
+                        ? 'Ini pemetaan baku — dasar pembanding bagi kedua pemetaan lainnya. Setiap angka yang tampil di kartu dan di halaman pasangan dihitung dengan pemetaan ini.'
+                        : 'This is the default mapping — the baseline the other two are compared against. Every number shown on a card and on a pair page is computed with it.'}
+                    </p>
+                  )
+                }
+                const touched = (['drive', 'walk'] as const).filter((mode) =>
+                  summary.some((entry) => entry.mode === mode && entry.maxAbsoluteChange > 0),
+                )
+                const untouched = (['drive', 'walk'] as const).filter(
+                  (mode) => !touched.includes(mode),
+                )
+                return (
+                  <>
+                    <h3 className="mt-8 font-serif text-lg font-semibold">
+                      {locale === 'id'
+                        ? 'Metrik mana yang bertahan terhadap pemetaan ini'
+                        : 'Which metrics survive this mapping'}
+                    </h3>
+                    <p className="mt-2 max-w-prose font-serif text-md leading-relaxed">
+                      {locale === 'id'
+                        ? `Perubahan relatif rata-rata terhadap pemetaan baku, di seluruh ${manifest.sites.length} lokasi. Di bawah ${percent(ROBUST_THRESHOLD, 0)} disebut tahan: angkanya dapat dibandingkan antar-lokasi tanpa perlu tahu pemetaannya. Di atas ${percent(SENSITIVE_THRESHOLD, 0)} disebut peka: angkanya hanya berarti bila disebutkan bersama pemetaan yang menghasilkannya.`
+                        : `Mean relative change against the default mapping, across all ${manifest.sites.length} sites. Below ${percent(ROBUST_THRESHOLD, 0)} is called robust: the number can be compared across sites without knowing the mapping. Above ${percent(SENSITIVE_THRESHOLD, 0)} is called sensitive: it only means anything stated together with the mapping that produced it.`}
+                    </p>
+                    {untouched.length > 0 ? (
+                      <p className="mt-2 max-w-prose font-mono text-xs leading-relaxed">
+                        {locale === 'id'
+                          ? `Jaringan ${untouched.map((mode) => d(mode === 'drive' ? 'drive' : 'walk', locale).toLowerCase()).join(' dan ')} tidak tersentuh sama sekali oleh pemetaan ini — nol perubahan di setiap lokasi, yang memang seharusnya.`
+                          : `The ${untouched.map((mode) => d(mode === 'drive' ? 'drive' : 'walk', locale).toLowerCase()).join(' and ')} network is untouched by this mapping — zero change at every site, which is what it should be.`}
+                      </p>
+                    ) : null}
+                    <div className="mt-4 overflow-x-auto">
+                      <table className="tabular w-full border-collapse font-mono text-xs">
+                        <caption className="sr-only">
+                          {locale === 'id'
+                            ? `Kepekaan tiap metrik terhadap pemetaan ${mapping.id}.`
+                            : `Each metric's sensitivity to the ${mapping.id} mapping.`}
+                        </caption>
+                        <thead>
+                          <tr className="border-b border-rule text-left">
+                            <th scope="col" className="py-1 pr-4 font-normal">
+                              {locale === 'id' ? 'Metrik' : 'Metric'}
+                            </th>
+                            <th scope="col" className="py-1 pr-4 font-normal">
+                              {locale === 'id' ? 'Jaringan' : 'Network'}
+                            </th>
+                            <th scope="col" className="py-1 pr-4 text-right font-normal">
+                              {locale === 'id' ? 'Perubahan rata-rata' : 'Mean change'}
+                            </th>
+                            <th scope="col" className="py-1 pr-4 font-normal">
+                              {locale === 'id' ? 'Ketahanan' : 'Stability'}
+                            </th>
+                            <th scope="col" className="py-1 pr-4 font-normal">
+                              {locale === 'id' ? 'Bergerak paling jauh' : 'Moves most'}
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {summary
+                            .filter((entry) => touched.includes(entry.mode))
+                            .map((entry) => (
+                              <tr
+                                key={`${entry.metric}-${entry.mode}`}
+                                className="border-b border-rule/40"
+                              >
+                                <th scope="row" className="py-px pr-4 text-left font-normal">
+                                  {t(
+                                    METRIC_LABEL[entry.metric] ?? {
+                                      id: entry.metric,
+                                      en: entry.metric,
+                                    },
+                                    locale,
+                                  )}
+                                </th>
+                                <td
+                                  className="py-px pr-4"
+                                  style={{
+                                    color:
+                                      entry.mode === 'drive' ? 'var(--drive)' : 'var(--walk)',
+                                  }}
+                                >
+                                  {d(entry.mode === 'drive' ? 'drive' : 'walk', locale)}
+                                </td>
+                                <td className="py-px pr-4 text-right">
+                                  {percent(entry.meanRelativeChange, 1)}
+                                </td>
+                                <td className="py-px pr-4">
+                                  {entry.stability === 'sensitive' ? '⚑ ' : ''}
+                                  {t(
+                                    STABILITY_LABEL[entry.stability] ?? {
+                                      id: entry.stability,
+                                      en: entry.stability,
+                                    },
+                                    locale,
+                                  )}
+                                </td>
+                                <td className="py-px pr-4 text-ink/60">
+                                  {entry.worstSlug === '' ? '—' : entry.worstSlug}
+                                </td>
+                              </tr>
+                            ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </>
+                )
+              })()}
 
               <h3 className="mt-8 font-serif text-lg font-semibold">
                 {locale === 'id' ? 'Angka di bawah pemetaan ini' : 'The numbers under this mapping'}
