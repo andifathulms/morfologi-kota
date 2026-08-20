@@ -85,11 +85,21 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
   )
   const label = (metric: string) => t(METRIC_LABEL[metric] ?? { id: metric, en: metric }, locale)
 
+  /*
+   * `:has()` for the panel, `~` for the chips.
+   *
+   * The radios used to sit before `.mappings` as siblings, because that is
+   * what `~` requires — which put them outside the fieldset, so the legend
+   * named nothing and a reader met three radio buttons belonging to no group.
+   * Asking the DOM instead of the sibling order frees the markup to be
+   * correct. The chips stay on `~` because they are siblings of the radios
+   * inside the fieldset. Still no JavaScript.
+   */
   const rules = TAG_MAPPINGS.map(
     (mapping) =>
-      `#map-${mapping.id}:checked~.mappings [data-mapping="${mapping.id}"]{display:block}` +
-      `#map-${mapping.id}:checked~.mappings label[for="map-${mapping.id}"]{background:var(--ink);color:var(--plate)}` +
-      `#map-${mapping.id}:focus-visible~.mappings label[for="map-${mapping.id}"]{outline:3px solid var(--ink);outline-offset:2px}`,
+      `.mapping-control:has(#map-${mapping.id}:checked)~.mappings [data-mapping="${mapping.id}"]{display:block}` +
+      `#map-${mapping.id}:checked~.mapping-chips label[for="map-${mapping.id}"]{background:var(--ink);color:var(--plate)}` +
+      `#map-${mapping.id}:focus-visible~.mapping-chips label[for="map-${mapping.id}"]{outline:3px solid var(--ink);outline-offset:2px}`,
   ).join('')
 
   return (
@@ -146,34 +156,37 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
           {locale === 'id' ? 'Pemetaan tag' : 'The tag mapping'}
         </h2>
         <style dangerouslySetInnerHTML={{ __html: rules }} />
-        {TAG_MAPPINGS.map((mapping) => (
-          <input
-            key={mapping.id}
-            type="radio"
-            name="mapping"
-            id={`map-${mapping.id}`}
-            defaultChecked={mapping.id === DEFAULT_TAG_MAPPING.id}
-            className="sr-only"
-          />
-        ))}
+
+        {/* The radios sit inside the fieldset, so the legend is their group
+            name. They used to precede it, which left them ungrouped. */}
+        <fieldset className="mapping-control m-0 mb-2 border-0 p-0">
+          <legend className="mb-2 p-0 font-sans text-base text-ink-subtle">
+            {d('tagMapping', locale)}
+          </legend>
+          {TAG_MAPPINGS.map((mapping) => (
+            <input
+              key={mapping.id}
+              type="radio"
+              name="mapping"
+              id={`map-${mapping.id}`}
+              defaultChecked={mapping.id === DEFAULT_TAG_MAPPING.id}
+              className="sr-only"
+            />
+          ))}
+          <div className="mapping-chips flex flex-wrap gap-2">
+            {TAG_MAPPINGS.map((mapping) => (
+              <label
+                key={mapping.id}
+                htmlFor={`map-${mapping.id}`}
+                className="cursor-pointer border border-rule-strong px-2 py-1 font-mono text-xs transition-colors duration-fast ease-house"
+              >
+                {t(mapping.label, locale)}
+              </label>
+            ))}
+          </div>
+        </fieldset>
 
         <div className="mappings">
-          <fieldset className="m-0 border-0 p-0">
-            <legend className="mb-2 p-0 font-sans text-base text-ink-subtle">
-              {d('tagMapping', locale)}
-            </legend>
-            <div className="flex flex-wrap gap-2">
-              {TAG_MAPPINGS.map((mapping) => (
-                <label
-                  key={mapping.id}
-                  htmlFor={`map-${mapping.id}`}
-                  className="cursor-pointer border border-rule-strong px-2 py-1 font-mono text-xs transition-colors duration-fast ease-house"
-                >
-                  {t(mapping.label, locale)}
-                </label>
-              ))}
-            </div>
-          </fieldset>
 
           {TAG_MAPPINGS.map((mapping) => (
             <div key={mapping.id} data-mapping={mapping.id} className="mt-6 hidden">

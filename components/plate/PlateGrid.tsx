@@ -14,6 +14,18 @@ import type { Locale } from '@/lib/i18n'
  * the browser's own, at the 240 ms the house layer specifies; and the plate
  * works with JavaScript off, which for a page that is fundamentally a printed
  * figure is the right behaviour rather than a concession.
+ *
+ * The ordering rules go through `:has()` so that the radios can live inside
+ * the fieldset. They used to be siblings *before* it, because `~` needs them
+ * to precede the grid — which meant the legend named nothing and a screen
+ * reader announced eleven radio buttons belonging to no group at all. `:has()`
+ * asks the DOM rather than the sibling order, so the markup is free to be
+ * correct. Still no JavaScript, still works with scripting off.
+ *
+ * Known ceiling, and it is not fixable here: `order` moves the cards visually
+ * and leaves the DOM alone, so reading and focus order stay alphabetical after
+ * a re-sort, and nothing announces that anything changed. That needs the order
+ * computed into the markup — URL state and a server-rendered order.
  */
 
 export interface SortableSite {
@@ -76,12 +88,14 @@ export function PlateGrid({
       const order = orderFor(sites, option.key === NAME_KEY ? undefined : option, locale)
       const orderRules = [...order.entries()].map(
         ([slug, position]) =>
-          `#sort-${option.key}:checked~.plate-grid>[data-slug="${slug}"]{order:${position}}`,
+          `.plate:has(#sort-${option.key}:checked) .plate-grid>[data-slug="${slug}"]{order:${position}}`,
       )
+      // The chips are siblings of the radios inside the fieldset, so these two
+      // stay on `~` — only the grid, which is outside it, needs `:has()`.
       return [
         ...orderRules,
-        `#sort-${option.key}:checked~.plate-controls label[for="sort-${option.key}"]{background:var(--ink);color:var(--plate)}`,
-        `#sort-${option.key}:focus-visible~.plate-controls label[for="sort-${option.key}"]{outline:3px solid var(--ink);outline-offset:2px}`,
+        `#sort-${option.key}:checked~.plate-chips label[for="sort-${option.key}"]{background:var(--ink);color:var(--plate)}`,
+        `#sort-${option.key}:focus-visible~.plate-chips label[for="sort-${option.key}"]{outline:3px solid var(--ink);outline-offset:2px}`,
       ]
     })
     .join('')
@@ -89,17 +103,6 @@ export function PlateGrid({
   return (
     <div className="plate">
       <style dangerouslySetInnerHTML={{ __html: rules }} />
-
-      {all.map((option) => (
-        <input
-          key={option.key}
-          type="radio"
-          name="plate-sort"
-          id={`sort-${option.key}`}
-          defaultChecked={option.key === NAME_KEY}
-          className="sr-only"
-        />
-      ))}
 
       {/*
         The control announces itself as a control. It used to open with a
@@ -116,7 +119,19 @@ export function PlateGrid({
             {note}
           </p>
         ) : null}
-        <div className="flex flex-wrap gap-2">
+        {/* Inside the fieldset, so the legend above is their group name. */}
+        {all.map((option) => (
+          <input
+            key={option.key}
+            type="radio"
+            name="plate-sort"
+            id={`sort-${option.key}`}
+            defaultChecked={option.key === NAME_KEY}
+            className="sr-only"
+          />
+        ))}
+
+        <div className="plate-chips flex flex-wrap gap-2">
           {all.map((option) => (
             <label
               key={option.key}
