@@ -258,7 +258,17 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                           : `The ${untouched.map((mode) => d(mode === 'drive' ? 'drive' : 'walk', locale).toLowerCase()).join(' and ')} network is untouched by this mapping — zero change at every site, which is what it should be.`}
                       </p>
                     ) : null}
-                    <div className="mt-4 overflow-x-auto">
+                    {/*
+                      The only table on this page with no links in it, so it
+                      is the only one a keyboard user cannot scroll by tabbing
+                      into. At 320 px it is wider than the page. WCAG 2.1.1.
+                    */}
+                    <div
+                      tabIndex={0}
+                      role="group"
+                      aria-label={`${d('tableRegion', locale)} — ${t(mapping.label, locale)}`}
+                      className="mt-4 overflow-x-auto"
+                    >
                       <table className="tabular w-full border-collapse font-mono text-xs">
                         <caption className="sr-only">
                           {locale === 'id'
