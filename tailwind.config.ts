@@ -25,6 +25,7 @@ const config: Config = {
       'rule-strong': 'var(--rule-strong)',
       rule: 'var(--rule)',
       'rule-faint': 'var(--rule-faint)',
+      overprint: 'var(--overprint)',
       drive: 'var(--drive)',
       walk: 'var(--walk)',
     },

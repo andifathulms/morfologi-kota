@@ -14,16 +14,28 @@
  * muted steps below are named, and their measured ratios are written down.
  */
 :root {
-  /* Colour — DESIGN.md §3. Monochrome plus exactly two hues. Ratios on plate. */
-  --plate: #faf9f6;
-  --ink: #14140f; /* 17.6:1 */
-  --ink-muted: #42423d; /*  9.6:1 — long-form secondary prose */
-  --ink-subtle: #595954; /*  6.7:1 — labels, captions, units, quote bars */
-  --rule-strong: #8c8779; /*  3.4:1 — card edges and section boundaries */
-  --rule: #b3aea1; /*  2.1:1 — decorative hairlines: rings, sampling circles */
-  --rule-faint: #c6c2b6; /*  1.7:1 — row separators inside a bordered table */
-  --drive: #2a5d7c; /*  6.8:1 */
-  --walk: #a85b32; /*  4.7:1 */
+  /*
+   * Colour — DESIGN.md §3. Monochrome plus exactly two hues. Ratios on plate.
+   *
+   * Two inks on an uncoated stock. The two hues are the same two the product
+   * has always had, taken to press weights: drive is a printing blue, walk a
+   * brick, and the ground is the warm sheet neither of them would print on if
+   * it were bright white.
+   *
+   * `--overprint` is not chosen. It is drive multiplied by walk, which is what
+   * the two inks make where they overlap — computed once here so a swatch can
+   * be drawn, and produced for real by `mix-blend-mode` in the rose.
+   */
+  --plate: #f7f4ec;
+  --ink: #16140f; /* 16.7:1 */
+  --ink-muted: #44403a; /*  9.4:1 — long-form secondary prose */
+  --ink-subtle: #5b564e; /*  6.6:1 — labels, captions, units, quote bars */
+  --rule-strong: #8b8375; /*  3.4:1 — card edges and section boundaries */
+  --rule: #b5ae9f; /*  2.0:1 — decorative hairlines: rings, sampling circles */
+  --rule-faint: #c9c3b5; /*  1.6:1 — row separators inside a bordered table */
+  --drive: #1f4e6b; /*  8.1:1 */
+  --walk: #a3431f; /*  5.7:1 */
+  --overprint: #13140d; /* 16.9:1 — drive × walk, where both networks run */
 
   /* Type — DESIGN.md §7. One scale, 1.25 ratio, floor 16px for body.
      14px is captions, units and citations only, never running prose. */
@@ -159,8 +171,8 @@ body {
  * DESIGN.md §3 fixes the palette, and this does not replace it: it is the same
  * two hues taken darker, plus the hairlines made visible, for a reader who has
  * asked their system for more contrast. Measured on plate — walk goes from
- * 4.7:1 to 6.9:1, drive from 6.8:1 to 9.0:1, the card edge from 3.4:1 to
- * 6.5:1, and the decorative hairline from 2.1:1 to 5.4:1.
+ * 5.7:1 to 8.1:1, drive from 8.1:1 to 10.7:1, the card edge from 3.4:1 to
+ * 8.4:1, and the decorative hairline from 2.0:1 to 5.4:1.
  *
  * Redefining the tokens is now the whole of it. The utility classes resolve to
  * the same custom properties, so the two `!important` overrides this block
@@ -169,13 +181,14 @@ body {
  */
 @media (prefers-contrast: more) {
   :root {
-    --ink-muted: #2c2c28;
-    --ink-subtle: #3a3a35;
-    --rule-strong: #4f4b41;
-    --rule: #6b6659;
-    --rule-faint: #8c8779;
-    --drive: #1e4a63;
-    --walk: #874523;
+    --ink-muted: #2b2822;
+    --ink-subtle: #3a362f;
+    --rule-strong: #4e4739;
+    --rule: #6b6354;
+    --rule-faint: #8b8375;
+    --drive: #173b52;
+    --walk: #7e3316;
+    --overprint: #0b0b07;
   }
 
   /*
