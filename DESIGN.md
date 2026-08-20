@@ -34,26 +34,35 @@ The other projects in this set are atlases and instruments. This one is a compar
 
 That register also does real work. §4 forbids scoring kampung against perumahan, and a plate reads as description where a dashboard reads as assessment. **The visual language enforces the framing.**
 
-## 3. Colour — monochrome, plus exactly two
+## 3. Colour — two inks on a sheet
 
 ```
---plate   #FAF9F6    paper stock
---ink     #14140F    network lines, text, rose outlines
---rule    #D8D5CC    hairlines, card edges, grid
+--plate        #F7F4EC   uncoated stock
+--ink          #16140F   network lines, text, rose outlines      16.7:1
+--ink-muted    #44403A   secondary prose                          9.4:1
+--ink-subtle   #5B564E   labels, captions, units                  6.6:1
+--rule-strong  #8B8375   card edges, section boundaries           3.4:1
+--rule         #B5AE9F   decorative hairlines: rings, circles     2.0:1
+--rule-faint   #C9C3B5   row separators inside a table            1.6:1
 ```
 
 The networks are drawn in ink on plate. Nothing else. A street network rendered in colour becomes decoration; rendered in black it stays evidence.
 
+The ground is warm because neither ink is one a press would put on bright white. Every text role clears AA on it and the measured ratio is written beside the token, in `globals.css` as well as here — a muted step whose contrast nobody wrote down is how `text-ink/50` once shipped at 3.5:1.
+
 ### The only two hues in the product
 
 ```
---drive   #2A5D7C    slate blue
---walk    #A85B32    terracotta
+--drive        #1F4E6B   printing blue                            8.1:1
+--walk         #A3431F   brick                                    5.7:1
+--overprint    #13140D   drive × walk — not chosen                16.9:1
 ```
 
 **These carry the entire semantic load**, because the drive/walk gap is the finding. Everything else being monochrome means the comparison is the only coloured thing on the page and cannot be missed.
 
-Distinguishable at hairline weight and under common colour-vision deficiencies — necessary, because two overlaid roses is exactly where hue confusion would destroy the point.
+**They are two press inks, and where they overlap they overprint.** In the paired rose both series multiply, so the overlap is the colour the two inks make together — the operation a two-colour press performs, and the reason this palette belongs to this product rather than to any product. `--overprint` is declared only so a key can draw a swatch and so a browser without `mix-blend-mode` has something to fall back to; on the page it is produced, never painted.
+
+**The overprint does not replace the shape cue, and must not be allowed to.** Blue and brick sit at 1.4:1 to each other, so they are not separable by luminance and never were. Overprint distinguishes the *overlap*; the heavy outline on walk distinguishes the *two networks*. A reader who separates neither hue still reads three regions. Removing the outline because the overlap now has a colour would quietly return the product to hue-only encoding.
 
 ### Nothing else gets a colour
 
