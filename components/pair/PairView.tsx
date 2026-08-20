@@ -93,7 +93,23 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
 
   return (
     <div>
-      <div className="flex snap-x snap-mandatory gap-8 overflow-x-auto pb-4 md:grid md:grid-cols-[1fr_auto_1fr] md:items-start md:gap-6 md:overflow-visible md:pb-0">
+      {/*
+        Focusable, because below `md` this is a horizontal scroller and there
+        is nothing inside either pane to tab to — the drawings and roses are
+        images, the metric columns are description lists. Without a focus stop
+        the walking pane was unreachable without a pointer, which also caught
+        anyone at 200% zoom on a 1280 px screen.
+
+        `role="group"` and a name because there is no native element for a
+        scrollable region: tabIndex alone would add a focus stop that announces
+        nothing at all.
+      */}
+      <div
+        tabIndex={0}
+        role="group"
+        aria-label={d('pairPanes', locale)}
+        className="flex snap-x snap-mandatory gap-8 overflow-x-auto pb-4 md:grid md:grid-cols-[1fr_auto_1fr] md:items-start md:gap-6 md:overflow-visible md:pb-0"
+      >
         <section className="min-w-pane shrink-0 snap-center md:col-start-1 md:min-w-0">
           <h2 className="m-0 font-sans text-lg font-semibold" style={{ color: 'var(--drive)' }}>
             {d('drive', locale)}

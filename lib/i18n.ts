@@ -121,6 +121,14 @@ const dictionary = {
     en: 'Ink: the edges that exist only in the walking network. Hairline: the network both modes share. Membership is decided by the tag mapping — an edge counts as walk-only when the OSM way it came from is not admitted to the driving network.',
   },
   walkOnlyLength: { id: 'Panjang hanya jalan kaki', en: 'Walk-only length' },
+  pairPanes: {
+    id: 'Kendara dan jalan kaki berdampingan — geser mendatar pada layar sempit',
+    en: 'Drive and walk side by side — scrolls horizontally on a narrow screen',
+  },
+  roseTableRegion: {
+    id: 'Tabel rose, dapat digeser mendatar',
+    en: 'Rose table, scrolls horizontally',
+  },
   walkOnlyShare: { id: 'Bagian dari jaringan jalan kaki', en: 'Share of walking network' },
 
   /* Provenance. */
