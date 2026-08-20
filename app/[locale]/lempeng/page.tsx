@@ -308,7 +308,16 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
         </section>
       ) : null}
 
-      <ModeKey locale={locale} className="mb-6 max-w-prose" />
+      {/* The plate gets a heading of its own. It is the page's main content
+          and it had none: the outline went from the introduction's last
+          section directly to sixteen site names. */}
+      <h2 className="m-0 font-serif text-lg font-semibold">
+        {locale === 'id'
+          ? `Lempeng — ${manifest.sites.length} lokasi, r = ${manifest.radiusM} m`
+          : `The plate — ${manifest.sites.length} sites, r = ${manifest.radiusM} m`}
+      </h2>
+
+      <ModeKey locale={locale} className="mb-6 mt-4 max-w-prose" />
 
       <PlateGrid
         sites={sites}

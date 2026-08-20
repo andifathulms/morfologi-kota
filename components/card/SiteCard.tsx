@@ -33,11 +33,15 @@ export function SiteCard({
   return (
     <article className="flex flex-col gap-3 border border-rule-strong p-4">
       <header>
-        <h2 className="m-0 font-serif text-md font-semibold leading-tight">
+        {/* An h3: the card sits inside the plate, which has its own h2. As an
+            h2 the sixteen cards were siblings of the introduction's sections,
+            so the outline ran from the last paragraph of prose straight into
+            an unannounced list of place names. */}
+        <h3 className="m-0 font-serif text-md font-semibold leading-tight">
           <Link href={`/${locale}/lokasi/${entry.slug}`} className="no-underline">
             {entry.name}
           </Link>
-        </h2>
+        </h3>
         <p className="m-0 font-sans text-xs text-ink-subtle">
           {entry.city} · {t(SITE_TYPE_LABEL[entry.type] ?? { id: entry.type, en: entry.type }, locale)}
         </p>
