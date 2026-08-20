@@ -55,6 +55,12 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm build
+        env:
+          # Optional. Set the SITE_URL repository variable to the deployed
+          # origin (https://<user>.github.io/morfologi-kota) to turn absolute
+          # canonical and Open Graph URLs on. Left unset, the metadata stays
+          # relative rather than pointing at a guessed origin.
+          NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

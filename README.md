@@ -44,6 +44,16 @@ unmapped. Those sites are flagged in the data, on the plate, and above every
 affected comparison. The drive/walk gap at a flagged site is not a statement
 about the place.
 
+## Taking the data
+
+The bundles in `data/out/` ship with the site and are linked from the plate,
+from every site page, and in full from the method page. Share-alike means they
+are offered, not merely credited.
+
+Any page prints as a figure: controls drop out, cards go two to a row and are
+never split across a page break, and the legend with the sampling radius and
+the attribution stays on the paper.
+
 ## Development
 
 ```bash

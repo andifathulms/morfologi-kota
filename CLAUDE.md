@@ -158,11 +158,16 @@ The site cites Boeing 2019 for the method, states the sampling radius and tag ma
 
 ## Current state
 
-**M0–M5 shipped.** Measures, pipeline, plate, pair, assumptions and method are all in place; 12 sites at r = 800 m, both modes, 3 tag mappings, 201 tests green.
+**M0–M6 shipped.** Measures, pipeline, plate, pair, assumptions and method are all in place; 12 sites at r = 800 m, both modes, 3 tag mappings, 201 tests green.
 
 Two things worth knowing before picking up the next task:
 
 - **`data:fetch` uses Overpass, not the Geofabrik PBF.** Twelve discs of a kilometre are a few megabytes against most of a gigabyte, and reading PBF would mean a protobuf dependency for data used once. Build-time only, cached under a git-ignored `data/cache/`, requests sequential and spaced. The invariant that neither service is touched at runtime is unchanged.
 - **Nine of the twelve sites come back flagged for thin footway coverage.** That is the risk the PRD names, measured rather than assumed. The plate and every affected pair say so in prose before a reader can draw a conclusion from the gap. Do not quietly drop the flag to make the headline comparison look stronger.
 
-Next, if continuing: M6 — export and sharing, and a pass over keyboard and screen-reader behaviour. Adding sites is `data/sites/index.ts` then `pnpm data:fetch && pnpm data:build && pnpm data:validate`.
+Adding a site is `data/sites/index.ts`, then `pnpm data:fetch && pnpm data:build && pnpm data:validate`. `public/data/` is generated from `data/out/` by `scripts/publish-data.mjs` on `dev` and `build` — it is how the ODbL offer is made good, so don't drop it.
+
+Where the next real work is:
+- **Coverage is the binding constraint on the finding, not the code.** The most valuable contribution to this project is not a feature; it is mapping *gang* in OpenStreetMap, or choosing sites where they are already mapped. Three sites currently clear the thin threshold.
+- **Sensitivity is reported per site but not summarised.** A reader has to compare tables to see which metrics are robust to the tag mapping and which are not.
+- **`prefers-contrast` and a genuine screen-reader pass** have not been done; the palette was measured (ink 17.6:1, drive 6.8:1, walk 4.7:1 on plate) but not tested with a reader.
