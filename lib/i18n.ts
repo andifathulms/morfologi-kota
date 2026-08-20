@@ -158,6 +158,21 @@ const dictionary = {
   },
   sampledPairs: { id: 'pasangan disampel', en: 'pairs sampled' },
   unreachablePairs: { id: 'pasangan tak terhubung', en: 'pairs unreachable' },
+  workingHeading: { id: 'Dari mana angka-angka ini', en: 'Where these come from' },
+  nodeCount: { id: 'Simpul', en: 'Nodes' },
+  edgeCount: { id: 'Ruas', en: 'Edges' },
+  intersectionCount: { id: 'Simpang (derajat ≥ 3)', en: 'Intersections (degree ≥ 3)' },
+  discArea: { id: 'Luas cakram', en: 'Disc area' },
+  weightedLength: { id: 'Panjang tertimbang rose', en: 'Rose weighted length' },
+  edgeCircuity: { id: 'Circuity per ruas', en: 'Per-edge circuity' },
+  edgeCircuityNote: {
+    id: 'Dua ukuran circuity yang berbeda: yang per ruas membandingkan tiap ruas dengan talinya sendiri, yang disampel membandingkan jarak antar simpang. Yang pertama mengukur kelokan jalan, yang kedua mengukur memutarnya perjalanan.',
+    en: 'Two different circuity measures: the per-edge one compares each segment against its own chord, the sampled one compares distances between junctions. The first measures how much streets bend, the second how far out of your way the network takes you.',
+  },
+  workingNote: {
+    id: 'Nilai antara yang dipakai kolom di atas. Kerapatan simpang adalah jumlah simpang dibagi luas cakram; panjang tertimbang adalah penyebut yang menjadikan batang rose sebuah bagian.',
+    en: 'The intermediate values the column above is built from. Intersection density is the intersection count over the disc area; the weighted length is the denominator that turns a rose bar into a share.',
+  },
   unreachableNote: {
     id: 'Pasangan yang tidak terhubung sama sekali dikeluarkan dari rata-rata. Jumlahnya besar berarti jaringan ini terpecah — sinyal tentang datanya, bukan tentang tempatnya.',
     en: 'Pairs with no route between them at all are excluded from the mean. A large count means this network is fragmented — a signal about the data, not about the place.',

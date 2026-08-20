@@ -2,6 +2,7 @@ import type { SiteBundle } from '@/data/sites'
 import { NetworkDifferenceDrawing, NetworkDrawing } from '@/components/network/NetworkDrawing'
 import { Rose } from '@/components/rose/Rose'
 import { MetricColumn } from '@/components/metrics/MetricColumn'
+import { WorkingColumn } from '@/components/metrics/WorkingColumn'
 import { DeltaColumn } from '@/components/metrics/DeltaColumn'
 import { RoseTable } from '@/components/table/RoseTable'
 import { d, type Locale } from '@/lib/i18n'
@@ -126,6 +127,14 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
           <div className="mt-4">
             <MetricColumn metrics={drive.metrics} mode="drive" locale={locale} notes />
           </div>
+          <div className="mt-6">
+            <WorkingColumn
+              metrics={drive.metrics}
+              mode="drive"
+              radiusM={radiusM}
+              locale={locale}
+            />
+          </div>
         </section>
 
         {/* Desktop: the delta sits between the two panes, so the comparison is
@@ -149,6 +158,9 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
           <Rose locale={locale} size={220} series={[walkRose]} />
           <div className="mt-4">
             <MetricColumn metrics={walk.metrics} mode="walk" locale={locale} notes />
+          </div>
+          <div className="mt-6">
+            <WorkingColumn metrics={walk.metrics} mode="walk" radiusM={radiusM} locale={locale} />
           </div>
         </section>
       </div>
