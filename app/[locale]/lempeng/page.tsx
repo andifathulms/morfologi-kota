@@ -158,7 +158,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
         <section className="mb-12" aria-labelledby="contoh">
           <h2
             id="contoh"
-            className="m-0 font-sans text-base font-semibold uppercase tracking-wide text-ink-subtle"
+            className="m-0 font-mono text-xs uppercase tracking-wide text-ink-subtle"
           >
             {d('exampleHeading', locale)}
           </h2>

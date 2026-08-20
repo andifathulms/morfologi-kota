@@ -113,6 +113,14 @@ Self-hosted via `next/font`.
 
 Light ground, so no dark-mode weight correction. Body 400, headings 600.
 
+**Body floor is 16.** 14 is captions, units, citations and control labels — never running prose. A sentence a reader is expected to read is 16 or larger, including the ones that feel secondary: the standing description in the masthead and the thin-coverage warning are both arguments, not annotations.
+
+### The label role
+
+`font-mono · 14 · uppercase · tracking-wide` marks a **standing label** — an element that names a mode or a destination rather than saying anything: the language switch, a section marker over a figure. Uppercase is what stops these reading as prose at a size where prose is not allowed.
+
+It is the only place uppercase or letter-spacing appears. Headings are never uppercase; neither is anything with a verb in it.
+
 **Tabular figures on every metric, without exception.** The metric columns are read down and compared across cards; proportional figures would break the alignment that makes that possible.
 
 ## 8. Motion
