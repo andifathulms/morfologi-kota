@@ -20,10 +20,28 @@ export default function RootPage() {
       <head>
         <meta httpEquiv="refresh" content={`0; url=${target}`} />
       </head>
-      <body style={{ backgroundColor: '#FAF9F6', color: '#14140F', fontFamily: 'Georgia, serif', padding: '32px' }}>
-        <p>
-          <a href={target}>Bentuk Kota — lempeng morfologi jalan</a>
-        </p>
+      <body
+        style={{
+          backgroundColor: '#FAF9F6',
+          color: '#14140F',
+          fontFamily: 'Georgia, serif',
+          lineHeight: 1.55,
+          margin: 0,
+          padding: '32px',
+        }}
+      >
+        {/* A handoff page is still a page: it gets a landmark and a heading, so
+            that a reader who lands here with the refresh disabled is not
+            dropped into an unstructured document. */}
+        <main>
+          <h1 style={{ fontSize: '28px', fontWeight: 600, margin: 0 }}>Bentuk Kota</h1>
+          <p style={{ fontSize: '18px' }}>
+            <a href={target}>Lempeng morfologi jaringan jalan — dua belas lokasi, dua jaringan</a>
+          </p>
+          <p lang="en" style={{ fontSize: '18px' }}>
+            <a href={`${basePath}/en/lempeng/`}>Street network morphology — the plate, in English</a>
+          </p>
+        </main>
       </body>
     </html>
   )

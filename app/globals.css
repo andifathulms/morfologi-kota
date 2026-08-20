@@ -104,6 +104,72 @@ body {
 }
 
 /*
+ * Increased contrast.
+ *
+ * DESIGN.md §3 fixes the palette, and this does not replace it: it is the same
+ * two hues taken darker, plus the hairlines made visible, for a reader who has
+ * asked their system for more contrast. Measured on plate — walk goes from
+ * 4.7:1 to 6.9:1 and drive from 6.8:1 to 9.0:1, and the rule from 1.4:1, which
+ * is a line you have to hunt for, to 5.4:1.
+ *
+ * The two opacity-modified utilities are overridden wholesale rather than
+ * enumerated, because a muted label is exactly what a reader in this mode has
+ * said they cannot read.
+ */
+@media (prefers-contrast: more) {
+  :root {
+    --rule: #6b6659;
+    --drive: #1e4a63;
+    --walk: #874523;
+  }
+
+  [class*='text-ink/'] {
+    color: var(--ink) !important;
+  }
+
+  /* Tailwind compiles the palette to literal colour, so the token change above
+     reaches inline `var(--rule)` uses but not the utility classes. */
+  [class*='border-rule'] {
+    border-color: var(--rule) !important;
+  }
+
+  /*
+   * A 0.5px hairline is a design decision on a good screen and an invisible
+   * one here. Widened per side and only where a border was asked for —
+   * Tailwind's preflight gives every element `border: 0 solid`, so a universal
+   * border-width would draw a box around everything on the page.
+   */
+  [class~='border'] {
+    border-width: 1px;
+  }
+
+  [class~='border-t'] {
+    border-top-width: 1px;
+  }
+
+  [class~='border-b'] {
+    border-bottom-width: 1px;
+  }
+
+  [class~='border-y'] {
+    border-top-width: 1px;
+    border-bottom-width: 1px;
+  }
+
+  [class~='border-x'],
+  [class~='md:border-x'] {
+    border-left-width: 1px;
+    border-right-width: 1px;
+  }
+
+  /* The drawings are in metres, so the ink is thickened by a factor rather
+     than set to a pixel width. */
+  :root {
+    --ink-weight: 1.7;
+  }
+}
+
+/*
  * DESIGN.md §8 — reduced motion gets a complete alternative, never a degraded
  * one. Networks and roses render complete and instant; nothing is lost but the
  * derivation.

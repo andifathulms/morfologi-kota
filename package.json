@@ -19,7 +19,8 @@
     "typecheck": "tsc --noEmit",
     "lint": "next lint",
     "data:publish": "node scripts/publish-data.mjs",
-    "data:survey": "tsx scripts/survey-coverage.ts"
+    "data:survey": "tsx scripts/survey-coverage.ts",
+    "audit:a11y": "node scripts/audit-a11y.mjs"
   },
   "dependencies": {
     "next": "14.2.5",

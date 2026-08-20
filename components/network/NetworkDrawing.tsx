@@ -91,8 +91,15 @@ export function NetworkDrawing({
   responsive = false,
 }: NetworkDrawingProps) {
   const clipId = `clip-${label.replace(/[^a-z0-9]/gi, '')}`
-  // A hairline at the drawn size, expressed in the metres of the viewBox.
+  /*
+   * A hairline at the drawn size, expressed in the metres of the viewBox — the
+   * drawing's user units are metres, not pixels, so this cannot be a constant
+   * and CSS cannot override it with one either. `--ink-weight` is the hook a
+   * stylesheet has: increased-contrast mode multiplies it rather than
+   * substituting a pixel value, which would have made the lines thinner.
+   */
   const stroke = ((2 * radiusM) / size) * 0.9
+  const strokeWidth = `calc(${stroke.toFixed(2)} * var(--ink-weight, 1))`
 
   // Round-robin, so each group is spread across the whole disc and the
   // stagger reads as the network arriving rather than as one wedge at a time.
@@ -116,14 +123,21 @@ export function NetworkDrawing({
           <circle cx={0} cy={0} r={radiusM} />
         </clipPath>
       </defs>
-      <circle cx={0} cy={0} r={radiusM} fill="none" stroke="var(--rule)" strokeWidth={stroke} />
+      <circle
+        cx={0}
+        cy={0}
+        r={radiusM}
+        fill="none"
+        stroke="var(--rule)"
+        style={{ strokeWidth }}
+      />
       <g
         clipPath={`url(#${clipId})`}
         fill="none"
         stroke="var(--ink)"
-        strokeWidth={stroke}
         strokeLinecap="round"
         strokeLinejoin="round"
+        style={{ strokeWidth }}
       >
         {grouped.map((d, index) =>
           d === '' ? null : (

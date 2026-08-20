@@ -167,7 +167,9 @@ Two things worth knowing before picking up the next task:
 
 Adding a site is `data/sites/index.ts`, then `pnpm data:fetch && pnpm data:build && pnpm data:validate`. `public/data/` is generated from `data/out/` by `scripts/publish-data.mjs` on `dev` and `build` — it is how the ODbL offer is made good, so don't drop it.
 
+**Coverage is still the binding constraint on the finding, and it always will be.** `pnpm data:survey` measures candidate centres before they are adopted — same radius, same tag mapping as the pipeline, selecting on data completeness and never on the metrics, because choosing sites by their entropy would be choosing the finding in advance. Seven of sixteen sites now clear the threshold. Every gated perumahan candidate surveyed came back thin (1.4–4.4%), which bounds what the kampung-versus-perumahan comparison can currently say. Adding a well-mapped perumahan cluster, or mapping one, is the single most valuable thing anyone could do here.
+
 Where the next real work is:
-- **Coverage is the binding constraint on the finding, not the code.** The most valuable contribution to this project is not a feature; it is mapping *gang* in OpenStreetMap, or choosing sites where they are already mapped. Three sites currently clear the thin threshold.
-- **Sensitivity is reported per site but not summarised.** A reader has to compare tables to see which metrics are robust to the tag mapping and which are not.
-- **`prefers-contrast` and a genuine screen-reader pass** have not been done; the palette was measured (ink 17.6:1, drive 6.8:1, walk 4.7:1 on plate) but not tested with a reader.
+- **A screen-reader pass with VoiceOver or NVDA is still owed.** `pnpm audit:a11y` checks the exported HTML for the structures a reader depends on and gates CI, but it cannot tell you whether a page makes *sense* when heard — in particular whether the pair view's three columns are followable in reading order, and whether 36-row rose tables are navigable or merely present.
+- **The overlaid rose still separates its two series by hue alone.** Mitigated by the caption, the per-bin title and the table, not solved. drive and walk sit at 1.4:1 to each other by luminance.
+- **`pnpm data:survey` candidates are hand-listed.** They could be found by querying for footway density across a city rather than by guessing neighbourhoods.

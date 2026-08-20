@@ -61,6 +61,9 @@ jobs:
           # canonical and Open Graph URLs on. Left unset, the metadata stays
           # relative rather than pointing at a guessed origin.
           NEXT_PUBLIC_SITE_URL: ${{ vars.SITE_URL }}
+      # Structural accessibility check over the exported HTML. Not a
+      # screen-reader test — see scripts/audit-a11y.mjs.
+      - run: pnpm audit:a11y
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
