@@ -21,14 +21,14 @@ export function RoseTable({ locale, series, label }: RoseTableProps) {
   if (first === undefined) return null
 
   return (
-    <details className="mt-2 border-t border-rule pt-2">
+    <details className="mt-2 border-t border-rule-strong pt-2">
       <summary className="cursor-pointer font-sans text-xs">
         {d('roseTable', locale)} — {label}
       </summary>
       <table className="tabular mt-2 w-full border-collapse font-mono text-xs">
         <caption className="sr-only">{label}</caption>
         <thead>
-          <tr className="border-b border-rule text-left">
+          <tr className="border-b border-rule-strong text-left">
             <th scope="col" className="py-1 pr-4 font-normal">
               {d('bin', locale)}
             </th>
@@ -46,7 +46,7 @@ export function RoseTable({ locale, series, label }: RoseTableProps) {
           {first.shares.map((_, index) => {
             const range = binRangeDeg(index)
             return (
-              <tr key={index} className="border-b border-rule/40">
+              <tr key={index} className="border-b border-rule-faint">
                 <th scope="row" className="py-px pr-4 text-left font-normal">
                   {String(index).padStart(2, '0')}
                 </th>

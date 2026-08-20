@@ -36,6 +36,13 @@ export interface NetworkDrawingProps {
    * the drawing should follow the column either way.
    */
   readonly responsive?: boolean
+  /**
+   * Distinguishes two drawings of the same site and mode on one page. The clip
+   * path needs a document-unique id and the label alone is not one: the plate
+   * draws Kayutangan twice — once as the worked example, once as its card —
+   * and two identical ids is a broken clip, not a cosmetic duplicate.
+   */
+  readonly instanceId?: string
 }
 
 /**
@@ -89,8 +96,9 @@ export function NetworkDrawing({
   label,
   buckets = 8,
   responsive = false,
+  instanceId,
 }: NetworkDrawingProps) {
-  const clipId = `clip-${label.replace(/[^a-z0-9]/gi, '')}`
+  const clipId = `clip-${label.replace(/[^a-z0-9]/gi, '')}${instanceId === undefined ? '' : `-${instanceId}`}`
   /*
    * A hairline at the drawn size, expressed in the metres of the viewBox — the
    * drawing's user units are metres, not pixels, so this cannot be a constant
@@ -140,6 +148,98 @@ export function NetworkDrawing({
         style={{ strokeWidth }}
       >
         {grouped.map((d, index) =>
+          d === '' ? null : (
+            <path key={index} d={d} pathLength={1} className={animate ? 'network-ink' : undefined} />
+          ),
+        )}
+      </g>
+    </svg>
+  )
+}
+
+/**
+ * The difference drawing — what walking adds to driving, drawn as itself.
+ *
+ * The pair view puts two discs side by side and asks the reader to subtract
+ * one from the other by eye, which nobody does: they read the Δ column
+ * instead. But "+24.6 km on foot" is a scalar, and a fine mesh threaded evenly
+ * through a kampung and two cut-throughs at the edge of a superblock are
+ * completely different urban facts behind an identical number. This is the
+ * figure that tells them apart.
+ *
+ * DESIGN.md §5 says the drawings are uniform ink with no colour and no
+ * weight hierarchy, and this keeps that: the walk-only edges are ink, the
+ * shared network recedes to `--rule`, and no hue enters. The distinction is
+ * mode membership, which the drawing is entitled to make — it is the subject —
+ * rather than road class, which it is not. §5 records the rule.
+ *
+ * Membership comes from the pipeline, decided by the tag rule in `lib/tags`.
+ * Nothing here computes it (CLAUDE.md, Invariants §16).
+ */
+export function NetworkDifferenceDrawing({
+  geometry,
+  walkOnlyIndices,
+  radiusM,
+  size = 220,
+  animate = true,
+  label,
+  buckets = 8,
+  responsive = false,
+  instanceId,
+}: Omit<NetworkDrawingProps, 'mode'> & {
+  readonly walkOnlyIndices: readonly number[]
+}) {
+  const clipId = `clip-diff-${label.replace(/[^a-z0-9]/gi, '')}${instanceId === undefined ? '' : `-${instanceId}`}`
+  const stroke = ((2 * radiusM) / size) * 0.9
+  const strokeWidth = `calc(${stroke.toFixed(2)} * var(--ink-weight, 1))`
+
+  const walkOnly = new Set(walkOnlyIndices)
+  const shared: string[] = Array.from({ length: buckets }, () => '')
+  const added: string[] = Array.from({ length: buckets }, () => '')
+  geometry.forEach((line, index) => {
+    const target = walkOnly.has(index) ? added : shared
+    const bucket = index % buckets
+    target[bucket] = (target[bucket] ?? '') + subpath(line)
+  })
+
+  return (
+    <svg
+      viewBox={`${-radiusM} ${-radiusM} ${radiusM * 2} ${radiusM * 2}`}
+      width={responsive ? undefined : size}
+      height={responsive ? undefined : size}
+      style={responsive ? { width: '100%', maxWidth: size, height: 'auto' } : undefined}
+      role="img"
+      aria-label={label}
+    >
+      <defs>
+        <clipPath id={clipId}>
+          <circle cx={0} cy={0} r={radiusM} />
+        </clipPath>
+      </defs>
+      <circle cx={0} cy={0} r={radiusM} fill="none" stroke="var(--rule)" style={{ strokeWidth }} />
+
+      {/* The shared network first and receded, so the ink sits on top of it
+          rather than beside it — the figure is an overlay, not a comparison. */}
+      <g
+        clipPath={`url(#${clipId})`}
+        fill="none"
+        stroke="var(--rule)"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ strokeWidth }}
+      >
+        {shared.map((d, index) => (d === '' ? null : <path key={index} d={d} />))}
+      </g>
+
+      <g
+        clipPath={`url(#${clipId})`}
+        fill="none"
+        stroke="var(--ink)"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        style={{ strokeWidth }}
+      >
+        {added.map((d, index) =>
           d === '' ? null : (
             <path key={index} d={d} pathLength={1} className={animate ? 'network-ink' : undefined} />
           ),

@@ -20,3 +20,8 @@ export function siteDataPath(slug: string): string {
 export function manifestDataPath(): string {
   return assetPath('/data/manifest.json')
 }
+
+/** The candidate survey — same radius, same mapping, same terms. */
+export function surveyDataPath(): string {
+  return assetPath('/data/survey.json')
+}

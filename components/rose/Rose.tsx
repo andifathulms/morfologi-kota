@@ -11,6 +11,12 @@ import { fixed, percent } from '@/lib/format'
  * cardinal ticks, and a hairline circle at the maximum so bar lengths are
  * readable against a bound (DESIGN.md §4).
  *
+ * The two series are separated by shape as well as hue: drive is a solid fill,
+ * walk is a light fill with a heavy outline. The hues sit at 1.4:1 to each
+ * other, so hue alone never distinguished them for a reader who does not
+ * separate blue from rust, or for anyone printing in greyscale. The swatches
+ * in `ModeKey` draw the same two treatments.
+ *
  * Symmetric by construction — the assertion lives in the invariant suite and
  * in `data:validate`, so an asymmetric rose cannot reach this component.
  *
@@ -53,6 +59,15 @@ function wedgePath(index: number, radius: number): string {
 
 function strokeFor(mode: Mode): string {
   return mode === 'drive' ? 'var(--drive)' : 'var(--walk)'
+}
+
+/**
+ * The non-chromatic half of the distinction, used only where the two series
+ * are overlaid: solid for drive, outlined for walk. A single series keeps the
+ * plain solid treatment, since there is nothing for it to be confused with.
+ */
+function overlaid(mode: Mode): { fillOpacity: number; strokeWidth: number } {
+  return mode === 'drive' ? { fillOpacity: 0.6, strokeWidth: 0.5 } : { fillOpacity: 0.14, strokeWidth: 2 }
 }
 
 export function Rose({ series, locale, size = 180, animate = true, caption = true }: RoseProps) {
@@ -115,9 +130,10 @@ export function Rose({ series, locale, size = 180, animate = true, caption = tru
                 key={`${s.mode}-${index}`}
                 d={wedgePath(index, radius)}
                 fill={strokeFor(s.mode)}
-                fillOpacity={series.length > 1 ? 0.72 : 0.9}
+                fillOpacity={series.length > 1 ? overlaid(s.mode).fillOpacity : 0.9}
                 stroke={strokeFor(s.mode)}
-                strokeWidth={0.5}
+                strokeWidth={series.length > 1 ? overlaid(s.mode).strokeWidth : 0.5}
+                strokeLinejoin="round"
                 className={animate ? 'rose-bar' : undefined}
                 style={animate ? { animationDelay: `${240 + index * 8}ms` } : undefined}
               >
@@ -133,7 +149,21 @@ export function Rose({ series, locale, size = 180, animate = true, caption = tru
       {caption ? (
         <figcaption className="tabular mt-1 font-mono text-xs">
           {series.map((s) => (
-            <span key={s.mode} className="mr-4 inline-block">
+            <span key={s.mode} className="mr-4 inline-flex items-center gap-1">
+              {series.length > 1 ? (
+                <svg width={10} height={10} viewBox="0 0 10 10" aria-hidden="true">
+                  <rect
+                    x={s.mode === 'drive' ? 0.5 : 1}
+                    y={s.mode === 'drive' ? 0.5 : 1}
+                    width={s.mode === 'drive' ? 9 : 8}
+                    height={s.mode === 'drive' ? 9 : 8}
+                    fill={strokeFor(s.mode)}
+                    fillOpacity={overlaid(s.mode).fillOpacity}
+                    stroke={strokeFor(s.mode)}
+                    strokeWidth={s.mode === 'drive' ? 0.5 : 2}
+                  />
+                </svg>
+              ) : null}
               <span style={{ color: strokeFor(s.mode) }}>
                 {d(s.mode === 'drive' ? 'drive' : 'walk', locale)}
               </span>{' '}

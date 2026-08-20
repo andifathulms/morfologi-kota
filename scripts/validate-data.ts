@@ -15,14 +15,17 @@ import { readFile } from 'node:fs/promises'
 import { existsSync } from 'node:fs'
 import { join } from 'node:path'
 import {
+  MAPPING_EXEMPLAR_SLUGS,
   SAMPLING_RADIUS_M,
   SITES,
   manifestSchema,
   siteBundleSchema,
+  surveySchema,
   type SiteBundle,
 } from '@/data/sites'
 
 const OUT_DIR = join(process.cwd(), 'data', 'out')
+const SURVEY_PATH = join(process.cwd(), 'data', 'survey.json')
 
 /**
  * Invariant §9: there is no score field in this codebase and adding one is a
@@ -105,6 +108,61 @@ function checkBundle(bundle: SiteBundle): void {
 
   check(bundle.sensitivity.length >= 1, `${slug}: no tag-mapping sensitivity recorded`)
 
+  /*
+   * The walk-only set must index the arrays it claims to index, or the
+   * difference drawing silently draws the wrong edges in ink — a wrong figure
+   * that looks entirely plausible, which is the worst kind.
+   */
+  const walkOnly = bundle.walkOnly
+  for (const index of walkOnly.indices) {
+    check(
+      index < bundle.walk.geometry.length,
+      `${slug}: walk-only index ${index} is outside the walking geometry`,
+    )
+  }
+  for (const index of walkOnly.plateIndices) {
+    check(
+      index < bundle.walk.plateGeometry.length,
+      `${slug}: walk-only plate index ${index} is outside the plate geometry`,
+    )
+  }
+  check(
+    new Set(walkOnly.indices).size === walkOnly.indices.length,
+    `${slug}: walk-only indices contain a duplicate`,
+  )
+  check(
+    walkOnly.lengthM <= bundle.walk.metrics.totalLengthM + 1,
+    `${slug}: more walk-only length than walking network — membership is wrong`,
+  )
+  check(
+    walkOnly.lengthM >= bundle.walk.metrics.totalLengthM - bundle.drive.metrics.totalLengthM - 1,
+    `${slug}: the walking network gains more length than it has walk-only edges — a drivable way is being counted as walk-only, or the reverse`,
+  )
+
+  check(bundle.extractVersion.length > 3, `${slug}: no extract timestamp — the number is not reproducible`)
+
+  // The exemplars carry every mapping, and nothing else carries any: an
+  // exemplar missing a mapping would show a gap the reader would read as a
+  // finding about the mapping rather than as a missing figure.
+  const isExemplar = MAPPING_EXEMPLAR_SLUGS.includes(slug)
+  if (isExemplar) {
+    check(
+      bundle.alternateGeometry !== undefined && bundle.alternateGeometry.length >= 2,
+      `${slug}: named a mapping exemplar but carries no alternative geometry`,
+    )
+    for (const alternate of bundle.alternateGeometry ?? []) {
+      check(
+        alternate.drivePlateGeometry.length > 0 && alternate.walkPlateGeometry.length > 0,
+        `${slug}/${alternate.mappingId}: empty comparison geometry`,
+      )
+    }
+  } else {
+    check(
+      bundle.alternateGeometry === undefined,
+      `${slug}: carries alternative geometry without being a named exemplar — the payload decision must stay explicit`,
+    )
+  }
+
   if (bundle.coverage.confidence.type === 'thin') {
     notes.push(
       `⚑ ${slug}: thin footway coverage (${(bundle.coverage.pedestrianShare * 100).toFixed(1)}% of walking-network length). Flagged, not compared as complete.`,
@@ -159,6 +217,42 @@ async function main(): Promise<void> {
       continue
     }
     checkBundle(siteBundleSchema.parse(JSON.parse(await readFile(path, 'utf8'))))
+  }
+
+  /*
+   * The survey is part of the honesty contract, not an optional extra: without
+   * it the reader has the sixteen sites and no way to check they were not
+   * chosen for their numbers (PRD §4).
+   */
+  if (!existsSync(SURVEY_PATH)) {
+    failures.push('data/survey.json is missing — run `pnpm data:survey`. Site selection would be undocumented.')
+  } else {
+    const survey = surveySchema.parse(JSON.parse(await readFile(SURVEY_PATH, 'utf8')))
+    check(
+      survey.radiusM === SAMPLING_RADIUS_M,
+      `survey: measured at r=${survey.radiusM} m, the set is r=${SAMPLING_RADIUS_M} m — a survey that samples differently predicts nothing`,
+    )
+    check(
+      survey.mappingId === manifest.mappingId,
+      `survey: mapping "${survey.mappingId}" ≠ pipeline mapping "${manifest.mappingId}"`,
+    )
+    check(survey.licence === 'ODbL-1.0', 'survey: derived data must carry ODbL')
+    scanForForbiddenKeys(survey, 'survey')
+
+    // Every adopted candidate must name a site that exists, or the page would
+    // claim a provenance the comparison set does not have.
+    const slugs = new Set(SITES.map((site) => site.slug))
+    for (const candidate of survey.candidates) {
+      if (candidate.adoptedAs === null) continue
+      check(
+        slugs.has(candidate.adoptedAs),
+        `survey: candidate ${candidate.label} claims to be site "${candidate.adoptedAs}", which does not exist`,
+      )
+    }
+    const cleared = survey.candidates.filter((c) => c.confidence !== 'thin').length
+    notes.push(
+      `Survey: ${cleared} of ${survey.candidates.length} candidate centres clear the thin threshold.`,
+    )
   }
 
   const thin = manifest.sites.filter((site) => site.coverage.confidence.type === 'thin').length

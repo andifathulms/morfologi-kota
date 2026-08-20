@@ -19,14 +19,17 @@ import {
   clipToRadius,
   computeModeMetrics,
   coverageOfWalkGraph,
+  edgeLengthM,
+  totalLengthM,
   type ModeMetrics,
   type StreetGraph,
 } from '@/lib/morphology'
-import { DEFAULT_TAG_MAPPING, TAG_MAPPINGS, type Mode, type TagMapping } from '@/lib/tags'
+import { DEFAULT_TAG_MAPPING, TAG_MAPPINGS, admitsWay, type Mode, type TagMapping } from '@/lib/tags'
 import {
   BOEING_CITATION,
   BOEING_DOI,
   ODBL_ATTRIBUTION,
+  MAPPING_EXEMPLAR_SLUGS,
   SAMPLING_RADIUS_M,
   SITES,
   classifyStability,
@@ -36,6 +39,7 @@ import {
   type SensitivitySummaryEntry,
   type SensitivityValues,
   type Site,
+  type WalkOnly,
 } from '@/data/sites'
 import { readCachedExtract, splitElements } from './osm'
 import { simplifyPolyline } from './simplify'
@@ -53,6 +57,15 @@ const SIMPLIFY_TOLERANCE_M = 2
  */
 const PLATE_TOLERANCE_M = 7
 const PLATE_MIN_LENGTH_M = 15
+
+/**
+ * The assumptions page draws its comparison discs smaller again — six of them
+ * on one page, at roughly 180 px. Coarser than the plate for the same reason
+ * the plate is coarser than the pair: below a pixel is below a pixel, and the
+ * alternative is a page of several megabytes to show that some lines left.
+ */
+const COMPARE_TOLERANCE_M = 12
+const COMPARE_MIN_LENGTH_M = 30
 
 /**
  * Floats are rounded before they are written. Two machines must produce a
@@ -95,27 +108,105 @@ function roundMetrics(metrics: ModeMetrics): ModeMetrics {
   }
 }
 
-/** Drawing geometry: simplified, rounded to the metre, one array per edge. */
-function emitGeometry(graph: StreetGraph, toleranceM = SIMPLIFY_TOLERANCE_M): [number, number][][] {
-  return graph.edges.map((edge) =>
-    simplifyPolyline(edge.geometry, toleranceM).map(
+/**
+ * Drawing geometry: simplified, rounded to the metre, one array per edge.
+ *
+ * `edgeIndex` maps each emitted line back to the graph edge it came from. The
+ * plate and comparison scales drop sub-pixel stubs, so the emitted array is
+ * shorter than the edge list and positional correspondence is lost — and
+ * `walkOnly.plateIndices` has to index the array that is actually drawn.
+ */
+interface EmittedGeometry {
+  readonly lines: [number, number][][]
+  readonly edgeIndex: number[]
+}
+
+function emitGeometryIndexed(
+  graph: StreetGraph,
+  toleranceM: number,
+  minLengthM: number,
+): EmittedGeometry {
+  const lines: [number, number][][] = []
+  const edgeIndex: number[] = []
+  graph.edges.forEach((edge, index) => {
+    const line = simplifyPolyline(edge.geometry, toleranceM).map(
       (point) => [round(point.xM, 1), round(point.yM, 1)] as [number, number],
-    ),
-  )
+    )
+    if (minLengthM > 0) {
+      let length = 0
+      for (let i = 1; i < line.length; i += 1) {
+        const a = line[i - 1]
+        const b = line[i]
+        if (a === undefined || b === undefined) continue
+        length += Math.hypot(b[0] - a[0], b[1] - a[1])
+      }
+      if (length < minLengthM) return
+    }
+    lines.push(line)
+    edgeIndex.push(index)
+  })
+  return { lines, edgeIndex }
+}
+
+function emitGeometry(graph: StreetGraph): EmittedGeometry {
+  return emitGeometryIndexed(graph, SIMPLIFY_TOLERANCE_M, 0)
 }
 
 /** The same geometry at plate scale, with sub-pixel stubs dropped. */
-function emitPlateGeometry(graph: StreetGraph): [number, number][][] {
-  return emitGeometry(graph, PLATE_TOLERANCE_M).filter((line) => {
-    let length = 0
-    for (let i = 1; i < line.length; i += 1) {
-      const a = line[i - 1]
-      const b = line[i]
-      if (a === undefined || b === undefined) continue
-      length += Math.hypot(b[0] - a[0], b[1] - a[1])
-    }
-    return length >= PLATE_MIN_LENGTH_M
+function emitPlateGeometry(graph: StreetGraph): EmittedGeometry {
+  return emitGeometryIndexed(graph, PLATE_TOLERANCE_M, PLATE_MIN_LENGTH_M)
+}
+
+/** Coarser again, for the six discs the assumptions page draws side by side. */
+function emitCompareGeometry(graph: StreetGraph): [number, number][][] {
+  return emitGeometryIndexed(graph, COMPARE_TOLERANCE_M, COMPARE_MIN_LENGTH_M).lines
+}
+
+/**
+ * Which walking edges the driving network does not contain.
+ *
+ * Decided by the tag rule, never by geometry: an edge is walk-only when the
+ * OSM way it came from is not admitted to the driving network under this
+ * mapping. `admitsWay` is the same function the graph builder used, so the
+ * answer is the graph's own definition rather than a second opinion about it —
+ * and a reader can follow the number back to a named constant in `lib/tags`.
+ *
+ * Comparing the two graphs edge-for-edge would not have worked: they are built
+ * independently, the walk graph admits more ways, so it splits at more
+ * junctions and its edge ids are not the drive graph's. Way membership is the
+ * only correspondence that survives, and it is also the one the mapping
+ * actually decides.
+ */
+function walkOnlyOf(
+  walkGraph: StreetGraph,
+  mapping: TagMapping,
+  full: EmittedGeometry,
+  plate: EmittedGeometry,
+): WalkOnly {
+  const isWalkOnly = walkGraph.edges.map(
+    (edge) => !admitsWay({ id: edge.wayId ?? 0, tags: edge.tags ?? {}, nodes: [] }, mapping, 'drive'),
+  )
+
+  let lengthM = 0
+  walkGraph.edges.forEach((edge, index) => {
+    if (isWalkOnly[index] === true) lengthM += edgeLengthM(edge)
   })
+  const walkLengthM = totalLengthM(walkGraph)
+
+  const pick = (emitted: EmittedGeometry): number[] => {
+    const indices: number[] = []
+    emitted.edgeIndex.forEach((edgeIdx, position) => {
+      if (isWalkOnly[edgeIdx] === true) indices.push(position)
+    })
+    return indices
+  }
+
+  return {
+    indices: pick(full),
+    plateIndices: pick(plate),
+    lengthM: round(lengthM, 2),
+    shareOfWalk: round(walkLengthM > 0 ? lengthM / walkLengthM : 0, 6),
+  }
 }
 
 /** Everything the sensitivity summary tracks, pulled off a metric column. */
@@ -219,20 +310,46 @@ async function main(): Promise<void> {
       ),
     })
 
+    const walkFull = emitGeometry(walk.graph)
+    const walkPlate = emitPlateGeometry(walk.graph)
+    const walkOnly = walkOnlyOf(walk.graph, DEFAULT_TAG_MAPPING, walkFull, walkPlate)
+
+    /*
+     * The same disc under every mapping, for the two exemplar sites only.
+     * Plate-scale geometry is most of a bundle, so this is deliberately not
+     * done for the whole set (PRD §6.5; `MAPPING_EXEMPLAR_SLUGS`).
+     */
+    const alternateGeometry = MAPPING_EXEMPLAR_SLUGS.includes(site.slug)
+      ? TAG_MAPPINGS.map((mapping) => {
+          const d = mapping.id === DEFAULT_TAG_MAPPING.id ? drive : buildMode(extract, site, 'drive', mapping)
+          const w = mapping.id === DEFAULT_TAG_MAPPING.id ? walk : buildMode(extract, site, 'walk', mapping)
+          return {
+            mappingId: mapping.id,
+            drivePlateGeometry: emitCompareGeometry(d.graph),
+            walkPlateGeometry: emitCompareGeometry(w.graph),
+            driveTotalLengthM: round(d.metrics.totalLengthM, 2),
+            walkTotalLengthM: round(w.metrics.totalLengthM, 2),
+          }
+        })
+      : undefined
+
     const bundle = siteBundleSchema.parse({
       site,
       radiusM: SAMPLING_RADIUS_M,
       mappingId: DEFAULT_TAG_MAPPING.id,
+      extractVersion: cached.timestampOsmBase,
       drive: {
         metrics: roundMetrics(drive.metrics),
-        geometry: emitGeometry(drive.graph),
-        plateGeometry: emitPlateGeometry(drive.graph),
+        geometry: emitGeometry(drive.graph).lines,
+        plateGeometry: emitPlateGeometry(drive.graph).lines,
       },
       walk: {
         metrics: roundMetrics(walk.metrics),
-        geometry: emitGeometry(walk.graph),
-        plateGeometry: emitPlateGeometry(walk.graph),
+        geometry: walkFull.lines,
+        plateGeometry: walkPlate.lines,
       },
+      walkOnly,
+      ...(alternateGeometry === undefined ? {} : { alternateGeometry }),
       coverage: {
         pedestrianShare: round(coverage.pedestrianShare, 6),
         pedestrianLengthM: round(coverage.pedestrianLengthM, 2),
@@ -262,13 +379,16 @@ async function main(): Promise<void> {
       coverage: bundle.coverage,
       drive: bundle.drive.metrics,
       walk: bundle.walk.metrics,
+      walkOnly: { lengthM: walkOnly.lengthM, shareOfWalk: walkOnly.shareOfWalk },
+      extractVersion: cached.timestampOsmBase,
     })
 
     const flag = coverage.confidence.type === 'thin' ? '  ⚑ thin footway coverage' : ''
     console.log(
       `${site.slug.padEnd(24)} H drive ${bundle.drive.metrics.orientationEntropy.toFixed(3)}` +
         `  H walk ${bundle.walk.metrics.orientationEntropy.toFixed(3)}` +
-        `  cov ${(coverage.pedestrianShare * 100).toFixed(1)}%${flag}`,
+        `  cov ${(coverage.pedestrianShare * 100).toFixed(1)}%` +
+        `  walk-only ${(walkOnly.lengthM / 1000).toFixed(1)} km${flag}`,
     )
   }
 

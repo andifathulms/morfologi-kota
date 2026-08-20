@@ -57,7 +57,7 @@ export function DeltaColumn({
     <div className="font-mono text-xs">
       <p className="mb-1 font-sans text-base font-semibold">
         {d('delta', locale)}
-        <span className="ml-1 font-normal text-ink/60">
+        <span className="ml-1 font-normal text-ink-subtle">
           {d('walk', locale)} − {d('drive', locale)}
         </span>
       </p>
@@ -69,8 +69,8 @@ export function DeltaColumn({
                 columns either side, but each pane carries a drawing and a rose
                 above its column, so nothing lines up and a bare number would
                 be unreadable. */}
-            <dt className="border-b border-rule/60 py-px text-ink/70">{row.label}</dt>
-            <dd className="m-0 border-b border-rule/60 py-px text-right">{row.value}</dd>
+            <dt className="border-b border-rule-faint py-px text-ink-subtle">{row.label}</dt>
+            <dd className="m-0 border-b border-rule-faint py-px text-right">{row.value}</dd>
           </div>
         ))}
       </dl>

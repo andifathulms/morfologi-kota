@@ -208,6 +208,20 @@ const sites: Site[] = [
 
 export const SITES: readonly Site[] = sitesSchema.parse(sites)
 
+/**
+ * The two sites drawn under every tag mapping on the assumptions page.
+ *
+ * Named here rather than derived, because the choice is editorial and should
+ * be reviewable in a diff: one kampung, where the mapping decides whether the
+ * gang are streets, and one planned cluster, where it decides whether the
+ * internal service roads are. Those are the two places the choice bites, and
+ * showing them is cheaper than showing sixteen — the geometry is most of the
+ * derived database, so this is a payload decision as much as an editorial one.
+ *
+ * Chosen for the mapping question, never for their metrics.
+ */
+export const MAPPING_EXEMPLAR_SLUGS: readonly string[] = ['kayutangan', 'bsd-cluster']
+
 export function siteBySlug(slug: string): Site | undefined {
   return SITES.find((site) => site.slug === slug)
 }

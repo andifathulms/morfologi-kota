@@ -4,15 +4,48 @@
 
 /*
  * DESIGN.md is authoritative. The tokens are declared here as custom
- * properties as well as in the Tailwind theme, because the SVG drawings and
- * the keyframes below need them outside a class attribute.
+ * properties and the Tailwind theme reads these same properties, so there is
+ * exactly one source for a colour, a size or a step — the SVG drawings, the
+ * generated sort rules and the utility classes all resolve to this block.
+ *
+ * A component asks for a token by name. It never reaches past one with an
+ * opacity modifier: `text-ink-subtle` used to compile to #878682, which is 3.5:1
+ * on plate and fails, and nothing in the theme could have caught it. The
+ * muted steps below are named, and their measured ratios are written down.
  */
 :root {
+  /* Colour — DESIGN.md §3. Monochrome plus exactly two hues. Ratios on plate. */
   --plate: #faf9f6;
-  --ink: #14140f;
-  --rule: #d8d5cc;
-  --drive: #2a5d7c;
-  --walk: #a85b32;
+  --ink: #14140f; /* 17.6:1 */
+  --ink-muted: #42423d; /*  9.6:1 — long-form secondary prose */
+  --ink-subtle: #595954; /*  6.7:1 — labels, captions, units, quote bars */
+  --rule-strong: #8c8779; /*  3.4:1 — card edges and section boundaries */
+  --rule: #b3aea1; /*  2.1:1 — decorative hairlines: rings, sampling circles */
+  --rule-faint: #c6c2b6; /*  1.7:1 — row separators inside a bordered table */
+  --drive: #2a5d7c; /*  6.8:1 */
+  --walk: #a85b32; /*  4.7:1 */
+
+  /* Type — DESIGN.md §7. One scale, 1.25 ratio, floor 16px for body.
+     14px is captions, units and citations only, never running prose. */
+  --text-xs: 14px;
+  --text-base: 16px;
+  --text-md: 18px;
+  --text-lg: 22px;
+  --text-xl: 28px;
+  --text-2xl: 36px;
+  --text-3xl: 46px;
+
+  /* Space — DESIGN.md §1. 4px base. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-24: 96px;
+  --space-32: 128px;
 
   --dur-fast: 120ms;
   --dur-state: 240ms;
@@ -119,28 +152,23 @@ body {
  * DESIGN.md §3 fixes the palette, and this does not replace it: it is the same
  * two hues taken darker, plus the hairlines made visible, for a reader who has
  * asked their system for more contrast. Measured on plate — walk goes from
- * 4.7:1 to 6.9:1 and drive from 6.8:1 to 9.0:1, and the rule from 1.4:1, which
- * is a line you have to hunt for, to 5.4:1.
+ * 4.7:1 to 6.9:1, drive from 6.8:1 to 9.0:1, the card edge from 3.4:1 to
+ * 6.5:1, and the decorative hairline from 2.1:1 to 5.4:1.
  *
- * The two opacity-modified utilities are overridden wholesale rather than
- * enumerated, because a muted label is exactly what a reader in this mode has
- * said they cannot read.
+ * Redefining the tokens is now the whole of it. The utility classes resolve to
+ * the same custom properties, so the two `!important` overrides this block
+ * used to carry — one to defeat `text-ink/NN`, one to defeat `border-rule` —
+ * have nothing left to defeat.
  */
 @media (prefers-contrast: more) {
   :root {
+    --ink-muted: #2c2c28;
+    --ink-subtle: #3a3a35;
+    --rule-strong: #4f4b41;
     --rule: #6b6659;
+    --rule-faint: #8c8779;
     --drive: #1e4a63;
     --walk: #874523;
-  }
-
-  [class*='text-ink/'] {
-    color: var(--ink) !important;
-  }
-
-  /* Tailwind compiles the palette to literal colour, so the token change above
-     reaches inline `var(--rule)` uses but not the utility classes. */
-  [class*='border-rule'] {
-    border-color: var(--rule) !important;
   }
 
   /*

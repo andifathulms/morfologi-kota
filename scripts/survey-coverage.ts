@@ -19,14 +19,17 @@
  *   pnpm data:survey
  */
 
+import { writeFile } from 'node:fs/promises'
+import { join } from 'node:path'
 import {
   buildGraphFromWays,
   clipToRadius,
   coverageOfWalkGraph,
   totalLengthM,
 } from '@/lib/morphology'
+import { GOOD_COVERAGE_THRESHOLD, THIN_COVERAGE_THRESHOLD } from '@/lib/morphology'
 import { DEFAULT_TAG_MAPPING } from '@/lib/tags'
-import { SAMPLING_RADIUS_M, SITES } from '@/data/sites'
+import { ODBL_ATTRIBUTION, SAMPLING_RADIUS_M, SITES, surveySchema } from '@/data/sites'
 import {
   cachePathFor,
   extractQuery,
@@ -81,13 +84,46 @@ const CANDIDATES: readonly Candidate[] = [
 const FETCH_MARGIN = 1.4
 const PAUSE_MS = 3000
 
+/** Same rounding convention as the pipeline, for the same determinism reason. */
+function round(value: number, places: number): number {
+  const factor = 10 ** places
+  const rounded = Math.round(value * factor) / factor
+  return Object.is(rounded, -0) ? 0 : rounded
+}
+
 interface Result {
   readonly candidate: Candidate
   readonly pedestrianShare: number
   readonly pedestrianLengthM: number
   readonly walkLengthM: number
   readonly driveLengthM: number
-  readonly confidence: string
+  readonly confidence: 'thin' | 'moderate' | 'good'
+  readonly extractVersion: string
+}
+
+/**
+ * Where the survey is written.
+ *
+ * `data/out` is wiped and rebuilt by `data:build`, and the survey is not built
+ * from the same inputs — it is measured against candidate centres, some of
+ * which are deliberately not sites. So it is a committed source file of its
+ * own, published alongside the derived database because it is one: same
+ * radius, same mapping, same code, ODbL like everything else.
+ */
+const SURVEY_PATH = join(process.cwd(), 'data', 'survey.json')
+
+/**
+ * Which candidates became sites. Matched by centre rather than by name,
+ * because the survey labels and the site slugs are written independently and a
+ * name match would silently drift. Within about 60 m is the same disc.
+ */
+function adoptedAs(candidate: Candidate): string | null {
+  const match = SITES.find(
+    (site) =>
+      Math.abs(site.centreLatDeg - candidate.latDeg) < 0.0006 &&
+      Math.abs(site.centreLonDeg - candidate.lonDeg) < 0.0006,
+  )
+  return match?.slug ?? null
 }
 
 async function measure(candidate: Candidate): Promise<Result> {
@@ -131,6 +167,7 @@ async function measure(candidate: Candidate): Promise<Result> {
     walkLengthM: coverage.walkLengthM,
     driveLengthM: totalLengthM(drive),
     confidence: coverage.confidence.type,
+    extractVersion: cached.timestampOsmBase,
   }
 }
 
@@ -164,11 +201,43 @@ async function main(): Promise<void> {
   }
 
   const good = sorted.filter((r) => r.confidence !== 'thin')
-  console.log(
-    `\n${good.length} of ${sorted.length} candidates clear the thin threshold, against ` +
-      `${SITES.length - 9} of ${SITES.length} sites currently in the set.`,
-  )
-  console.log(`Cached under ${cachePathFor('survey-…')} — git-ignored, never committed.`)
+  console.log(`\n${good.length} of ${sorted.length} candidates clear the thin threshold.`)
+
+  /*
+   * Written, not just printed.
+   *
+   * The measurement of a rejected candidate is a result — it is the evidence
+   * that the sixteen sites were chosen on data completeness and not on their
+   * numbers, and it is the only place the project says out loud how much of
+   * Indonesia it cannot currently ask the question of. Leaving it in stdout
+   * meant the argument in this file's header was addressed to nobody.
+   */
+  const survey = surveySchema.parse({
+    radiusM: SAMPLING_RADIUS_M,
+    mappingId: DEFAULT_TAG_MAPPING.id,
+    thinThreshold: THIN_COVERAGE_THRESHOLD,
+    goodThreshold: GOOD_COVERAGE_THRESHOLD,
+    candidates: sorted.map((result) => ({
+      label: result.candidate.label,
+      type: result.candidate.type,
+      latDeg: result.candidate.latDeg,
+      lonDeg: result.candidate.lonDeg,
+      note: result.candidate.note,
+      pedestrianShare: round(result.pedestrianShare, 6),
+      pedestrianLengthM: round(result.pedestrianLengthM, 2),
+      walkLengthM: round(result.walkLengthM, 2),
+      driveLengthM: round(result.driveLengthM, 2),
+      confidence: result.confidence,
+      adoptedAs: adoptedAs(result.candidate),
+      extractVersion: result.extractVersion,
+    })),
+    attribution: ODBL_ATTRIBUTION,
+    licence: 'ODbL-1.0',
+  })
+
+  await writeFile(SURVEY_PATH, `${JSON.stringify(survey, null, 2)}\n`, 'utf8')
+  console.log(`Wrote data/survey.json — ${survey.candidates.length} candidates, committed.`)
+  console.log(`Extracts cached under ${cachePathFor('survey-…')} — git-ignored, never committed.`)
 }
 
 main().catch((error) => {

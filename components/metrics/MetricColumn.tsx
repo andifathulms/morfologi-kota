@@ -62,10 +62,10 @@ export function MetricColumn({
       <dl className="tabular m-0 grid grid-cols-[1fr_auto] gap-x-4">
         {rows.map((row) => (
           <div key={row.label} className="contents">
-            <dt className="border-b border-rule/60 py-px text-ink/70">{row.label}</dt>
-            <dd className="m-0 border-b border-rule/60 py-px text-right">
+            <dt className="border-b border-rule-faint py-px text-ink-subtle">{row.label}</dt>
+            <dd className="m-0 border-b border-rule-faint py-px text-right">
               {row.value}
-              {row.hint ? <span className="ml-1 text-ink/50">{row.hint}</span> : null}
+              {row.hint ? <span className="ml-1 text-ink-subtle">{row.hint}</span> : null}
             </dd>
           </div>
         ))}

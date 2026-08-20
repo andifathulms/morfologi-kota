@@ -141,6 +141,54 @@ export const sensitivitySummaryEntrySchema = z.object({
 export type SensitivitySummaryEntry = z.infer<typeof sensitivitySummaryEntrySchema>
 
 /**
+ * Which of the walking network's edges the driving network does not contain.
+ *
+ * Membership is decided by the tag rule, not by geometry: an edge is walk-only
+ * when the OSM way it came from is not admitted to the driving network under
+ * this mapping. That is a rule in `lib/tags` a reader can look up, rather than
+ * a proximity heuristic they would have to trust — and it is why the number is
+ * citable. It also moves when the mapping moves, which is correct: under
+ * `strict-drive` a service road becomes walk-only, because that is precisely
+ * what changing the mapping means.
+ *
+ * Stored as indices into the geometry arrays rather than as a duplicate set of
+ * coordinates. Two thousand booleans per site is ten kilobytes; two thousand
+ * indices is two, and duplicating the coordinates would have been thirty.
+ */
+export const walkOnlySchema = z.object({
+  /** Indices into `walk.geometry`. */
+  indices: z.array(z.number().int().min(0)),
+  /** Indices into `walk.plateGeometry`, which drops sub-pixel stubs. */
+  plateIndices: z.array(z.number().int().min(0)),
+  /** Length carried by those edges. Descriptive, like every other length. */
+  lengthM: z.number().min(0),
+  /** Share of the walking network's length they represent, [0, 1]. */
+  shareOfWalk: z.number().min(0).max(1),
+})
+export type WalkOnly = z.infer<typeof walkOnlySchema>
+
+/**
+ * The same disc drawn under an alternative tag mapping.
+ *
+ * PRD §6.5 makes the mapping a control rather than a constant, and the
+ * assumptions page has always reported its effect as a table of numbers. A
+ * table is the least persuasive register available for the claim "this is a
+ * modelling choice": the convincing version is watching the lines leave.
+ *
+ * Plate-scale geometry only, and only for the exemplar sites named in
+ * `data/sites/index.ts` — carrying it for every site under every mapping would
+ * roughly quadruple the derived database for a figure shown twice.
+ */
+export const alternateGeometrySchema = z.object({
+  mappingId: z.string(),
+  drivePlateGeometry: z.array(polylineSchema),
+  walkPlateGeometry: z.array(polylineSchema),
+  driveTotalLengthM: z.number().min(0),
+  walkTotalLengthM: z.number().min(0),
+})
+export type AlternateGeometry = z.infer<typeof alternateGeometrySchema>
+
+/**
  * A site bundle. Both modes are required: a site with one mode is incomplete,
  * not a partial result (CLAUDE.md, Invariants §4).
  */
@@ -160,8 +208,20 @@ export const siteBundleSchema = z.object({
     geometry: z.array(polylineSchema),
     plateGeometry: z.array(polylineSchema),
   }),
+  /** What walking adds to driving here — the gap, as a set of edges. */
+  walkOnly: walkOnlySchema,
   coverage: coverageSchema,
   sensitivity: z.array(sensitivityEntrySchema).min(1),
+  /** Present only for the exemplar sites. */
+  alternateGeometry: z.array(alternateGeometrySchema).optional(),
+  /*
+   * This site's own extract timestamp.
+   *
+   * Sites are fetched sequentially and spaced, so OpenStreetMap moves between
+   * them: the manifest's joined string describes the set, and this describes
+   * the site. A reader reproducing one number needs this one.
+   */
+  extractVersion: z.string().min(1),
   attribution: z.string().min(10),
   licence: z.literal('ODbL-1.0'),
 })
@@ -179,6 +239,10 @@ export const manifestEntrySchema = z.object({
   coverage: coverageSchema,
   drive: modeMetricsSchema.omit({ rose: true }).extend({ rose: roseSchema }),
   walk: modeMetricsSchema.omit({ rose: true }).extend({ rose: roseSchema }),
+  /** Length and share of the walking network the driving network lacks. */
+  walkOnly: walkOnlySchema.omit({ indices: true, plateIndices: true }),
+  /** This site's own extract timestamp, not the set's. */
+  extractVersion: z.string().min(1),
 })
 export type ManifestEntry = z.infer<typeof manifestEntrySchema>
 
@@ -211,6 +275,52 @@ export const manifestSchema = z.object({
   sensitivitySummary: z.array(sensitivitySummaryEntrySchema),
 })
 export type Manifest = z.infer<typeof manifestSchema>
+
+/**
+ * The candidate survey — the sites that were measured and not adopted.
+ *
+ * `pnpm data:survey` measures candidate centres at the same radius under the
+ * same mapping the pipeline uses, and selection is on data completeness only,
+ * never on the metrics: choosing sites by their entropy would be choosing the
+ * finding in advance (PRD §4).
+ *
+ * That argument used to be addressed to nobody but the compiler. The results
+ * lived in a dev script's stdout, so a reader had no way to check that the
+ * sixteen sites were not picked for their numbers, and no way to see the
+ * strongest result the project currently holds: that most Indonesian
+ * neighbourhoods are not yet mapped densely enough to be asked the question.
+ *
+ * This is a statement about OpenStreetMap, not about the places. A candidate
+ * below the threshold has unmapped alleys, not absent ones.
+ */
+export const surveyCandidateSchema = z.object({
+  label: z.string().min(2),
+  type: z.string().min(2),
+  latDeg: z.number(),
+  lonDeg: z.number(),
+  note: z.string().min(2),
+  pedestrianShare: z.number().min(0).max(1),
+  pedestrianLengthM: z.number().min(0),
+  walkLengthM: z.number().min(0),
+  driveLengthM: z.number().min(0),
+  confidence: z.enum(['thin', 'moderate', 'good']),
+  /** Whether this candidate is in the comparison set, and under which slug. */
+  adoptedAs: z.string().nullable(),
+  /** The candidate's own extract timestamp. */
+  extractVersion: z.string().min(1),
+})
+export type SurveyCandidate = z.infer<typeof surveyCandidateSchema>
+
+export const surveySchema = z.object({
+  radiusM: z.number().positive(),
+  mappingId: z.string(),
+  thinThreshold: z.number().min(0).max(1),
+  goodThreshold: z.number().min(0).max(1),
+  candidates: z.array(surveyCandidateSchema).min(1),
+  attribution: z.string().min(10),
+  licence: z.literal('ODbL-1.0'),
+})
+export type Survey = z.infer<typeof surveySchema>
 
 export const ODBL_ATTRIBUTION =
   'Data jalan © OpenStreetMap contributors, ODbL 1.0. Basis data turunan ini ditawarkan dengan lisensi yang sama.'

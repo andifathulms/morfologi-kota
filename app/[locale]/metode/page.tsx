@@ -1,11 +1,12 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { loadManifest } from '@/lib/data'
-import { LOCALES, isLocale, t, type Locale, type Bilingual } from '@/lib/i18n'
+import Link from 'next/link'
+import { loadManifest, loadSurvey } from '@/lib/data'
+import { LOCALES, d, isLocale, t, type Locale, type Bilingual } from '@/lib/i18n'
 import { DEFAULT_TAG_MAPPING } from '@/lib/tags'
 import { GOOD_COVERAGE_THRESHOLD, THIN_COVERAGE_THRESHOLD } from '@/lib/morphology'
 import { percent } from '@/lib/format'
-import { manifestDataPath, siteDataPath } from '@/lib/paths'
+import { manifestDataPath, siteDataPath, surveyDataPath } from '@/lib/paths'
 
 export function generateStaticParams(): { locale: Locale }[] {
   return LOCALES.map((locale) => ({ locale }))
@@ -105,6 +106,21 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) notFound()
   const locale: Locale = params.locale
   const manifest = loadManifest()
+  const survey = loadSurvey()
+
+  /*
+   * Counted from the survey, never written down. A number in prose that says
+   * five when the file says six is the kind of thing nobody notices.
+   */
+  const cleared = survey.candidates.filter((candidate) => candidate.confidence !== 'thin').length
+  const perumahanCandidates = survey.candidates.filter(
+    (candidate) => candidate.type === 'perumahan',
+  )
+  const perumahanShares = perumahanCandidates.map((candidate) => candidate.pedestrianShare)
+  const perumahanRange =
+    perumahanShares.length === 0
+      ? '—'
+      : `${percent(Math.min(...perumahanShares))}–${percent(Math.max(...perumahanShares))}`
   const limitations = limitationsFor(
     manifest.sites.filter((site) => site.coverage.confidence.type === 'thin').length,
     manifest.sites.length,
@@ -136,17 +152,17 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
           {locale === 'id' ? 'Parameter' : 'Parameters'}
         </h2>
         <dl className="tabular mt-2 grid grid-cols-[auto_1fr] gap-x-6 font-mono text-xs">
-          <dt className="text-ink/70">{locale === 'id' ? 'Jari-jari sampel' : 'Sampling radius'}</dt>
+          <dt className="text-ink-subtle">{locale === 'id' ? 'Jari-jari sampel' : 'Sampling radius'}</dt>
           <dd className="m-0">{manifest.radiusM} m</dd>
-          <dt className="text-ink/70">{locale === 'id' ? 'Jumlah bin' : 'Bin count'}</dt>
+          <dt className="text-ink-subtle">{locale === 'id' ? 'Jumlah bin' : 'Bin count'}</dt>
           <dd className="m-0">{manifest.binCount}</dd>
-          <dt className="text-ink/70">{locale === 'id' ? 'Penimbang' : 'Weighting'}</dt>
+          <dt className="text-ink-subtle">{locale === 'id' ? 'Penimbang' : 'Weighting'}</dt>
           <dd className="m-0">{locale === 'id' ? 'panjang ruas' : 'segment length'}</dd>
-          <dt className="text-ink/70">{locale === 'id' ? 'Pemetaan tag' : 'Tag mapping'}</dt>
+          <dt className="text-ink-subtle">{locale === 'id' ? 'Pemetaan tag' : 'Tag mapping'}</dt>
           <dd className="m-0">{manifest.mappingId}</dd>
-          <dt className="text-ink/70">{locale === 'id' ? 'Versi ekstrak' : 'Extract version'}</dt>
+          <dt className="text-ink-subtle">{locale === 'id' ? 'Versi ekstrak' : 'Extract version'}</dt>
           <dd className="m-0">{manifest.extractVersion}</dd>
-          <dt className="text-ink/70">{locale === 'id' ? 'Jumlah lokasi' : 'Sites'}</dt>
+          <dt className="text-ink-subtle">{locale === 'id' ? 'Jumlah lokasi' : 'Sites'}</dt>
           <dd className="m-0">{manifest.sites.length}</dd>
         </dl>
         <p className="mt-4 font-serif text-md leading-relaxed">
@@ -160,7 +176,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
         </h2>
         <dl className="mt-4">
           {definitions.map((definition) => (
-            <div key={definition.term} className="mt-4 border-t border-rule pt-2">
+            <div key={definition.term} className="mt-4 border-t border-rule-strong pt-2">
               <dt className="font-mono text-xs font-semibold">{definition.term}</dt>
               <dd className="m-0 mt-1 font-serif text-md leading-relaxed">
                 {t(definition.body, locale)}
@@ -190,6 +206,95 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
             {t(limitation, locale)}
           </p>
         ))}
+      </section>
+
+      {/*
+       * Site selection, documented.
+       *
+       * `data:survey` has always measured candidate centres before they were
+       * adopted, at the same radius under the same mapping, selecting on data
+       * completeness and never on the metrics — because choosing sites by
+       * their entropy would be choosing the finding in advance (PRD §4). That
+       * argument used to live in a script's header and its results in stdout,
+       * so a sceptical reader had no way to check either. Here they are.
+       */}
+      <section className="mt-12">
+        <h2 id="pemilihan" className="m-0 font-serif text-lg font-semibold">
+          {d('selectionHeading', locale)}
+        </h2>
+        <p className="mt-2 max-w-prose font-serif text-md leading-relaxed">
+          {locale === 'id'
+            ? `Kandidat diukur sebelum diadopsi, pada jari-jari yang sama (${survey.radiusM} m) dan pemetaan tag yang sama (“${survey.mappingId}”) dengan yang dipakai pipeline — survei yang menyampel berbeda tidak akan memprediksi apa pun. Pemilihan dilakukan atas dasar kelengkapan data saja, tidak pernah atas dasar metriknya: memilih lokasi menurut entropinya berarti memilih temuan sejak awal.`
+            : `Candidates are measured before they are adopted, at the same radius (${survey.radiusM} m) and under the same tag mapping (“${survey.mappingId}”) the pipeline uses — a survey that sampled differently would predict nothing. Selection is on data completeness only, never on the metrics: picking sites by their entropy would be choosing the finding in advance.`}
+        </p>
+        <p className="mt-4 max-w-prose border-l-2 border-ink-subtle pl-4 font-serif text-md leading-relaxed">
+          {locale === 'id'
+            ? `${cleared} dari ${survey.candidates.length} kandidat yang disurvei melewati ambang cakupan tipis (${percent(survey.thinThreshold, 0)}). Dari ${perumahanCandidates.length} kandidat perumahan kluster, tidak satu pun lolos — ${perumahanRange}. Itulah batas dari apa yang dapat dikatakan perbandingan kampung-versus-perumahan saat ini, dan itu pernyataan tentang OpenStreetMap, bukan tentang tempat-tempatnya: gangnya belum terpetakan, bukan tidak ada.`
+            : `${cleared} of ${survey.candidates.length} surveyed candidates clear the thin-coverage threshold (${percent(survey.thinThreshold, 0)}). Of the ${perumahanCandidates.length} perumahan cluster candidates, not one does — ${perumahanRange}. That bounds what the kampung-versus-perumahan comparison can currently say, and it is a statement about OpenStreetMap rather than about the places: the gang are unmapped, not absent.`}
+        </p>
+        <div className="mt-4 overflow-x-auto">
+          <table className="tabular w-full border-collapse font-mono text-xs">
+            <caption className="sr-only">
+              {locale === 'id'
+                ? 'Kandidat yang disurvei, diurutkan menurut cakupan gang, dengan status adopsinya.'
+                : 'Surveyed candidates, sorted by footway coverage, with whether each was adopted.'}
+            </caption>
+            <thead>
+              <tr className="border-b border-rule-strong text-left">
+                <th scope="col" className="py-1 pr-4 font-normal">
+                  {d('surveyCandidate', locale)}
+                </th>
+                <th scope="col" className="py-1 pr-4 font-normal">
+                  {locale === 'id' ? 'Jenis' : 'Type'}
+                </th>
+                <th scope="col" className="py-1 pr-4 text-right font-normal">
+                  {d('coverage', locale)}
+                </th>
+                <th scope="col" className="py-1 pr-4 font-normal">
+                  {locale === 'id' ? 'Keyakinan' : 'Confidence'}
+                </th>
+                <th scope="col" className="py-1 pr-4 font-normal">
+                  {d('surveyStatus', locale)}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {survey.candidates.map((candidate) => (
+                <tr key={candidate.label} className="border-b border-rule-faint">
+                  <th scope="row" className="py-px pr-4 text-left font-normal">
+                    {candidate.label}
+                    <span className="ml-2 text-ink-subtle">{candidate.note}</span>
+                  </th>
+                  <td className="py-px pr-4 text-ink-subtle">{candidate.type}</td>
+                  <td className="py-px pr-4 text-right">{percent(candidate.pedestrianShare)}</td>
+                  <td className="py-px pr-4">
+                    {candidate.confidence === 'thin' ? '⚑ ' : ''}
+                    {candidate.confidence}
+                  </td>
+                  <td className="py-px pr-4">
+                    {candidate.adoptedAs === null ? (
+                      <span className="text-ink-subtle">{d('surveyNotAdopted', locale)}</span>
+                    ) : (
+                      <Link href={`/${locale}/lokasi/${candidate.adoptedAs}`}>
+                        {d('surveyAdopted', locale)}
+                      </Link>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p className="mt-4 max-w-prose font-serif text-md leading-relaxed">
+          {locale === 'id'
+            ? 'Kandidat di bawah ambang tidak dibuang diam-diam — ia diukur, dicatat, dan ditampilkan di sini. Menambahkan kluster perumahan yang terpetakan rapat, atau memetakannya, masih menjadi hal paling berguna yang bisa dilakukan siapa pun terhadap proyek ini.'
+            : 'A candidate below the threshold is not quietly discarded — it is measured, recorded, and shown here. Adding a well-mapped perumahan cluster, or mapping one, remains the single most useful thing anyone could do to this project.'}
+        </p>
+        <p className="mt-2 font-mono text-xs leading-relaxed">
+          <a href={surveyDataPath()} download>
+            {d('downloadSurvey', locale)}
+          </a>
+        </p>
       </section>
 
       <section className="mt-12">
@@ -224,7 +329,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
             <a href={manifestDataPath()} download>
               manifest.json
             </a>{' '}
-            <span className="text-ink/60">
+            <span className="text-ink-subtle">
               {locale === 'id'
                 ? '— parameter dan metrik seluruh lokasi, tanpa geometri'
                 : '— parameters and metrics for every site, without the geometry'}
@@ -235,7 +340,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
               <a href={siteDataPath(site.slug)} download>
                 {site.slug}.json
               </a>{' '}
-              <span className="text-ink/60">{site.name}</span>
+              <span className="text-ink-subtle">{site.name}</span>
             </li>
           ))}
         </ul>

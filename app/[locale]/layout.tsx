@@ -102,11 +102,25 @@ export default function LocaleLayout({
           {locale === 'id' ? 'Langsung ke isi' : 'Skip to content'}
         </a>
         <div className="mx-auto max-w-plate px-4">
-          <header className="flex flex-wrap items-baseline justify-between gap-4 border-b border-rule py-6">
-            <div className="flex flex-wrap items-baseline gap-6">
-              <Link href={`/${locale}/lempeng`} className="font-serif text-lg font-semibold no-underline">
-                {d('siteTitle', locale)}
-              </Link>
+          {/*
+            The masthead carries the standing one-line description, not just
+            the name. A reader landing on any page — the plate, a pair, the
+            assumptions — should be told in one sentence what this measures
+            before they meet a metric. It was written and unused until now.
+          */}
+          <header className="flex flex-wrap items-end justify-between gap-4 border-b border-rule-strong py-6">
+            <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
+              <div>
+                <Link
+                  href={`/${locale}/lempeng`}
+                  className="font-serif text-xl font-semibold leading-tight no-underline"
+                >
+                  {d('siteTitle', locale)}
+                </Link>
+                <p className="m-0 mt-1 max-w-prose font-sans text-xs leading-snug text-ink-subtle">
+                  {d('tagline', locale)}
+                </p>
+              </div>
               <nav
                 aria-label={locale === 'id' ? 'Bagian utama' : 'Sections'}
                 className="flex items-baseline gap-6 font-sans text-base"
@@ -137,7 +151,7 @@ export default function LocaleLayout({
             stated wherever a number is, and they are stated again here.
           */}
           <footer
-            className="mt-16 border-t border-rule py-6 font-mono text-xs leading-relaxed"
+            className="mt-16 border-t border-rule-strong py-6 font-mono text-xs leading-relaxed"
             aria-label={locale === 'id' ? 'Sumber data dan parameter' : 'Data source and parameters'}
           >
             <p>{manifest.attribution}</p>

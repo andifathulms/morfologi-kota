@@ -38,7 +38,7 @@ export function CoverageBadge({
         {d('coverage', locale)} {percent(coverage.pedestrianShare)} · {label}
       </p>
       {thin && verbose ? (
-        <p className="mt-1 max-w-prose border-l-2 border-ink/30 pl-2 font-sans text-xs leading-snug">
+        <p className="mt-1 max-w-prose border-l-2 border-ink-subtle pl-2 font-sans text-xs leading-snug">
           {d('thinWarning', locale)}
         </p>
       ) : null}

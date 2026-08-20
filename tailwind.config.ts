@@ -7,41 +7,52 @@ import type { Config } from 'tailwindcss'
 const config: Config = {
   content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}'],
   theme: {
+    /*
+     * Every value here resolves to a custom property declared in
+     * `app/globals.css`. That is the point: the SVG drawings and the generated
+     * sort rules read the properties directly, so if the theme carried literal
+     * values the two layers could disagree — and under `prefers-contrast` they
+     * used to, which is why that block needed `!important` overrides.
+     */
     // DESIGN.md §3 — monochrome plus exactly two hues. No red, no ramp.
     colors: {
       transparent: 'transparent',
       current: 'currentColor',
-      plate: '#FAF9F6',
-      ink: '#14140F',
-      rule: '#D8D5CC',
-      drive: '#2A5D7C',
-      walk: '#A85B32',
+      plate: 'var(--plate)',
+      ink: 'var(--ink)',
+      'ink-muted': 'var(--ink-muted)',
+      'ink-subtle': 'var(--ink-subtle)',
+      'rule-strong': 'var(--rule-strong)',
+      rule: 'var(--rule)',
+      'rule-faint': 'var(--rule-faint)',
+      drive: 'var(--drive)',
+      walk: 'var(--walk)',
     },
     // DESIGN.md §1 — 4px base.
     spacing: {
       0: '0px',
-      1: '4px',
-      2: '8px',
-      3: '12px',
-      4: '16px',
-      6: '24px',
-      8: '32px',
-      12: '48px',
-      16: '64px',
-      24: '96px',
-      32: '128px',
+      1: 'var(--space-1)',
+      2: 'var(--space-2)',
+      3: 'var(--space-3)',
+      4: 'var(--space-4)',
+      6: 'var(--space-6)',
+      8: 'var(--space-8)',
+      12: 'var(--space-12)',
+      16: 'var(--space-16)',
+      24: 'var(--space-24)',
+      32: 'var(--space-32)',
       px: '1px',
       full: '100%',
     },
     // DESIGN.md §7 — 1.25 ratio, floor 16px (14 is captions/citations only).
     fontSize: {
-      xs: ['14px', '1.45'],
-      base: ['16px', '1.55'],
-      md: ['18px', '1.5'],
-      lg: ['22px', '1.35'],
-      xl: ['28px', '1.25'],
-      '2xl': ['36px', '1.15'],
-      '3xl': ['46px', '1.1'],
+      xs: ['var(--text-xs)', '1.45'],
+      base: ['var(--text-base)', '1.55'],
+      md: ['var(--text-md)', '1.5'],
+      lg: ['var(--text-lg)', '1.35'],
+      xl: ['var(--text-xl)', '1.25'],
+      '2xl': ['var(--text-2xl)', '1.15'],
+      '3xl': ['var(--text-3xl)', '1.1'],
     },
     fontWeight: { normal: '400', semibold: '600' },
     borderRadius: { none: '0', DEFAULT: '2px', sm: '2px' }, // §1 — radius 2px only

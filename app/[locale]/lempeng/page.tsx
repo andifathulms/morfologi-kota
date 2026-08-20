@@ -8,6 +8,8 @@ import { LOCALES, d, isLocale, type Locale } from '@/lib/i18n'
 import { manifestDataPath } from '@/lib/paths'
 import { SITE_TYPE_LABEL, t } from '@/lib/i18n'
 import { kilometres, percent, signed, signedPercent } from '@/lib/format'
+import { NetworkDrawing } from '@/components/network/NetworkDrawing'
+import { ModeKey, ModeSwatch } from '@/components/legend/ModeKey'
 
 export function generateStaticParams(): { locale: Locale }[] {
   return LOCALES.map((locale) => ({ locale }))
@@ -108,8 +110,37 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
     max: Math.max(...rows.map(pick)),
   })
 
+  /*
+   * The worked example.
+   *
+   * A stranger used to meet four hundred words before the first drawing, which
+   * is a long way to ask someone to read on trust that two networks differ.
+   * One site, both networks, at the top — the claim demonstrated before it is
+   * explained.
+   *
+   * Chosen, not written down: the largest walk-over-drive gain among the sites
+   * whose coverage allows the comparison at all, preferring a kampung because
+   * that is where the gap is the premise rather than an artefact. Selection is
+   * on coverage and on network length — never on entropy, which would be
+   * choosing the finding in advance (PRD §4).
+   */
+  const heroRow = readable.find((row) => row.site.type === 'kampung') ?? readable[0]
+  const hero =
+    heroRow === undefined
+      ? undefined
+      : { row: heroRow, bundle: loadBundle(heroRow.site.slug) }
+
   return (
     <div>
+      {/*
+       * Reading order, deliberately.
+       *
+       * The claim, then the claim demonstrated, then the count, then the
+       * caveat, then the numbers. It used to be claim, method, operational
+       * detail, caveat, numbers, table — four hundred words and no drawing.
+       * Nothing has been cut: the coverage caveat is still ahead of every
+       * figure it qualifies, which is the only ordering PRD §4 permits.
+       */}
       <section className="mb-12 max-w-prose">
         <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">
           {locale === 'id'
@@ -121,23 +152,86 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
             ? 'Entropi orientasi jaringan jalan menurut metode Boeing (2019), dihitung untuk dua jaringan yang berbeda di lokasi yang sama: jaringan yang dapat dikendarai, dan jaringan yang dapat dijalani kaki. Kampung terjalin rapat bagi pejalan kaki dan renggang bagi kendaraan; kluster berpagar kebalikannya. Metrik berbasis jaringan kendaraan tidak dapat melihat perbedaan itu.'
             : 'Street network orientation entropy after Boeing (2019), computed for two different networks in the same place: the one you can drive and the one you can walk. A kampung is densely connected on foot and barely by car; a gated cluster is the reverse. A driving-network metric cannot see the difference.'}
         </p>
-        <p className="mt-4 font-serif text-md leading-relaxed">
-          {locale === 'id'
-            ? 'Setiap kartu memakai jari-jari sampel yang sama, mencetak jari-jari itu, dan melaporkan seberapa banyak gang yang sudah terpetakan di OpenStreetMap. Lokasi dapat diurutkan, tetapi tidak dinilai.'
-            : 'Every card uses the same sampling radius, prints it, and reports how much of its gang network is mapped in OpenStreetMap. Sites can be sorted; they are not rated.'}
-        </p>
-        <p className="mt-4 max-w-prose border-l-2 border-ink/40 pl-4 font-serif text-md leading-relaxed">
-          {locale === 'id'
-            ? `Yang ditemukan lebih dulu adalah temuan tentang datanya: ${thin} dari ${manifest.sites.length} lokasi memiliki cakupan gang yang tipis di OpenStreetMap. Untuk lokasi-lokasi itu, jaringan pejalan kakinya hampir sama dengan jaringan kendaraannya — bukan karena gangnya tidak ada, melainkan karena belum terpetakan. Selisih kendara/jalan kaki di sana tidak dapat dibaca sebagai temuan tentang tempatnya.`
-            : `The first finding is a finding about the data: ${thin} of ${manifest.sites.length} sites have thin gang coverage in OpenStreetMap. For those, the walking network is nearly the driving network — not because the gang are not there, but because they are not mapped. The drive/walk gap at those sites cannot be read as a finding about the place.`}
-        </p>
-        <p className="tabular mt-4 font-mono text-xs">
+      </section>
+
+      {hero !== undefined ? (
+        <section className="mb-12" aria-labelledby="contoh">
+          <h2
+            id="contoh"
+            className="m-0 font-sans text-base font-semibold uppercase tracking-wide text-ink-subtle"
+          >
+            {d('exampleHeading', locale)}
+          </h2>
+          <figure className="m-0 mt-3">
+            <div className="grid max-w-[42rem] grid-cols-2 gap-6">
+              {(['drive', 'walk'] as const).map((mode) => (
+                <div key={mode}>
+                  <p className="m-0 mb-1 flex items-center gap-2 font-sans text-base font-semibold">
+                    <ModeSwatch mode={mode} />
+                    <span style={{ color: mode === 'drive' ? 'var(--drive)' : 'var(--walk)' }}>
+                      {d(mode, locale)}
+                    </span>
+                  </p>
+                  <NetworkDrawing
+                    geometry={hero.bundle[mode].plateGeometry}
+                    radiusM={hero.bundle.radiusM}
+                    size={320}
+                    responsive
+                    mode={mode}
+                    label={`${hero.row.site.name} — ${d(mode, locale)}`}
+                    instanceId="contoh"
+                  />
+                  <p className="tabular m-0 mt-1 font-mono text-xs">
+                    {kilometres(hero.row.site[mode].totalLengthM)}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <figcaption className="mt-3 max-w-prose font-serif text-md leading-relaxed">
+              {locale === 'id'
+                ? `${hero.row.site.name}, ${hero.row.site.city}. Lingkaran yang sama, jari-jari ${hero.bundle.radiusM} m, ekstrak yang sama — ${kilometres(hero.row.site.drive.totalLengthM)} jalan bila Anda mengemudi, ${kilometres(hero.row.site.walk.totalLengthM)} bila Anda berjalan kaki. Selisih itulah yang diukur di sini, untuk setiap lokasi, dengan cara yang sama.`
+                : `${hero.row.site.name}, ${hero.row.site.city}. The same disc, ${hero.bundle.radiusM} m radius, the same extract — ${kilometres(hero.row.site.drive.totalLengthM)} of street if you drive, ${kilometres(hero.row.site.walk.totalLengthM)} if you walk. That difference is what is measured here, for every site, the same way.`}{' '}
+              <Link href={`/${locale}/lokasi/${hero.row.site.slug}`}>
+                {d('openPair', locale)}
+              </Link>
+            </figcaption>
+          </figure>
+        </section>
+      ) : null}
+
+      <section className="mb-12 max-w-prose">
+        <p className="tabular m-0 font-mono text-xs">
           {manifest.sites.length} {locale === 'id' ? 'lokasi' : 'sites'} · r = {manifest.radiusM} m ·
           36 bin ·{' '}
           {locale === 'id'
             ? `${thin} bertanda cakupan gang tipis`
             : `${thin} flagged for thin footway coverage`}
         </p>
+
+        {/* The caveat keeps every word and keeps its place ahead of the
+            numbers. What changes is that it now reads as a caveat, with a
+            heading of its own, rather than as the third paragraph of the
+            introduction. */}
+        <aside className="mt-4 border-l-2 border-ink-subtle pl-4" aria-labelledby="peringatan">
+          <h2 id="peringatan" className="m-0 font-sans text-base font-semibold">
+            {d('caveatHeading', locale)}
+          </h2>
+          <p className="mt-2 font-serif text-md leading-relaxed">
+            {locale === 'id'
+              ? `Yang ditemukan lebih dulu adalah temuan tentang datanya: ${thin} dari ${manifest.sites.length} lokasi memiliki cakupan gang yang tipis di OpenStreetMap. Untuk lokasi-lokasi itu, jaringan pejalan kakinya hampir sama dengan jaringan kendaraannya — bukan karena gangnya tidak ada, melainkan karena belum terpetakan. Selisih kendara/jalan kaki di sana tidak dapat dibaca sebagai temuan tentang tempatnya.`
+              : `The first finding is a finding about the data: ${thin} of ${manifest.sites.length} sites have thin gang coverage in OpenStreetMap. For those, the walking network is nearly the driving network — not because the gang are not there, but because they are not mapped. The drive/walk gap at those sites cannot be read as a finding about the place.`}
+          </p>
+          <p className="mt-2 font-sans text-base leading-snug text-ink-muted">
+            {locale === 'id'
+              ? 'Setiap kartu memakai jari-jari sampel yang sama, mencetak jari-jari itu, dan melaporkan seberapa banyak gang yang sudah terpetakan di OpenStreetMap. Lokasi dapat diurutkan, tetapi tidak dinilai.'
+              : 'Every card uses the same sampling radius, prints it, and reports how much of its gang network is mapped in OpenStreetMap. Sites can be sorted; they are not rated.'}{' '}
+            <Link href={`/${locale}/metode#pemilihan`}>
+              {locale === 'id'
+                ? 'Kandidat yang diukur dan tidak diadopsi tercatat pada halaman metode.'
+                : 'The candidates that were measured and not adopted are recorded on the method page.'}
+            </Link>
+          </p>
+        </aside>
       </section>
 
       {readable.length > 0 && kampung.length > 0 && planned.length > 0 ? (
@@ -165,7 +259,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
                   : 'Walk minus drive at the sites with adequate footway coverage, sorted by network length gained.'}
               </caption>
               <thead>
-                <tr className="border-b border-rule text-left">
+                <tr className="border-b border-rule-strong text-left">
                   <th scope="col" className="py-1 pr-4 font-normal">
                     {locale === 'id' ? 'Lokasi' : 'Site'}
                   </th>
@@ -188,11 +282,11 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
               </thead>
               <tbody>
                 {readable.map((row) => (
-                  <tr key={row.site.slug} className="border-b border-rule/40">
+                  <tr key={row.site.slug} className="border-b border-rule-faint">
                     <th scope="row" className="py-px pr-4 text-left font-normal">
                       <Link href={`/${locale}/lokasi/${row.site.slug}`}>{row.site.name}</Link>
                     </th>
-                    <td className="py-px pr-4 text-ink/70">
+                    <td className="py-px pr-4 text-ink-subtle">
                       {t(
                         SITE_TYPE_LABEL[row.site.type] ?? { id: row.site.type, en: row.site.type },
                         locale,
@@ -214,12 +308,15 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
         </section>
       ) : null}
 
+      <ModeKey locale={locale} className="mb-6 max-w-prose" />
+
       <PlateGrid
         sites={sites}
         options={options}
         locale={locale}
         sortLabel={d('sortBy', locale)}
         nameLabel={d('sortName', locale)}
+        note={d('sortNotRanking', locale)}
       >
         {cards}
       </PlateGrid>

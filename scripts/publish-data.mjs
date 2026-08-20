@@ -10,7 +10,7 @@
  * and is what is committed.
  */
 
-import { cp, mkdir, rm } from 'node:fs/promises'
+import { copyFile, cp, mkdir, rm } from 'node:fs/promises'
 import { join } from 'node:path'
 
 const from = join(process.cwd(), 'data', 'out')
@@ -20,4 +20,11 @@ await rm(to, { recursive: true, force: true })
 await mkdir(to, { recursive: true })
 await cp(from, to, { recursive: true })
 
-console.log('publish-data: data/out → public/data')
+/*
+ * The candidate survey is part of the derived database too — same radius, same
+ * mapping, same code — so it is offered on the same terms. It lives outside
+ * `data/out` because `data:build` wipes that directory.
+ */
+await copyFile(join(process.cwd(), 'data', 'survey.json'), join(to, 'survey.json'))
+
+console.log('publish-data: data/out + data/survey.json → public/data')

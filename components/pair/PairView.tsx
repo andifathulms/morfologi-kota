@@ -1,10 +1,11 @@
 import type { SiteBundle } from '@/data/sites'
-import { NetworkDrawing } from '@/components/network/NetworkDrawing'
+import { NetworkDifferenceDrawing, NetworkDrawing } from '@/components/network/NetworkDrawing'
 import { Rose } from '@/components/rose/Rose'
 import { MetricColumn } from '@/components/metrics/MetricColumn'
 import { DeltaColumn } from '@/components/metrics/DeltaColumn'
 import { RoseTable } from '@/components/table/RoseTable'
 import { d, type Locale } from '@/lib/i18n'
+import { kilometres, percent } from '@/lib/format'
 
 /**
  * The pair — the reason the project exists (PRD §6.2).
@@ -35,13 +36,54 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
   const delta = (
     <div>
       <div className="mb-4">
-        <p className="m-0 font-sans text-xs text-ink/70">
+        <p className="m-0 font-sans text-xs text-ink-subtle">
           {locale === 'id' ? 'Kedua rose ditumpuk' : 'Both roses overlaid'}
         </p>
         <Rose locale={locale} size={200} series={[driveRose, walkRose]} />
       </div>
       <DeltaColumn drive={drive.metrics} walk={walk.metrics} locale={locale} />
     </div>
+  )
+
+  /*
+   * The difference, drawn.
+   *
+   * Two discs side by side ask the reader to subtract by eye, and they do not:
+   * they read the Δ column, which is a scalar. This is the same subtraction
+   * rendered, so that a fine mesh through a kampung and two cut-throughs at
+   * the edge of a cluster stop looking like the same finding.
+   */
+  const difference = (
+    <figure className="m-0">
+      <h3 className="m-0 font-sans text-base font-semibold">{d('differenceHeading', locale)}</h3>
+      <div className="mt-2">
+        <NetworkDifferenceDrawing
+          geometry={walk.geometry}
+          walkOnlyIndices={bundle.walkOnly.indices}
+          radiusM={radiusM}
+          size={420}
+          responsive
+          label={`${bundle.site.name} — ${d('differenceHeading', locale)}`}
+        />
+      </div>
+      <dl className="tabular m-0 mt-2 grid grid-cols-[1fr_auto] gap-x-4 font-mono text-xs">
+        <dt className="border-b border-rule-faint py-px text-ink-subtle">
+          {d('walkOnlyLength', locale)}
+        </dt>
+        <dd className="m-0 border-b border-rule-faint py-px text-right">
+          {kilometres(bundle.walkOnly.lengthM)}
+        </dd>
+        <dt className="border-b border-rule-faint py-px text-ink-subtle">
+          {d('walkOnlyShare', locale)}
+        </dt>
+        <dd className="m-0 border-b border-rule-faint py-px text-right">
+          {percent(bundle.walkOnly.shareOfWalk)}
+        </dd>
+      </dl>
+      <figcaption className="mt-2 max-w-prose font-sans text-xs leading-snug text-ink-muted">
+        {d('differenceCaption', locale)}
+      </figcaption>
+    </figure>
   )
 
   return (
@@ -67,7 +109,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
 
         {/* Desktop: the delta sits between the two panes, so the comparison is
             read across rather than remembered. */}
-        <div className="hidden md:col-start-2 md:block md:border-x md:border-rule md:px-6">
+        <div className="hidden md:col-start-2 md:block md:border-x md:border-rule-strong md:px-6">
           {delta}
         </div>
 
@@ -91,7 +133,9 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
       </div>
 
       {/* Narrow screens swipe between the two panes with the delta beneath. */}
-      <div className="mt-6 border-t border-rule pt-4 md:hidden">{delta}</div>
+      <div className="mt-6 border-t border-rule-strong pt-4 md:hidden">{delta}</div>
+
+      <section className="mt-12 border-t border-rule-strong pt-6">{difference}</section>
 
       <RoseTable
         locale={locale}

@@ -65,14 +65,14 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
 
       <header className="mt-4 max-w-prose">
         <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">{site.name}</h1>
-        <p className="m-0 font-sans text-base text-ink/70">
+        <p className="m-0 font-sans text-base text-ink-subtle">
           {site.city} · {t(SITE_TYPE_LABEL[site.type] ?? { id: site.type, en: site.type }, locale)}
         </p>
         <p className="mt-4 font-serif text-md leading-relaxed">{t(site.note, locale)}</p>
       </header>
 
       {/* DESIGN.md §9 — the legend contract: radius, mode and tag set, coverage. */}
-      <div className="tabular my-6 border-y border-rule py-3 font-mono text-xs">
+      <div className="tabular my-6 border-y border-rule-strong py-3 font-mono text-xs">
         <p className="m-0">
           {d('radius', locale)} {bundle.radiusM} m · 36 bin · {d('tagMapping', locale)} “
           {bundle.mappingId}” · {t(DEFAULT_TAG_MAPPING.note, locale)}
@@ -80,10 +80,21 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
         <div className="mt-1">
           <CoverageBadge coverage={bundle.coverage} locale={locale} verbose />
         </div>
+        {/*
+          This site's own extract, not the set's. The manifest joins every
+          timestamp with slashes, which describes the comparison set and tells
+          a reader reproducing one number nothing at all.
+        */}
+        <p className="m-0 mt-1">
+          {d('extractVersion', locale)} {bundle.extractVersion}
+        </p>
+        <p className="m-0 mt-1 max-w-prose font-sans text-xs leading-snug text-ink-subtle">
+          {d('extractVersionNote', locale)}
+        </p>
       </div>
 
       {thin ? (
-        <p className="mb-6 max-w-prose border-l-2 border-ink/40 pl-4 font-serif text-md leading-relaxed">
+        <p className="mb-6 max-w-prose border-l-2 border-ink-subtle pl-4 font-serif text-md leading-relaxed">
           {locale === 'id'
             ? 'Bacalah kedua kolom di bawah ini sebagai dua pembacaan dari data yang sama, bukan sebagai selisih yang sudah dapat disimpulkan. Gang di lokasi ini belum terpetakan cukup rapat untuk itu.'
             : 'Read the two columns below as two readings of the same data rather than as a gap that can yet be concluded from. The gang here are not mapped densely enough for that.'}

@@ -55,6 +55,7 @@ export function PlateGrid({
   locale,
   sortLabel,
   nameLabel,
+  note,
 }: {
   readonly sites: readonly SortableSite[]
   readonly options: readonly SortOption[]
@@ -62,6 +63,8 @@ export function PlateGrid({
   readonly locale: Locale
   readonly sortLabel: string
   readonly nameLabel: string
+  /** One line saying what re-sorting is for, and that it is not a ranking. */
+  readonly note?: string
 }) {
   const all: SortOption[] = [
     { key: NAME_KEY, label: nameLabel, descending: false },
@@ -98,14 +101,27 @@ export function PlateGrid({
         />
       ))}
 
+      {/*
+        The control announces itself as a control. It used to open with a
+        legend set in the same size and weight as body prose, immediately above
+        ten chips reading `φ — Kendara` and `ΔH — Jalan kaki − Kendara`, which
+        is the first thing many readers met on the page. The note says what
+        re-sorting is for before the jargon arrives — and says the thing the
+        source comment has always said and the page never did (PRD §4).
+      */}
       <fieldset className="plate-controls m-0 mb-6 border-0 p-0">
-        <legend className="mb-2 p-0 font-sans text-base text-ink/70">{sortLabel}</legend>
+        <legend className="p-0 font-sans text-base font-semibold">{sortLabel}</legend>
+        {note !== undefined ? (
+          <p className="m-0 mb-3 mt-1 max-w-prose font-sans text-xs leading-snug text-ink-subtle">
+            {note}
+          </p>
+        ) : null}
         <div className="flex flex-wrap gap-2">
           {all.map((option) => (
             <label
               key={option.key}
               htmlFor={`sort-${option.key}`}
-              className="cursor-pointer border border-rule px-2 py-1 font-mono text-xs transition-colors duration-fast ease-house"
+              className="cursor-pointer border border-rule-strong px-2 py-1 font-mono text-xs transition-colors duration-fast ease-house"
             >
               {option.label}
             </label>

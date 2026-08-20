@@ -15,14 +15,24 @@ import { join } from 'node:path'
 import {
   manifestSchema,
   siteBundleSchema,
+  surveySchema,
   type Manifest,
   type ManifestEntry,
   type SiteBundle,
+  type Survey,
 } from '@/data/sites'
 
 const OUT_DIR = join(process.cwd(), 'data', 'out')
 
+/*
+ * The survey sits beside `data/out` rather than inside it, because `data:build`
+ * wipes that directory and the survey is not built from the same inputs — it
+ * measures candidate centres, most of which are deliberately not sites.
+ */
+const SURVEY_PATH = join(process.cwd(), 'data', 'survey.json')
+
 let cachedManifest: Manifest | undefined
+let cachedSurvey: Survey | undefined
 
 export function loadManifest(): Manifest {
   if (cachedManifest === undefined) {
@@ -31,6 +41,14 @@ export function loadManifest(): Manifest {
     )
   }
   return cachedManifest
+}
+
+/** The candidate survey — how the comparison set was selected (PRD §4). */
+export function loadSurvey(): Survey {
+  if (cachedSurvey === undefined) {
+    cachedSurvey = surveySchema.parse(JSON.parse(readFileSync(SURVEY_PATH, 'utf8')))
+  }
+  return cachedSurvey
 }
 
 export function loadBundle(slug: string): SiteBundle {

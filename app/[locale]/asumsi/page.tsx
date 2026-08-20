@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { loadBundle, loadManifest } from '@/lib/data'
 import { LOCALES, d, isLocale, t, type Locale } from '@/lib/i18n'
 import { TAG_MAPPINGS, DEFAULT_TAG_MAPPING } from '@/lib/tags'
-import { ROBUST_THRESHOLD, SENSITIVE_THRESHOLD } from '@/data/sites'
+import { MAPPING_EXEMPLAR_SLUGS, ROBUST_THRESHOLD, SENSITIVE_THRESHOLD } from '@/data/sites'
+import { NetworkDrawing } from '@/components/network/NetworkDrawing'
 import { fixed, kilometres, percent, signed } from '@/lib/format'
 
 /**
@@ -158,7 +159,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
 
         <div className="mappings">
           <fieldset className="m-0 border-0 p-0">
-            <legend className="mb-2 p-0 font-sans text-base text-ink/70">
+            <legend className="mb-2 p-0 font-sans text-base text-ink-subtle">
               {d('tagMapping', locale)}
             </legend>
             <div className="flex flex-wrap gap-2">
@@ -166,7 +167,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                 <label
                   key={mapping.id}
                   htmlFor={`map-${mapping.id}`}
-                  className="cursor-pointer border border-rule px-2 py-1 font-mono text-xs transition-colors duration-fast ease-house"
+                  className="cursor-pointer border border-rule-strong px-2 py-1 font-mono text-xs transition-colors duration-fast ease-house"
                 >
                   {t(mapping.label, locale)}
                 </label>
@@ -245,7 +246,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                             : `Each metric's sensitivity to the ${mapping.id} mapping.`}
                         </caption>
                         <thead>
-                          <tr className="border-b border-rule text-left">
+                          <tr className="border-b border-rule-strong text-left">
                             <th scope="col" className="py-1 pr-4 font-normal">
                               {locale === 'id' ? 'Metrik' : 'Metric'}
                             </th>
@@ -269,7 +270,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                             .map((entry) => (
                               <tr
                                 key={`${entry.metric}-${entry.mode}`}
-                                className="border-b border-rule/40"
+                                className="border-b border-rule-faint"
                               >
                                 <th scope="row" className="py-px pr-4 text-left font-normal">
                                   {t(
@@ -302,7 +303,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                                     locale,
                                   )}
                                 </td>
-                                <td className="py-px pr-4 text-ink/60">
+                                <td className="py-px pr-4 text-ink-subtle">
                                   {entry.worstSlug === '' ? '—' : entry.worstSlug}
                                 </td>
                               </tr>
@@ -317,7 +318,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
               <h3 className="mt-8 font-serif text-lg font-semibold">
                 {locale === 'id' ? 'Angka di bawah pemetaan ini' : 'The numbers under this mapping'}
               </h3>
-              <p className="m-0 max-w-prose font-sans text-xs text-ink/70">
+              <p className="m-0 max-w-prose font-sans text-xs text-ink-subtle">
                 {locale === 'id'
                   ? 'Selisih dihitung terhadap pemetaan baku. Angkanya memang bergerak; itulah maksudnya.'
                   : 'Differences are against the default mapping. The numbers do move; that is the point.'}
@@ -331,7 +332,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                       : `Every site's numbers under the ${mapping.id} mapping, with differences against the default.`}
                   </caption>
                   <thead>
-                    <tr className="border-b border-rule text-left">
+                    <tr className="border-b border-rule-strong text-left">
                       <th scope="col" className="py-1 pr-4 font-normal">
                         {locale === 'id' ? 'Lokasi' : 'Site'}
                       </th>
@@ -363,7 +364,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                       )
                       if (here === undefined || base === undefined) return null
                       return (
-                        <tr key={bundle.site.slug} className="border-b border-rule/40">
+                        <tr key={bundle.site.slug} className="border-b border-rule-faint">
                           <th scope="row" className="py-px pr-4 text-left font-normal">
                             <Link href={`/${locale}/lokasi/${bundle.site.slug}`}>
                               {bundle.site.name}
@@ -372,13 +373,13 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                           <td className="py-px pr-4 text-right">
                             {fixed(here.drive.orientationEntropy, 3)}
                           </td>
-                          <td className="py-px pr-4 text-right text-ink/60">
+                          <td className="py-px pr-4 text-right text-ink-subtle">
                             {signed(here.drive.orientationEntropy - base.drive.orientationEntropy, 3)}
                           </td>
                           <td className="py-px pr-4 text-right">
                             {fixed(here.walk.orientationEntropy, 3)}
                           </td>
-                          <td className="py-px pr-4 text-right text-ink/60">
+                          <td className="py-px pr-4 text-right text-ink-subtle">
                             {signed(here.walk.orientationEntropy - base.walk.orientationEntropy, 3)}
                           </td>
                           <td className="py-px pr-4 text-right">
@@ -398,6 +399,76 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
         </div>
       </section>
 
+      {/*
+        The mapping, drawn.
+        PRD §6.5 makes the tag mapping a control, and every other part of this
+        page argues that in numbers — which is the least persuasive register
+        available for "this is a choice, not a fact". These are the lines
+        leaving.
+      */}
+      <section className="mt-16">
+        <h2 className="m-0 font-serif text-lg font-semibold">
+          {d('mappingDrawingHeading', locale)}
+        </h2>
+        <p className="mt-2 max-w-prose font-serif text-md leading-relaxed">
+          {d('mappingDrawingNote', locale)}
+        </p>
+
+        {MAPPING_EXEMPLAR_SLUGS.map((slug) => {
+          const bundle = loadBundle(slug)
+          const alternates = bundle.alternateGeometry ?? []
+          if (alternates.length === 0) return null
+          return (
+            <figure key={slug} className="m-0 mt-8">
+              <figcaption className="m-0 font-sans text-base font-semibold">
+                {bundle.site.name}
+                <span className="ml-2 font-normal text-ink-subtle">
+                  {bundle.site.city} · r = {bundle.radiusM} m
+                </span>
+              </figcaption>
+              {(['drive', 'walk'] as const).map((mode) => (
+                <div key={mode} className="mt-4">
+                  <p
+                    className="m-0 font-sans text-base font-semibold"
+                    style={{ color: mode === 'drive' ? 'var(--drive)' : 'var(--walk)' }}
+                  >
+                    {d(mode, locale)}
+                  </p>
+                  <div className="mt-2 grid grid-cols-2 gap-4 md:grid-cols-3">
+                    {alternates.map((alternate) => {
+                      const mapping = TAG_MAPPINGS.find((m) => m.id === alternate.mappingId)
+                      const geometry =
+                        mode === 'drive' ? alternate.drivePlateGeometry : alternate.walkPlateGeometry
+                      const lengthM =
+                        mode === 'drive' ? alternate.driveTotalLengthM : alternate.walkTotalLengthM
+                      return (
+                        <div key={alternate.mappingId}>
+                          <NetworkDrawing
+                            geometry={geometry}
+                            radiusM={bundle.radiusM}
+                            size={240}
+                            responsive
+                            animate={false}
+                            mode={mode}
+                            label={`${bundle.site.name} — ${d(mode, locale)} — ${alternate.mappingId}`}
+                            instanceId={`map-${alternate.mappingId}`}
+                          />
+                          <p className="tabular m-0 mt-1 font-mono text-xs">
+                            {mapping === undefined ? alternate.mappingId : t(mapping.label, locale)}
+                            {alternate.mappingId === DEFAULT_TAG_MAPPING.id ? ' ·' : ' ·'}{' '}
+                            {kilometres(lengthM)}
+                          </p>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </div>
+              ))}
+            </figure>
+          )
+        })}
+      </section>
+
       <section className="mt-16">
         <h2 className="m-0 font-serif text-lg font-semibold">
           {locale === 'id' ? 'Cakupan gang per lokasi' : 'Footway coverage per site'}
@@ -415,7 +486,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                 : 'Footway coverage per site, with its confidence and density.'}
             </caption>
             <thead>
-              <tr className="border-b border-rule text-left">
+              <tr className="border-b border-rule-strong text-left">
                 <th scope="col" className="py-1 pr-4 font-normal">
                   {locale === 'id' ? 'Lokasi' : 'Site'}
                 </th>
@@ -432,7 +503,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
             </thead>
             <tbody>
               {manifest.sites.map((entry) => (
-                <tr key={entry.slug} className="border-b border-rule/40">
+                <tr key={entry.slug} className="border-b border-rule-faint">
                   <th scope="row" className="py-px pr-4 text-left font-normal">
                     <Link href={`/${locale}/lokasi/${entry.slug}`}>{entry.name}</Link>
                   </th>

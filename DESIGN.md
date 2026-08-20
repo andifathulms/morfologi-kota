@@ -79,6 +79,14 @@ Fixed-radius circular clip, edge drawn as a hairline so the sampling boundary is
 
 No labels, no basemap, no landmarks. The shape is the subject.
 
+### The one permitted distinction: mode membership
+
+The difference drawing — what walking adds to driving — needs to separate two sets of edges inside a single disc. It does so with **ink for the walk-only edges and `--rule` for the shared network**, never with a hue.
+
+This is not a loophole in the no-hierarchy rule, and it must not be read as one. The rule forbids ranking streets by *road class*, because the analysis does not use road class and drawing it in would smuggle an importance the measurement never claimed. Mode membership is a different thing: it *is* the subject of that figure, it is decided by the tag mapping the page already states, and it is the one distinction the product exists to show.
+
+Nothing else earns this. A drawing may not distinguish by road class, by site type, by traffic, by width, or by anything else. If a second exception is ever proposed, it is being proposed against this paragraph.
+
 ## 6. Layout — small multiples
 
 **The plate** is a grid of site cards: network drawing, rose, metric column. All sites visible at once, sortable by any metric — patterns across the set appear by re-sorting, which is what small multiples are for.

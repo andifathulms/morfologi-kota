@@ -31,14 +31,14 @@ export function SiteCard({
   const metrics = mode === 'drive' ? entry.drive : entry.walk
 
   return (
-    <article className="flex flex-col gap-3 border border-rule p-4">
+    <article className="flex flex-col gap-3 border border-rule-strong p-4">
       <header>
         <h2 className="m-0 font-serif text-md font-semibold leading-tight">
           <Link href={`/${locale}/lokasi/${entry.slug}`} className="no-underline">
             {entry.name}
           </Link>
         </h2>
-        <p className="m-0 font-sans text-xs text-ink/70">
+        <p className="m-0 font-sans text-xs text-ink-subtle">
           {entry.city} · {t(SITE_TYPE_LABEL[entry.type] ?? { id: entry.type, en: entry.type }, locale)}
         </p>
       </header>
@@ -87,12 +87,12 @@ export function SiteCard({
         ]}
       />
 
-      <p className="m-0 max-w-prose font-serif text-xs leading-snug text-ink/80">
+      <p className="m-0 max-w-prose font-serif text-xs leading-snug text-ink-muted">
         {t(entry.note, locale)}
       </p>
 
       {/* DESIGN.md §9 — the legend contract, on every card. */}
-      <footer className="tabular border-t border-rule pt-2 font-mono text-xs">
+      <footer className="tabular border-t border-rule-strong pt-2 font-mono text-xs">
         <p className="m-0">
           {d('radius', locale)} {entry.radiusM} m · 36 bin
         </p>
