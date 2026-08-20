@@ -119,7 +119,7 @@ export function Rose({ series, locale, size = 180, animate = true, caption = tru
                 stroke={strokeFor(s.mode)}
                 strokeWidth={0.5}
                 className={animate ? 'rose-bar' : undefined}
-                style={animate ? { animationDelay: `${index * 8}ms` } : undefined}
+                style={animate ? { animationDelay: `${240 + index * 8}ms` } : undefined}
               >
                 <title>
                   {`${d(s.mode === 'drive' ? 'drive' : 'walk', locale)} · ${range.startDeg.toFixed(0)}°–${range.endDeg.toFixed(0)}° · ${percent(share, 1)}`}

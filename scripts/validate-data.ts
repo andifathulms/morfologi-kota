@@ -75,8 +75,13 @@ function checkBundle(bundle: SiteBundle): void {
   check(bundle.attribution.includes('OpenStreetMap'), `${slug}: missing OpenStreetMap attribution`)
 
   for (const mode of ['drive', 'walk'] as const) {
-    const { metrics, geometry } = bundle[mode]
+    const { metrics, geometry, plateGeometry } = bundle[mode]
     check(geometry.length > 0, `${slug}/${mode}: no geometry — a site with one mode is incomplete`)
+    check(plateGeometry.length > 0, `${slug}/${mode}: no plate-scale geometry`)
+    check(
+      plateGeometry.length <= geometry.length,
+      `${slug}/${mode}: plate geometry is not a simplification of the full geometry`,
+    )
     check(metrics.degrees.nodeCount > 0, `${slug}/${mode}: empty graph`)
     checkRose(metrics.rose.shares, `${slug}/${mode}`)
     check(metrics.edgeCircuity >= 1 - 1e-9, `${slug}/${mode}: edge circuity ${metrics.edgeCircuity} < 1`)

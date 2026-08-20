@@ -34,6 +34,19 @@ body {
   text-rendering: optimizeLegibility;
 }
 
+/* Visually hidden, still reachable by keyboard and by a screen reader. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 /* DESIGN.md §7 — tabular figures on every metric, without exception. */
 .tabular {
   font-variant-numeric: tabular-nums;
@@ -51,9 +64,14 @@ body {
  * rose fills bin by bin, so the histogram is visibly derived from the drawing
  * rather than appearing beside it. Pure CSS, so it costs no JavaScript.
  */
+/*
+ * Paths carry pathLength="1", so one keyframe draws every network whatever its
+ * real length — and no path needs an inline style, which is what keeps a plate
+ * of twelve sites down to a few hundred kilobytes of markup.
+ */
 @keyframes draw-network {
   from {
-    stroke-dashoffset: var(--dash);
+    stroke-dashoffset: 1;
   }
   to {
     stroke-dashoffset: 0;
@@ -70,11 +88,27 @@ body {
 }
 
 .network-ink {
-  stroke-dasharray: var(--dash);
-  stroke-dashoffset: var(--dash);
-  animation: draw-network var(--dur-draw) var(--ease-house) forwards;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: draw-network var(--dur-draw) var(--ease-house) backwards;
 }
 
+/* The stagger: the drawing spreads across the disc rather than arriving at once. */
+.network-ink:nth-child(4n + 2) {
+  animation-delay: 60ms;
+}
+.network-ink:nth-child(4n + 3) {
+  animation-delay: 120ms;
+}
+.network-ink:nth-child(4n + 4) {
+  animation-delay: 180ms;
+}
+
+/*
+ * The rose fills bin by bin while the network draws, so the histogram is
+ * visibly derived from the drawing. The per-bin delay is set on the element,
+ * since it counts from the bin's index.
+ */
 .rose-bar {
   /* The rose viewBox is centred on 0 0, so a bin grows out of the origin. */
   transform-box: view-box;

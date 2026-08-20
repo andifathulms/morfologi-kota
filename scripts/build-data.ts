@@ -39,8 +39,17 @@ import { simplifyPolyline } from './simplify'
 
 const OUT_DIR = join(process.cwd(), 'data', 'out')
 
-/** Below a hairline's worth of screen at the size a card draws a site. */
+/** Below a hairline's worth of screen at the size the pair view draws a site. */
 const SIMPLIFY_TOLERANCE_M = 2
+
+/**
+ * The plate draws a site 200 px across, which is 8 m to the pixel: at that
+ * size a 7 m deviation is invisible and a 15 m stub is a dot. Simplifying for
+ * the plate separately is the difference between a page of a few hundred
+ * kilobytes and one of several megabytes.
+ */
+const PLATE_TOLERANCE_M = 7
+const PLATE_MIN_LENGTH_M = 15
 
 /**
  * Floats are rounded before they are written. Two machines must produce a
@@ -84,12 +93,26 @@ function roundMetrics(metrics: ModeMetrics): ModeMetrics {
 }
 
 /** Drawing geometry: simplified, rounded to the metre, one array per edge. */
-function emitGeometry(graph: StreetGraph): [number, number][][] {
+function emitGeometry(graph: StreetGraph, toleranceM = SIMPLIFY_TOLERANCE_M): [number, number][][] {
   return graph.edges.map((edge) =>
-    simplifyPolyline(edge.geometry, SIMPLIFY_TOLERANCE_M).map(
+    simplifyPolyline(edge.geometry, toleranceM).map(
       (point) => [round(point.xM, 1), round(point.yM, 1)] as [number, number],
     ),
   )
+}
+
+/** The same geometry at plate scale, with sub-pixel stubs dropped. */
+function emitPlateGeometry(graph: StreetGraph): [number, number][][] {
+  return emitGeometry(graph, PLATE_TOLERANCE_M).filter((line) => {
+    let length = 0
+    for (let i = 1; i < line.length; i += 1) {
+      const a = line[i - 1]
+      const b = line[i]
+      if (a === undefined || b === undefined) continue
+      length += Math.hypot(b[0] - a[0], b[1] - a[1])
+    }
+    return length >= PLATE_MIN_LENGTH_M
+  })
 }
 
 interface ModeResult {
@@ -169,8 +192,16 @@ async function main(): Promise<void> {
       site,
       radiusM: SAMPLING_RADIUS_M,
       mappingId: DEFAULT_TAG_MAPPING.id,
-      drive: { metrics: roundMetrics(drive.metrics), geometry: emitGeometry(drive.graph) },
-      walk: { metrics: roundMetrics(walk.metrics), geometry: emitGeometry(walk.graph) },
+      drive: {
+        metrics: roundMetrics(drive.metrics),
+        geometry: emitGeometry(drive.graph),
+        plateGeometry: emitPlateGeometry(drive.graph),
+      },
+      walk: {
+        metrics: roundMetrics(walk.metrics),
+        geometry: emitGeometry(walk.graph),
+        plateGeometry: emitPlateGeometry(walk.graph),
+      },
       coverage: {
         pedestrianShare: round(coverage.pedestrianShare, 6),
         pedestrianLengthM: round(coverage.pedestrianLengthM, 2),

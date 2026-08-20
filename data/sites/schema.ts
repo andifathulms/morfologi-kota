@@ -115,8 +115,18 @@ export const siteBundleSchema = z.object({
   site: siteSchema,
   radiusM: z.number().positive(),
   mappingId: z.string(),
-  drive: z.object({ metrics: modeMetricsSchema, geometry: z.array(polylineSchema) }),
-  walk: z.object({ metrics: modeMetricsSchema, geometry: z.array(polylineSchema) }),
+  drive: z.object({
+    metrics: modeMetricsSchema,
+    /** Full detail — the pair view draws a site large. */
+    geometry: z.array(polylineSchema),
+    /** Coarser, for the plate, where a site is 200 px across. */
+    plateGeometry: z.array(polylineSchema),
+  }),
+  walk: z.object({
+    metrics: modeMetricsSchema,
+    geometry: z.array(polylineSchema),
+    plateGeometry: z.array(polylineSchema),
+  }),
   coverage: coverageSchema,
   sensitivity: z.array(sensitivityEntrySchema).min(1),
   attribution: z.string().min(10),

@@ -12,6 +12,11 @@ import type { Mode } from '@/lib/tags'
  * Fixed-radius circular clip, with the boundary drawn as a hairline so the
  * sampling edge is visible rather than implied. No labels, no basemap, no
  * landmarks — the shape is the subject.
+ *
+ * A site is a thousand or so segments, so they are emitted as a handful of
+ * multi-subpath `path` elements rather than one element each: same ink, a
+ * twentieth of the markup. `pathLength="1"` normalises every one of them, so
+ * the draw animation needs no per-element style at all.
  */
 
 export interface NetworkDrawingProps {
@@ -20,34 +25,54 @@ export interface NetworkDrawingProps {
   readonly radiusM: number
   readonly size?: number
   readonly animate?: boolean
-  /**
-   * Only used for the accessible label — the drawing itself is ink, never the
-   * mode hue.
-   */
+  /** Only used for the accessible label — the drawing is ink, never the mode hue. */
   readonly mode: Mode
   readonly label: string
+  /** How many groups the drawing is staggered across. */
+  readonly buckets?: number
 }
 
-function pathFor(line: readonly (readonly [number, number])[]): string {
-  let d = ''
-  for (let i = 0; i < line.length; i += 1) {
+/**
+ * Append a number, with a separator only where one is actually needed: a
+ * negative number is delimited by its own minus sign. Over twelve sites this
+ * is tens of kilobytes of markup, for no change at all to the drawing.
+ */
+function append(d: string, value: number): string {
+  const text = String(Math.round(value))
+  const needsSeparator = !text.startsWith('-') && /[0-9]$/.test(d)
+  return d + (needsSeparator ? ' ' : '') + text
+}
+
+/**
+ * One polyline as a subpath: an absolute move, then relative line segments.
+ * The deltas are metres between shape points, so they are one or two digits
+ * where the absolute coordinates would be three or four.
+ */
+function subpath(line: readonly (readonly [number, number])[]): string {
+  const first = line[0]
+  if (first === undefined) return ''
+  // y is flipped: metres run north, SVG runs down.
+  let d = append(append('M', first[0]), -first[1])
+  let previousX = Math.round(first[0])
+  let previousY = Math.round(-first[1])
+  let open = false
+  for (let i = 1; i < line.length; i += 1) {
     const point = line[i]
     if (point === undefined) continue
-    // y is flipped: metres run north, SVG runs down.
-    d += `${i === 0 ? 'M' : 'L'}${point[0].toFixed(0)} ${(-point[1]).toFixed(0)}`
+    const x = Math.round(point[0])
+    const y = Math.round(-point[1])
+    const dx = x - previousX
+    const dy = y - previousY
+    if (dx === 0 && dy === 0) continue
+    if (!open) {
+      d += 'l'
+      open = true
+    }
+    d = append(append(d, dx), dy)
+    previousX = x
+    previousY = y
   }
-  return d
-}
-
-function lengthOf(line: readonly (readonly [number, number])[]): number {
-  let total = 0
-  for (let i = 1; i < line.length; i += 1) {
-    const a = line[i - 1]
-    const b = line[i]
-    if (a === undefined || b === undefined) continue
-    total += Math.hypot(b[0] - a[0], b[1] - a[1])
-  }
-  return total
+  return open ? d : ''
 }
 
 export function NetworkDrawing({
@@ -56,10 +81,19 @@ export function NetworkDrawing({
   size = 220,
   animate = true,
   label,
+  buckets = 8,
 }: NetworkDrawingProps) {
   const clipId = `clip-${label.replace(/[^a-z0-9]/gi, '')}`
-  // Hairline at the drawn size: 0.5 device px expressed in metres of viewBox.
+  // A hairline at the drawn size, expressed in the metres of the viewBox.
   const stroke = ((2 * radiusM) / size) * 0.9
+
+  // Round-robin, so each group is spread across the whole disc and the
+  // stagger reads as the network arriving rather than as one wedge at a time.
+  const grouped: string[] = Array.from({ length: buckets }, () => '')
+  geometry.forEach((line, index) => {
+    const bucket = index % buckets
+    grouped[bucket] = (grouped[bucket] ?? '') + subpath(line)
+  })
 
   return (
     <svg
@@ -83,24 +117,11 @@ export function NetworkDrawing({
         strokeLinecap="round"
         strokeLinejoin="round"
       >
-        {geometry.map((line, index) => {
-          const dash = Math.max(1, Math.round(lengthOf(line)))
-          return (
-            <path
-              key={index}
-              d={pathFor(line)}
-              className={animate ? 'network-ink' : undefined}
-              style={
-                animate
-                  ? ({
-                      '--dash': `${dash}`,
-                      animationDelay: `${(index % 40) * 8}ms`,
-                    } as React.CSSProperties)
-                  : undefined
-              }
-            />
-          )
-        })}
+        {grouped.map((d, index) =>
+          d === '' ? null : (
+            <path key={index} d={d} pathLength={1} className={animate ? 'network-ink' : undefined} />
+          ),
+        )}
       </g>
     </svg>
   )
