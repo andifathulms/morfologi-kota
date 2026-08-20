@@ -149,11 +149,11 @@ const sites: Site[] = [
     name: 'IKN — Kawasan Inti',
     city: 'Penajam Paser Utara',
     type: 'ikn',
-    centreLatDeg: -0.999,
-    centreLonDeg: 116.71,
+    centreLatDeg: -0.9853,
+    centreLonDeg: 116.69,
     note: {
-      id: 'Jaringan jalan yang sedang dibangun; bentuknya adalah keputusan yang sedang diambil sekarang.',
-      en: 'A street network under construction; its form is a decision being made now.',
+      id: 'Sumbu Kebangsaan dan sekitarnya. Jaringannya sedang dibangun dan sebagian belum terpetakan — kedua hal itu terlihat di angkanya.',
+      en: 'The Sumbu Kebangsaan axis and its surroundings. The network is under construction and partly unmapped — both show in the numbers.',
     },
   },
 ]

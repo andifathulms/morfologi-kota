@@ -1,0 +1,232 @@
+/**
+ * DEV/CI — cached OSM extracts → clipped sites → both graphs → metrics.
+ *
+ * BUILD TIME ONLY. This is the whole pipeline: for every site it builds the
+ * driving graph and the walking graph under the default tag mapping, clips
+ * both to the fixed sampling radius, computes the metric column for each,
+ * measures footway coverage, recomputes the headline numbers under every
+ * alternative mapping so the sensitivity can be reported, and emits a bundle
+ * per site plus a manifest.
+ *
+ * Nothing is computed in a component (CLAUDE.md, Invariants §16) — the output
+ * of this script is what the pages render.
+ */
+
+import { mkdir, writeFile, rm } from 'node:fs/promises'
+import { join } from 'node:path'
+import {
+  buildGraphFromWays,
+  clipToRadius,
+  computeModeMetrics,
+  coverageOfWalkGraph,
+  type ModeMetrics,
+  type StreetGraph,
+} from '@/lib/morphology'
+import { DEFAULT_TAG_MAPPING, TAG_MAPPINGS, type Mode, type TagMapping } from '@/lib/tags'
+import {
+  BOEING_CITATION,
+  BOEING_DOI,
+  ODBL_ATTRIBUTION,
+  SAMPLING_RADIUS_M,
+  SITES,
+  manifestSchema,
+  siteBundleSchema,
+  type ManifestEntry,
+  type Site,
+} from '@/data/sites'
+import { readCachedExtract, splitElements } from './osm'
+import { simplifyPolyline } from './simplify'
+
+const OUT_DIR = join(process.cwd(), 'data', 'out')
+
+/** Below a hairline's worth of screen at the size a card draws a site. */
+const SIMPLIFY_TOLERANCE_M = 2
+
+/**
+ * Floats are rounded before they are written. Two machines must produce a
+ * byte-identical bundle from the same extract (PRD §8), and the last bits of a
+ * double are not something to stake that on.
+ */
+function round(value: number, places: number): number {
+  const factor = 10 ** places
+  const rounded = Math.round(value * factor) / factor
+  return Object.is(rounded, -0) ? 0 : rounded
+}
+
+function roundMetrics(metrics: ModeMetrics): ModeMetrics {
+  return {
+    ...metrics,
+    rose: {
+      binCentresDeg: metrics.rose.binCentresDeg,
+      shares: metrics.rose.shares.map((share) => round(share, 8)),
+      totalWeight: round(metrics.rose.totalWeight, 3),
+    },
+    orientationEntropy: round(metrics.orientationEntropy, 6),
+    normalisedEntropy: round(metrics.normalisedEntropy, 6),
+    orientationOrder: round(metrics.orientationOrder, 6),
+    edgeCircuity: round(metrics.edgeCircuity, 6),
+    sampledCircuity: round(metrics.sampledCircuity, 6),
+    degrees: {
+      ...metrics.degrees,
+      averageDegree: round(metrics.degrees.averageDegree, 6),
+      proportions: {
+        deadEnd: round(metrics.degrees.proportions.deadEnd, 6),
+        through: round(metrics.degrees.proportions.through, 6),
+        threeWay: round(metrics.degrees.proportions.threeWay, 6),
+        fourWay: round(metrics.degrees.proportions.fourWay, 6),
+        fivePlus: round(metrics.degrees.proportions.fivePlus, 6),
+      },
+    },
+    intersectionDensityPerKm2: round(metrics.intersectionDensityPerKm2, 3),
+    medianSegmentLengthM: round(metrics.medianSegmentLengthM, 2),
+    totalLengthM: round(metrics.totalLengthM, 2),
+  }
+}
+
+/** Drawing geometry: simplified, rounded to the metre, one array per edge. */
+function emitGeometry(graph: StreetGraph): [number, number][][] {
+  return graph.edges.map((edge) =>
+    simplifyPolyline(edge.geometry, SIMPLIFY_TOLERANCE_M).map(
+      (point) => [round(point.xM, 1), round(point.yM, 1)] as [number, number],
+    ),
+  )
+}
+
+interface ModeResult {
+  readonly graph: StreetGraph
+  readonly metrics: ModeMetrics
+}
+
+function buildMode(
+  extract: ReturnType<typeof splitElements>,
+  site: Site,
+  mode: Mode,
+  mapping: TagMapping,
+): ModeResult {
+  const graph = clipToRadius(
+    buildGraphFromWays(
+      { nodes: extract.nodes, ways: extract.ways },
+      {
+        centreLonDeg: site.centreLonDeg,
+        centreLatDeg: site.centreLatDeg,
+        mode,
+        mapping,
+      },
+    ),
+    SAMPLING_RADIUS_M,
+  )
+  return { graph, metrics: computeModeMetrics(graph, { radiusM: SAMPLING_RADIUS_M }) }
+}
+
+async function main(): Promise<void> {
+  await rm(OUT_DIR, { recursive: true, force: true })
+  await mkdir(OUT_DIR, { recursive: true })
+
+  console.log(`Building ${SITES.length} sites at r=${SAMPLING_RADIUS_M} m, 36 bins, both modes.`)
+  console.log(`Tag mapping: ${DEFAULT_TAG_MAPPING.id}. Sensitivity over ${TAG_MAPPINGS.length}.\n`)
+
+  const manifestSites: ManifestEntry[] = []
+  const extractVersions = new Set<string>()
+
+  for (const site of SITES) {
+    const cached = await readCachedExtract(site.slug)
+    extractVersions.add(cached.timestampOsmBase)
+    const extract = splitElements(cached.response)
+
+    const drive = buildMode(extract, site, 'drive', DEFAULT_TAG_MAPPING)
+    const walk = buildMode(extract, site, 'walk', DEFAULT_TAG_MAPPING)
+    const coverage = coverageOfWalkGraph(walk.graph, SAMPLING_RADIUS_M)
+
+    // Sensitivity: the same headline numbers under every mapping. Reported,
+    // never asserted — the numbers legitimately move (PRD §8).
+    const sensitivity = TAG_MAPPINGS.map((mapping) => {
+      const d =
+        mapping.id === DEFAULT_TAG_MAPPING.id
+          ? drive.metrics
+          : buildMode(extract, site, 'drive', mapping).metrics
+      const w =
+        mapping.id === DEFAULT_TAG_MAPPING.id
+          ? walk.metrics
+          : buildMode(extract, site, 'walk', mapping).metrics
+      return {
+        mappingId: mapping.id,
+        drive: {
+          orientationEntropy: round(d.orientationEntropy, 6),
+          orientationOrder: round(d.orientationOrder, 6),
+          deadEndProportion: round(d.degrees.proportions.deadEnd, 6),
+          totalLengthM: round(d.totalLengthM, 2),
+        },
+        walk: {
+          orientationEntropy: round(w.orientationEntropy, 6),
+          orientationOrder: round(w.orientationOrder, 6),
+          deadEndProportion: round(w.degrees.proportions.deadEnd, 6),
+          totalLengthM: round(w.totalLengthM, 2),
+        },
+      }
+    })
+
+    const bundle = siteBundleSchema.parse({
+      site,
+      radiusM: SAMPLING_RADIUS_M,
+      mappingId: DEFAULT_TAG_MAPPING.id,
+      drive: { metrics: roundMetrics(drive.metrics), geometry: emitGeometry(drive.graph) },
+      walk: { metrics: roundMetrics(walk.metrics), geometry: emitGeometry(walk.graph) },
+      coverage: {
+        pedestrianShare: round(coverage.pedestrianShare, 6),
+        pedestrianLengthM: round(coverage.pedestrianLengthM, 2),
+        walkLengthM: round(coverage.walkLengthM, 2),
+        pedestrianDensityMPerKm2: round(coverage.pedestrianDensityMPerKm2, 2),
+        confidence: {
+          type: coverage.confidence.type,
+          pedestrianShare: round(coverage.confidence.pedestrianShare, 6),
+        },
+      },
+      sensitivity,
+      attribution: ODBL_ATTRIBUTION,
+      licence: 'ODbL-1.0',
+    })
+
+    await writeFile(join(OUT_DIR, `${site.slug}.json`), JSON.stringify(bundle), 'utf8')
+
+    manifestSites.push({
+      slug: site.slug,
+      name: site.name,
+      city: site.city,
+      type: site.type,
+      centreLatDeg: site.centreLatDeg,
+      centreLonDeg: site.centreLonDeg,
+      note: site.note,
+      radiusM: SAMPLING_RADIUS_M,
+      coverage: bundle.coverage,
+      drive: bundle.drive.metrics,
+      walk: bundle.walk.metrics,
+    })
+
+    const flag = coverage.confidence.type === 'thin' ? '  ⚑ thin footway coverage' : ''
+    console.log(
+      `${site.slug.padEnd(24)} H drive ${bundle.drive.metrics.orientationEntropy.toFixed(3)}` +
+        `  H walk ${bundle.walk.metrics.orientationEntropy.toFixed(3)}` +
+        `  cov ${(coverage.pedestrianShare * 100).toFixed(1)}%${flag}`,
+    )
+  }
+
+  const manifest = manifestSchema.parse({
+    radiusM: SAMPLING_RADIUS_M,
+    mappingId: DEFAULT_TAG_MAPPING.id,
+    extractVersion: [...extractVersions].sort().join(' / '),
+    binCount: 36,
+    method: { citation: BOEING_CITATION, doi: BOEING_DOI },
+    attribution: ODBL_ATTRIBUTION,
+    licence: 'ODbL-1.0',
+    sites: manifestSites,
+  })
+
+  await writeFile(join(OUT_DIR, 'manifest.json'), JSON.stringify(manifest), 'utf8')
+  console.log(`\nWrote ${SITES.length} bundles + manifest to data/out.`)
+  console.log('Next: pnpm data:validate')
+}
+
+main().catch((error) => {
+  console.error(error)
+  process.exit(1)
+})
