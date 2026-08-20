@@ -54,7 +54,7 @@ body {
 /*
  * Paths carry pathLength="1", so one keyframe draws every network whatever its
  * real length — and no path needs an inline style, which is what keeps a plate
- * of twelve sites down to a few hundred kilobytes of markup.
+ * of a dozen-odd sites down to a few hundred kilobytes of markup.
  */
 @keyframes draw-network {
   from {

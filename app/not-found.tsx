@@ -37,7 +37,7 @@ export default function NotFound() {
           </p>
           <p style={{ fontSize: '18px' }}>
             <a href={`${basePath}/${DEFAULT_LOCALE}/lempeng/`}>
-              Kembali ke lempeng — dua belas lokasi, dua jaringan
+              Kembali ke lempeng morfologi jaringan jalan
             </a>
           </p>
           <p lang="en" style={{ fontSize: '18px' }}>

@@ -77,10 +77,11 @@ const definitions: readonly { term: string; body: Bilingual }[] = [
   },
 ]
 
-const limitations: readonly Bilingual[] = [
+/** Counted from the manifest, so the sentence cannot drift from the data. */
+const limitationsFor = (thin: number, total: number): readonly Bilingual[] => [
   {
-    id: 'Temuan utama bergantung pada gang yang terpetakan. Sembilan dari dua belas lokasi di sini bertanda cakupan tipis, dan untuk lokasi-lokasi itu selisih kendara/jalan kaki tidak dapat dibaca sebagai temuan tentang tempatnya. Itu temuan tentang datanya.',
-    en: 'The headline finding depends on gang being mapped. Nine of the twelve sites here carry a thin-coverage flag, and for those the drive/walk gap cannot be read as a finding about the place. It is a finding about the data.',
+    id: `Temuan utama bergantung pada gang yang terpetakan. ${thin} dari ${total} lokasi di sini bertanda cakupan tipis, dan untuk lokasi-lokasi itu selisih kendara/jalan kaki tidak dapat dibaca sebagai temuan tentang tempatnya. Itu temuan tentang datanya.`,
+    en: `The headline finding depends on gang being mapped. ${thin} of the ${total} sites here carry a thin-coverage flag, and for those the drive/walk gap cannot be read as a finding about the place. It is a finding about the data.`,
   },
   {
     id: 'Interpretasi tag adalah pilihan pemodelan. Halaman Asumsi menunjukkan berapa jauh angkanya bergerak jika pilihannya diubah.',
@@ -104,6 +105,10 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) notFound()
   const locale: Locale = params.locale
   const manifest = loadManifest()
+  const limitations = limitationsFor(
+    manifest.sites.filter((site) => site.coverage.confidence.type === 'thin').length,
+    manifest.sites.length,
+  )
 
   return (
     <div className="max-w-prose">

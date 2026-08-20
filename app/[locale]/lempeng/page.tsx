@@ -15,11 +15,15 @@ export function generateStaticParams(): { locale: Locale }[] {
 
 export function generateMetadata({ params }: { params: { locale: string } }): Metadata {
   const locale: Locale = isLocale(params.locale) ? params.locale : 'id'
+  // Counted, not written down: the set grows when a surveyed candidate is
+  // adopted, and a title that says twelve when there are sixteen is the kind
+  // of thing nobody notices until it is in a search result.
+  const count = loadManifest().sites.length
   return {
     title:
       locale === 'id'
-        ? 'Lempeng — dua belas lokasi, dua jaringan · Bentuk Kota'
-        : 'The plate — twelve sites, two networks · Bentuk Kota',
+        ? `Lempeng — ${count} lokasi, dua jaringan · Bentuk Kota`
+        : `The plate — ${count} sites, two networks · Bentuk Kota`,
     alternates: { canonical: `/${locale}/lempeng/` },
   }
 }

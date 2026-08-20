@@ -40,7 +40,7 @@ export interface NetworkDrawingProps {
 
 /**
  * Append a number, with a separator only where one is actually needed: a
- * negative number is delimited by its own minus sign. Over twelve sites this
+ * negative number is delimited by its own minus sign. Across a plate this
  * is tens of kilobytes of markup, for no change at all to the drawing.
  */
 function append(d: string, value: number): string {

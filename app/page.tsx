@@ -36,7 +36,7 @@ export default function RootPage() {
         <main>
           <h1 style={{ fontSize: '28px', fontWeight: 600, margin: 0 }}>Bentuk Kota</h1>
           <p style={{ fontSize: '18px' }}>
-            <a href={target}>Lempeng morfologi jaringan jalan — dua belas lokasi, dua jaringan</a>
+            <a href={target}>Lempeng morfologi jaringan jalan — dua jaringan untuk tempat yang sama</a>
           </p>
           <p lang="en" style={{ fontSize: '18px' }}>
             <a href={`${basePath}/en/lempeng/`}>Street network morphology — the plate, in English</a>
