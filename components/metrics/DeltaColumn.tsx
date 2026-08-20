@@ -64,7 +64,12 @@ export function DeltaColumn({
       <dl className="tabular m-0 grid grid-cols-[1fr_auto] gap-x-4">
         {rows.map((row) => (
           <div key={row.label} className="contents">
-            <dt className="border-b border-rule/60 py-px text-ink/70 md:sr-only">{row.label}</dt>
+            {/* Labels stay visible. They were hidden on desktop on the
+                assumption that these rows would line up with the metric
+                columns either side, but each pane carries a drawing and a rose
+                above its column, so nothing lines up and a bare number would
+                be unreadable. */}
+            <dt className="border-b border-rule/60 py-px text-ink/70">{row.label}</dt>
             <dd className="m-0 border-b border-rule/60 py-px text-right">{row.value}</dd>
           </div>
         ))}
