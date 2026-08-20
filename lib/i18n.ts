@@ -148,6 +148,20 @@ const dictionary = {
     en: 'The rose is always 180°-symmetric, because one segment traversed both ways differs by exactly 180°.',
   },
   roseWeight: { id: 'Panjang tertimbang', en: 'Weighted length' },
+  natNote: {
+    id: 'H diukur dalam nat — satuan informasi berbasis logaritma natural. Itulah sebabnya maksimumnya ln 36 ≈ 3,584 dan bukan log₂ 36.',
+    en: 'H is in nats — the natural-log unit of information. That is why its maximum is ln 36 ≈ 3.584 rather than log₂ 36.',
+  },
+  circuitySampled: {
+    id: 'Circuity adalah perkiraan: jarak jaringan dibagi jarak garis lurus, dirata-ratakan atas sampel pasangan simpul yang diambil dengan benih tetap — bukan atas seluruh pasangan.',
+    en: 'Circuity is an estimate: network distance over straight-line distance, averaged across a seeded sample of node pairs rather than across all of them.',
+  },
+  sampledPairs: { id: 'pasangan disampel', en: 'pairs sampled' },
+  unreachablePairs: { id: 'pasangan tak terhubung', en: 'pairs unreachable' },
+  unreachableNote: {
+    id: 'Pasangan yang tidak terhubung sama sekali dikeluarkan dari rata-rata. Jumlahnya besar berarti jaringan ini terpecah — sinyal tentang datanya, bukan tentang tempatnya.',
+    en: 'Pairs with no route between them at all are excluded from the mean. A large count means this network is fragmented — a signal about the data, not about the place.',
+  },
   roseTableCaption: {
     id: 'Bagian panjang jaringan per bin arah selebar 10°, untuk kendara dan jalan kaki.',
     en: 'Share of network length per 10° bearing bin, for drive and walk.',

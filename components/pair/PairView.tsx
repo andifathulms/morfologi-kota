@@ -124,7 +124,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
           />
           <Rose locale={locale} size={220} series={[driveRose]} />
           <div className="mt-4">
-            <MetricColumn metrics={drive.metrics} mode="drive" locale={locale} />
+            <MetricColumn metrics={drive.metrics} mode="drive" locale={locale} notes />
           </div>
         </section>
 
@@ -148,7 +148,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
           />
           <Rose locale={locale} size={220} series={[walkRose]} />
           <div className="mt-4">
-            <MetricColumn metrics={walk.metrics} mode="walk" locale={locale} />
+            <MetricColumn metrics={walk.metrics} mode="walk" locale={locale} notes />
           </div>
         </section>
       </div>

@@ -25,7 +25,14 @@ export function metricRows(metrics: ModeMetrics, locale: Locale): readonly Metri
     { label: d('entropy', locale), value: fixed(metrics.orientationEntropy, 3), hint: 'nat' },
     { label: 'H / H max', value: fixed(metrics.normalisedEntropy, 3) },
     { label: d('phi', locale), value: fixed(metrics.orientationOrder, 3) },
-    { label: d('circuity', locale), value: fixed(metrics.sampledCircuity, 3) },
+    // Marked as sampled where it is printed. It is a seeded estimate over a
+    // subset of node pairs, and it sat in the same column, same weight, as
+    // measured quantities like network length.
+    {
+      label: d('circuity', locale),
+      value: fixed(metrics.sampledCircuity, 3),
+      hint: `~${metrics.sampledPairCount}`,
+    },
     { label: d('averageDegree', locale), value: fixed(metrics.degrees.averageDegree, 2) },
     { label: d('fourWay', locale), value: percent(metrics.degrees.proportions.fourWay) },
     { label: d('deadEnd', locale), value: percent(metrics.degrees.proportions.deadEnd) },
@@ -43,11 +50,18 @@ export function MetricColumn({
   mode,
   locale,
   heading,
+  notes = false,
 }: {
   readonly metrics: ModeMetrics
   readonly mode: Mode
   readonly locale: Locale
   readonly heading?: boolean
+  /**
+   * Print the paragraph explaining H's unit and circuity's sampling under the
+   * column. On where there is room — the pair — and off on the plate, where
+   * sixteen cards would carry sixteen copies of it.
+   */
+  readonly notes?: boolean
 }) {
   const rows = metricRows(metrics, locale)
   const hue = mode === 'drive' ? 'var(--drive)' : 'var(--walk)'
@@ -70,6 +84,36 @@ export function MetricColumn({
           </div>
         ))}
       </dl>
+
+      {/*
+        The two figures in this column that are not measurements, said under
+        the column rather than on a method page: H's unit, which is printed on
+        every card and was defined nowhere, and circuity's sampling, which was
+        presented in the same weight as network length.
+
+        Only where the column has room — the pair. The plate prints the sample
+        size beside the number and leaves the paragraph to this view.
+      */}
+      {notes ? (
+        <div className="mt-3 max-w-prose font-sans text-base leading-snug text-ink-muted">
+          <p className="m-0">{d('natNote', locale)}</p>
+          <p className="m-0 mt-2">
+            {d('circuitySampled', locale)}{' '}
+            <span className="tabular font-mono text-xs">
+              {metrics.sampledPairCount} {d('sampledPairs', locale)}
+            </span>
+            {metrics.unreachablePairCount > 0 ? (
+              <>
+                {' · '}
+                <span className="tabular font-mono text-xs">
+                  {metrics.unreachablePairCount} {d('unreachablePairs', locale)}
+                </span>{' '}
+                {d('unreachableNote', locale)}
+              </>
+            ) : null}
+          </p>
+        </div>
+      ) : null}
     </div>
   )
 }
