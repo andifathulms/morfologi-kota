@@ -14,10 +14,12 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 import {
   manifestSchema,
+  referenceSchema,
   siteBundleSchema,
   surveySchema,
   type Manifest,
   type ManifestEntry,
+  type Reference,
   type SiteBundle,
   type Survey,
 } from '@/data/sites'
@@ -33,6 +35,7 @@ const SURVEY_PATH = join(process.cwd(), 'data', 'survey.json')
 
 let cachedManifest: Manifest | undefined
 let cachedSurvey: Survey | undefined
+let cachedReference: Reference | undefined
 
 export function loadManifest(): Manifest {
   if (cachedManifest === undefined) {
@@ -49,6 +52,16 @@ export function loadSurvey(): Survey {
     cachedSurvey = surveySchema.parse(JSON.parse(readFileSync(SURVEY_PATH, 'utf8')))
   }
   return cachedSurvey
+}
+
+/** The known-answer networks — the scale every real number is read against. */
+export function loadReference(): Reference {
+  if (cachedReference === undefined) {
+    cachedReference = referenceSchema.parse(
+      JSON.parse(readFileSync(join(OUT_DIR, 'reference.json'), 'utf8')),
+    )
+  }
+  return cachedReference
 }
 
 export function loadBundle(slug: string): SiteBundle {

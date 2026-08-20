@@ -309,6 +309,44 @@ export type Manifest = z.infer<typeof manifestSchema>
  * This is a statement about OpenStreetMap, not about the places. A candidate
  * below the threshold has unmapped alleys, not absent ones.
  */
+/**
+ * A reference network — one of the known-answer fixtures, measured and drawn.
+ *
+ * The point is calibration. Nothing in the product told a reader whether
+ * H = 3.265 was high or low; the anchors existed only as prose on the method
+ * page. These are the anchors as figures: the same shape, the same rose, the
+ * same arithmetic, with an answer known before any code ran.
+ *
+ * `expected` states that answer in words, so the page can show what the value
+ * is *supposed* to be beside what the pipeline computed — the reader checks
+ * the instrument rather than trusting it.
+ */
+export const referenceNetworkSchema = z.object({
+  id: z.enum(['perfect-grid', 'rotated-grid', 'random-geometric', 'pure-tree']),
+  label: z.object({ id: z.string().min(2), en: z.string().min(2) }),
+  note: z.object({ id: z.string().min(8), en: z.string().min(8) }),
+  /** The known answer, stated. Not computed — this is what it should be. */
+  expected: z.object({ id: z.string().min(2), en: z.string().min(2) }),
+  rose: roseSchema,
+  orientationEntropy: z.number().min(0),
+  normalisedEntropy: z.number().min(0).max(1),
+  orientationOrder: z.number().min(0).max(1),
+  deadEndProportion: z.number().min(0).max(1),
+  /** Half the drawing's extent, so the disc frames it the way a site is framed. */
+  radiusM: z.number().positive(),
+  geometry: z.array(polylineSchema),
+})
+export type ReferenceNetwork = z.infer<typeof referenceNetworkSchema>
+
+export const referenceSchema = z.object({
+  binCount: z.literal(36),
+  /** ln 4 and ln 36 — the anchors φ is measured between. */
+  gridEntropy: z.number().positive(),
+  maxEntropy: z.number().positive(),
+  networks: z.array(referenceNetworkSchema).min(3),
+})
+export type Reference = z.infer<typeof referenceSchema>
+
 export const surveyCandidateSchema = z.object({
   label: z.string().min(2),
   type: z.string().min(2),

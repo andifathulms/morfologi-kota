@@ -17,6 +17,8 @@ import { join } from 'node:path'
 import {
   buildGraphFromWays,
   clipToRadius,
+  GRID_ENTROPY,
+  MAX_ENTROPY,
   binContributions,
   computeModeMetrics,
   coverageOfWalkGraph,
@@ -35,14 +37,22 @@ import {
   SITES,
   classifyStability,
   manifestSchema,
+  referenceSchema,
   siteBundleSchema,
   type ManifestEntry,
   type SensitivitySummaryEntry,
   type EmittedModeMetrics,
+  type ReferenceNetwork,
   type SensitivityValues,
   type Site,
   type WalkOnly,
 } from '@/data/sites'
+import {
+  perfectGrid,
+  pureTree,
+  randomGeometricGraph,
+  rotatedGrid,
+} from '@/lib/reference/networks'
 import { readCachedExtract, splitElements } from './osm'
 import { simplifyPolyline } from './simplify'
 
@@ -265,6 +275,96 @@ function buildMode(
   return { graph, metrics: computeModeMetrics(graph, { radiusM: SAMPLING_RADIUS_M }) }
 }
 
+/**
+ * The reference networks, measured by the same code that measures a site.
+ *
+ * A reader has no scale for H until they have seen one. These are the known
+ * answers — a perfect grid at ln 4, the same grid rotated 29° at the *same*
+ * entropy with shifted bins, a random graph near ln 36, a pure tree — put
+ * through `computeModeMetrics` exactly as a real disc is, so the number beside
+ * a reference rose is comparable with the number beside a real one.
+ *
+ * The rotated grid is the one that teaches the most in one glance: identical H,
+ * different bins. That is rotation-invariance, and it is Boeing's Manhattan.
+ */
+function buildReference(): ReferenceNetwork[] {
+  const tree = pureTree()
+  const specs = [
+    {
+      id: 'perfect-grid' as const,
+      graph: perfectGrid(),
+      label: { id: 'Petak sempurna', en: 'Perfect grid' },
+      note: {
+        id: 'Panjang yang sama membentang utara–selatan dan timur–barat: empat bin terisi, sisanya kosong.',
+        en: 'Equal length running north–south and east–west: four bins occupied, the rest empty.',
+      },
+      expected: { id: 'H = ln 4 ≈ 1,386 · φ = 1', en: 'H = ln 4 ≈ 1.386 · φ = 1' },
+    },
+    {
+      id: 'rotated-grid' as const,
+      graph: rotatedGrid(29),
+      label: { id: 'Petak yang sama, diputar 29°', en: 'The same grid, rotated 29°' },
+      note: {
+        id: 'Bentuk yang sama persis, diputar. Entropinya tidak berubah — hanya binnya yang bergeser. Inilah yang dimaksud ukuran ini tidak bergantung pada arah hadap kota, dan inilah Manhattan pada 29° dalam makalah Boeing.',
+        en: 'Exactly the same shape, turned. The entropy does not move — only the bins do. That is what it means for the measure to be rotation-invariant, and it is Boeing’s Manhattan at 29°.',
+      },
+      expected: {
+        id: 'H sama dengan petak di sebelah kiri',
+        en: 'H identical to the grid on its left',
+      },
+    },
+    {
+      id: 'random-geometric' as const,
+      graph: randomGeometricGraph(),
+      label: { id: 'Graf geometrik acak', en: 'Random geometric graph' },
+      note: {
+        id: 'Titik acak yang dihubungkan bila berdekatan: arah jalan hampir merata, jadi entropinya mendekati maksimum.',
+        en: 'Random points joined when close: bearings are near-uniform, so entropy sits near its maximum.',
+      },
+      expected: { id: 'H mendekati ln 36 ≈ 3,584', en: 'H approaching ln 36 ≈ 3.584' },
+    },
+    {
+      id: 'pure-tree' as const,
+      graph: tree.graph,
+      label: { id: 'Pohon murni', en: 'Pure tree' },
+      note: {
+        id: 'Tidak ada satu pun putaran: setiap cabang berakhir buntu. Proporsi jalan buntunya diketahui dari konstruksinya.',
+        en: 'Not one loop: every branch ends in a dead end. Its dead-end proportion is known from its construction.',
+      },
+      expected: {
+        id: `jalan buntu = ${(tree.expectedDeadEndProportion * 100).toFixed(1)}% menurut konstruksi`,
+        en: `dead-end = ${(tree.expectedDeadEndProportion * 100).toFixed(1)}% by construction`,
+      },
+    },
+  ]
+
+  return specs.map((spec) => {
+    let radiusM = 1
+    for (const node of spec.graph.nodes.values()) {
+      radiusM = Math.max(radiusM, Math.hypot(node.xM, node.yM))
+    }
+    const metrics = computeModeMetrics(spec.graph, { radiusM })
+    return {
+      id: spec.id,
+      label: spec.label,
+      note: spec.note,
+      expected: spec.expected,
+      rose: {
+        binCentresDeg: [...metrics.rose.binCentresDeg],
+        shares: metrics.rose.shares.map((share) => round(share, 8)),
+        binContributions: binContributions(metrics.rose).map((term) => round(term, 8)),
+        totalWeight: round(metrics.rose.totalWeight, 3),
+      },
+      orientationEntropy: round(metrics.orientationEntropy, 6),
+      normalisedEntropy: round(metrics.normalisedEntropy, 6),
+      orientationOrder: round(metrics.orientationOrder, 6),
+      deadEndProportion: round(metrics.degrees.proportions.deadEnd, 6),
+      radiusM: round(radiusM, 2),
+      geometry: emitGeometryIndexed(spec.graph, COMPARE_TOLERANCE_M, 0).lines,
+    }
+  })
+}
+
 async function main(): Promise<void> {
   await rm(OUT_DIR, { recursive: true, force: true })
   await mkdir(OUT_DIR, { recursive: true })
@@ -460,6 +560,20 @@ async function main(): Promise<void> {
   })
 
   await writeFile(join(OUT_DIR, 'manifest.json'), JSON.stringify(manifest), 'utf8')
+
+  const reference = referenceSchema.parse({
+    binCount: 36,
+    gridEntropy: round(GRID_ENTROPY, 6),
+    maxEntropy: round(MAX_ENTROPY, 6),
+    networks: buildReference(),
+  })
+  await writeFile(join(OUT_DIR, 'reference.json'), JSON.stringify(reference), 'utf8')
+  for (const network of reference.networks) {
+    console.log(
+      `reference ${network.id.padEnd(18)} H ${network.orientationEntropy.toFixed(3)}` +
+        `  φ ${network.orientationOrder.toFixed(3)}  (${network.expected.en})`,
+    )
+  }
   console.log(`\nWrote ${SITES.length} bundles + manifest to data/out.`)
   console.log('Next: pnpm data:validate')
 }

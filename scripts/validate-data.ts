@@ -19,6 +19,7 @@ import {
   SAMPLING_RADIUS_M,
   SITES,
   manifestSchema,
+  referenceSchema,
   siteBundleSchema,
   surveySchema,
   type SiteBundle,
@@ -26,6 +27,7 @@ import {
 
 const OUT_DIR = join(process.cwd(), 'data', 'out')
 const SURVEY_PATH = join(process.cwd(), 'data', 'survey.json')
+const REFERENCE_PATH = join(OUT_DIR, 'reference.json')
 
 /**
  * Invariant §9: there is no score field in this codebase and adding one is a
@@ -281,6 +283,79 @@ async function main(): Promise<void> {
     const cleared = survey.candidates.filter((c) => c.confidence !== 'thin').length
     notes.push(
       `Survey: ${cleared} of ${survey.candidates.length} candidate centres clear the thin threshold.`,
+    )
+  }
+
+  /*
+   * The reference networks are the scale a reader reads every real number
+   * against, so their answers are checked here against what they are supposed
+   * to be — not against what the pipeline happened to produce. If the grid
+   * ever stops giving ln 4, the calibration on the page is wrong and so is
+   * something in `lib/morphology`.
+   */
+  if (!existsSync(REFERENCE_PATH)) {
+    failures.push('data/out/reference.json is missing — the numbers would have no scale.')
+  } else {
+    const reference = referenceSchema.parse(JSON.parse(await readFile(REFERENCE_PATH, 'utf8')))
+    const byId = new Map(reference.networks.map((network) => [network.id, network]))
+
+    const grid = byId.get('perfect-grid')
+    const rotated = byId.get('rotated-grid')
+    check(grid !== undefined, 'reference: no perfect grid — the lower anchor is missing')
+    check(rotated !== undefined, 'reference: no rotated grid — rotation-invariance is unshown')
+
+    if (grid !== undefined) {
+      check(
+        Math.abs(grid.orientationEntropy - Math.log(4)) < 1e-6,
+        `reference: the perfect grid gives H = ${grid.orientationEntropy}, not ln 4 = ${Math.log(4).toFixed(6)}`,
+      )
+      check(
+        Math.abs(grid.orientationOrder - 1) < 1e-6,
+        `reference: the perfect grid gives φ = ${grid.orientationOrder}, not 1`,
+      )
+    }
+
+    // The claim the rotated grid exists to make, asserted rather than asserted
+    // in prose: turning a network does not change its entropy.
+    if (grid !== undefined && rotated !== undefined) {
+      check(
+        Math.abs(grid.orientationEntropy - rotated.orientationEntropy) < 1e-6,
+        `reference: rotating the grid moved H from ${grid.orientationEntropy} to ${rotated.orientationEntropy} — the measure is not rotation-invariant, or the binning is wrong`,
+      )
+      const shifted = grid.rose.shares.some(
+        (share, index) => Math.abs(share - (rotated.rose.shares[index] ?? 0)) > 1e-6,
+      )
+      check(shifted, 'reference: rotating the grid did not move a single bin — the fixture is not rotated')
+    }
+
+    const random = byId.get('random-geometric')
+    if (random !== undefined) {
+      check(
+        random.orientationEntropy > 0.95 * reference.maxEntropy,
+        `reference: the random graph gives H = ${random.orientationEntropy}, well below ln 36 = ${reference.maxEntropy}`,
+      )
+    }
+
+    const tree = byId.get('pure-tree')
+    if (tree !== undefined) {
+      check(
+        tree.deadEndProportion > 0.4,
+        `reference: the pure tree gives a dead-end proportion of ${tree.deadEndProportion} — a tree is mostly leaves`,
+      )
+    }
+
+    for (const network of reference.networks) {
+      checkRose(network.rose.shares, `reference/${network.id}`)
+      checkEntropyDecomposition(
+        network.rose.binContributions,
+        network.orientationEntropy,
+        `reference/${network.id}`,
+      )
+      check(network.geometry.length > 0, `reference/${network.id}: nothing to draw`)
+    }
+    scanForForbiddenKeys(reference, 'reference')
+    notes.push(
+      `Reference: grid H ${grid?.orientationEntropy.toFixed(3)} = ln 4, rotated ${rotated?.orientationEntropy.toFixed(3)}, random ${random?.orientationEntropy.toFixed(3)} of max ${reference.maxEntropy.toFixed(3)}.`,
     )
   }
 

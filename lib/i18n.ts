@@ -177,6 +177,15 @@ const dictionary = {
     id: 'Pasangan yang tidak terhubung sama sekali dikeluarkan dari rata-rata. Jumlahnya besar berarti jaringan ini terpecah — sinyal tentang datanya, bukan tentang tempatnya.',
     en: 'Pairs with no route between them at all are excluded from the mean. A large count means this network is fragmented — a signal about the data, not about the place.',
   },
+  referenceHeading: {
+    id: 'Seberapa besar 3 itu? Tiga jaringan yang jawabannya sudah diketahui',
+    en: 'How big is a 3? Three networks whose answers are known',
+  },
+  referenceNote: {
+    id: 'Angka entropi tidak berarti apa-apa tanpa skala. Jaringan-jaringan ini dibangun, bukan diukur dari OpenStreetMap: jawabannya diketahui sebelum kode dijalankan, dan pipeline yang sama mengukurnya seperti mengukur lokasi sungguhan. Kolom “seharusnya” adalah jawaban yang sudah diketahui; kolom di sebelahnya adalah yang dihitung. Build gagal bila keduanya berbeda.',
+    en: 'An entropy figure means nothing without a scale. These networks are constructed rather than measured from OpenStreetMap: their answers are known before any code runs, and the same pipeline measures them as measures a real site. The “should be” line is the known answer; the figure beside it is what was computed. The build fails if they disagree.',
+  },
+  referenceExpected: { id: 'seharusnya', en: 'should be' },
   entropyTerm: { id: '−P·ln P', en: '−P·ln P' },
   entropyTotal: { id: 'Jumlah = H', en: 'Sum = H' },
   entropyDerivation: {

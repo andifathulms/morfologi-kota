@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
-import { loadBundle, loadManifest } from '@/lib/data'
+import { loadBundle, loadManifest, loadReference } from '@/lib/data'
 import Link from 'next/link'
 import { SiteCard } from '@/components/card/SiteCard'
 import { PlateGrid, type SortOption, type SortableSite } from '@/components/plate/PlateGrid'
@@ -10,6 +10,7 @@ import { SITE_TYPE_LABEL, t } from '@/lib/i18n'
 import { kilometres, percent, signed, signedPercent } from '@/lib/format'
 import { NetworkDrawing } from '@/components/network/NetworkDrawing'
 import { ModeKey, ModeSwatch } from '@/components/legend/ModeKey'
+import { ReferenceStrip } from '@/components/reference/ReferenceStrip'
 
 export function generateStaticParams(): { locale: Locale }[] {
   return LOCALES.map((locale) => ({ locale }))
@@ -41,6 +42,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
   if (!isLocale(params.locale)) notFound()
   const locale: Locale = params.locale
   const manifest = loadManifest()
+  const reference = loadReference()
 
   const sites: SortableSite[] = manifest.sites.map((entry) => ({
     slug: entry.slug,
@@ -318,6 +320,10 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
           </div>
         </section>
       ) : null}
+
+      <ReferenceStrip reference={reference} locale={locale} />
+
+      <div className="mt-12" />
 
       {/* The plate gets a heading of its own. It is the page's main content
           and it had none: the outline went from the introduction's last
