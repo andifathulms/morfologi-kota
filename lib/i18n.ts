@@ -177,6 +177,14 @@ const dictionary = {
     id: 'Pasangan yang tidak terhubung sama sekali dikeluarkan dari rata-rata. Jumlahnya besar berarti jaringan ini terpecah — sinyal tentang datanya, bukan tentang tempatnya.',
     en: 'Pairs with no route between them at all are excluded from the mean. A large count means this network is fragmented — a signal about the data, not about the place.',
   },
+  heroBridge: {
+    id: 'Panjang memberi tahu berapa banyak jalan yang ada. Rose memberi tahu ke arah mana jalan itu membentang — dan keduanya bergerak sendiri-sendiri: sebuah tempat bisa memperoleh jaringan berkilo-kilometer saat berjalan kaki tanpa mengubah arahnya sama sekali, atau justru berubah arah tanpa bertambah panjang. Entropi orientasi H mengukur yang kedua, dan itulah yang diukur setiap kartu di bawah.',
+    en: 'Length tells you how much street there is. The rose tells you which way it runs — and the two move independently: a place can gain kilometres of network on foot without shifting its directions at all, or shift them without gaining much. Orientation entropy H measures the second, and it is what every card below measures.',
+  },
+  heroBridgeCompare: {
+    id: 'Di sini keduanya bergerak:',
+    en: 'Here both move:',
+  },
   referenceHeading: {
     id: 'Seberapa besar 3 itu? Tiga jaringan yang jawabannya sudah diketahui',
     en: 'How big is a 3? Three networks whose answers are known',

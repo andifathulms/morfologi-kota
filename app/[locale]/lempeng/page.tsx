@@ -7,10 +7,11 @@ import { PlateGrid, type SortOption, type SortableSite } from '@/components/plat
 import { LOCALES, d, isLocale, type Locale } from '@/lib/i18n'
 import { manifestDataPath } from '@/lib/paths'
 import { SITE_TYPE_LABEL, t } from '@/lib/i18n'
-import { kilometres, percent, signed, signedPercent } from '@/lib/format'
+import { fixed, kilometres, percent, signed, signedPercent } from '@/lib/format'
 import { NetworkDrawing } from '@/components/network/NetworkDrawing'
 import { ModeKey, ModeSwatch } from '@/components/legend/ModeKey'
 import { ReferenceStrip } from '@/components/reference/ReferenceStrip'
+import { Rose } from '@/components/rose/Rose'
 
 export function generateStaticParams(): { locale: Locale }[] {
   return LOCALES.map((locale) => ({ locale }))
@@ -208,6 +209,49 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
                 {d('openPair', locale)} — {hero.row.site.name}
               </Link>
             </figcaption>
+
+            {/*
+              The bridge.
+              The example above explains the gap in kilometres, which is vivid
+              and is not what this app measures with. Without this step a
+              reader leaves understanding "walking has more street" — which
+              they already suspected — and with no idea what the two coloured
+              shapes on every card are for.
+            */}
+            <div className="mt-6 max-w-figure">
+              <p className="m-0 max-w-prose font-serif text-md leading-relaxed">
+                {d('heroBridge', locale)}
+              </p>
+              <div className="mt-4 flex flex-wrap items-start gap-6">
+                <Rose
+                  locale={locale}
+                  size={200}
+                  method={false}
+                  series={[
+                    {
+                      shares: hero.bundle.drive.metrics.rose.shares,
+                      mode: 'drive',
+                      orientationEntropy: hero.bundle.drive.metrics.orientationEntropy,
+                      orientationOrder: hero.bundle.drive.metrics.orientationOrder,
+                    },
+                    {
+                      shares: hero.bundle.walk.metrics.rose.shares,
+                      mode: 'walk',
+                      orientationEntropy: hero.bundle.walk.metrics.orientationEntropy,
+                      orientationOrder: hero.bundle.walk.metrics.orientationOrder,
+                    },
+                  ]}
+                />
+                <p className="tabular m-0 max-w-prose font-mono text-xs leading-relaxed">
+                  {d('heroBridgeCompare', locale)}
+                  <br />
+                  {kilometres(hero.row.site.drive.totalLengthM)} →{' '}
+                  {kilometres(hero.row.site.walk.totalLengthM)}
+                  <br />H {fixed(hero.row.site.drive.orientationEntropy, 3)} →{' '}
+                  {fixed(hero.row.site.walk.orientationEntropy, 3)}
+                </p>
+              </div>
+            </div>
           </figure>
         </section>
       ) : null}
