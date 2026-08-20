@@ -427,22 +427,28 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
           const bundle = loadBundle(slug)
           const alternates = bundle.alternateGeometry ?? []
           if (alternates.length === 0) return null
+          /*
+           * Two levels of heading for twelve figures. The site name was a
+           * figcaption and the mode a bare paragraph, so the outline had
+           * nothing between this section's h2 and the drawings — Kayutangan
+           * and BSD were indistinguishable in it.
+           */
           return (
-            <figure key={slug} className="m-0 mt-8">
-              <figcaption className="m-0 font-sans text-base font-semibold">
+            <section key={slug} className="mt-8">
+              <h3 className="m-0 font-serif text-md font-semibold">
                 {bundle.site.name}
-                <span className="ml-2 font-normal text-ink-subtle">
+                <span className="ml-2 font-sans text-base font-normal text-ink-subtle">
                   {bundle.site.city} · r = {bundle.radiusM} m
                 </span>
-              </figcaption>
+              </h3>
               {(['drive', 'walk'] as const).map((mode) => (
                 <div key={mode} className="mt-4">
-                  <p
+                  <h4
                     className="m-0 font-sans text-base font-semibold"
                     style={{ color: mode === 'drive' ? 'var(--drive)' : 'var(--walk)' }}
                   >
                     {d(mode, locale)}
-                  </p>
+                  </h4>
                   <div className="mt-2 grid grid-cols-2 gap-4 md:grid-cols-3">
                     {alternates.map((alternate) => {
                       const mapping = TAG_MAPPINGS.find((m) => m.id === alternate.mappingId)
@@ -473,7 +479,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                   </div>
                 </div>
               ))}
-            </figure>
+            </section>
           )
         })}
       </section>
