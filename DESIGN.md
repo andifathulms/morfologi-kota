@@ -164,7 +164,7 @@ And the method page carries the Boeing citation, the metric definitions, the tag
 
 ## 10. Accessibility
 
-- **Every rose has a table equivalent** — 36 bins with bearings and shares — always available, not a fallback. It is also what someone would paste into a message.
+- **Every rose has a table equivalent** — 36 bins with bearings and shares — always available, not a fallback. It is also what someone would paste into a message. On the plate that is sixteen cards times thirty-six bins, and it is most of why that page is the size it is. The cost is known and it is accepted: a table that is one click away is a fallback, which is the thing this line exists to forbid.
 - **Colour is never the only channel:** drive and walk are labelled on every card and in every axis, and the paired view is positional as well as chromatic.
 - Metric columns are already text and read cleanly in order.
 - Sorting and mode toggles keyboard-operable; focus visible at 3px.
