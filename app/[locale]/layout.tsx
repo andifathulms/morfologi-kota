@@ -6,6 +6,7 @@ import '../globals.css'
 import { LOCALES, d, isLocale, type Locale } from '@/lib/i18n'
 import { loadManifest } from '@/lib/data'
 import { NavLink } from '@/components/nav/NavLink'
+import { Mark } from '@/components/brand/Mark'
 
 /*
  * DESIGN.md §7. Self-hosted: next/font fetches at build time and serves the
@@ -138,7 +139,9 @@ export default function LocaleLayout({
           */}
           <header className="flex flex-wrap items-end justify-between gap-4 border-b border-rule-strong py-6">
             <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
-              <div>
+              <div className="flex items-start gap-3">
+                <Mark size={34} className="mt-1 shrink-0" />
+                <div>
                 <Link
                   href={`/${locale}/lempeng`}
                   className="font-serif text-xl font-semibold leading-tight no-underline"
@@ -148,6 +151,7 @@ export default function LocaleLayout({
                 <p className="m-0 mt-1 max-w-prose font-sans text-base leading-snug text-ink-subtle">
                   {d('tagline', locale)}
                 </p>
+                </div>
               </div>
               <nav
                 aria-label={locale === 'id' ? 'Bagian utama' : 'Sections'}

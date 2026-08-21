@@ -60,6 +60,16 @@ The ground is warm because neither ink is one a press would put on bright white.
 
 **These carry the entire semantic load**, because the drive/walk gap is the finding. Everything else being monochrome means the comparison is the only coloured thing on the page and cannot be missed.
 
+**The one place they appear outside a figure is the mark.** The masthead glyph
+is a trunk forking into a plain branch and a knotted one — the drivable network
+in `--drive`, the walkable network in `--walk`, the shared trunk in `--ink`, in
+the same assignment as the legend and never swapped. It is the legend in
+miniature rather than a logo that happens to be coloured, which is the only
+reason it is allowed: it says the thing the hues are reserved for saying. It
+draws in the tokens, not in the exported brand file's own near-miss palette, so
+it moves with the sheet under `prefers-contrast: more`. Nothing else may claim
+this exception.
+
 **They are two press inks, and where they overlap they overprint.** In the paired rose both series multiply, so the overlap is the colour the two inks make together — the operation a two-colour press performs, and the reason this palette belongs to this product rather than to any product. `--overprint` is declared only so a key can draw a swatch and so a browser without `mix-blend-mode` has something to fall back to; on the page it is produced, never painted.
 
 **The overprint does not replace the shape cue, and must not be allowed to.** Blue and brick sit at 1.4:1 to each other, so they are not separable by luminance and never were. Overprint distinguishes the *overlap*; the heavy outline on walk distinguishes the *two networks*. A reader who separates neither hue still reads three regions. Removing the outline because the overlap now has a colour would quietly return the product to hue-only encoding.
