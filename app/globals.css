@@ -99,6 +99,27 @@ body {
 }
 
 /*
+ * The pair's swipe container.
+ *
+ * Below `md` it is a horizontal scroller with a focus stop, because there is
+ * nothing inside either pane to tab to. At `md` it becomes `display: contents`
+ * so the two panes are direct children of the pair grid and the delta column
+ * can be placed between them once, rather than rendered twice and hidden at
+ * each breakpoint in turn.
+ *
+ * An element with no box cannot draw an outline, so the ring the container
+ * would have shown moves to the panes it dissolved into. Without this the stop
+ * is still reachable and still announced, and nothing marks where the focus
+ * went — which is the one thing DESIGN.md §10 asks of a focus state.
+ */
+@media (min-width: 768px) {
+  .pair-panes:focus-visible > section {
+    outline: 3px solid var(--ink);
+    outline-offset: 2px;
+  }
+}
+
+/*
  * Overprint.
  *
  * Where the two series overlap, both inks multiply — against the sheet and

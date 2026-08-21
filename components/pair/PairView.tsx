@@ -72,7 +72,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
         derived from, not a subsection of the walking one. As an h3 the
         document outline filed the product's central figure underneath "walk".
       */}
-      <h2 className="m-0 font-sans text-lg font-semibold">{d('differenceHeading', locale)}</h2>
+      <h2 className="m-0 font-serif text-lg font-semibold">{d('differenceHeading', locale)}</h2>
       <div className="mt-2">
         <NetworkDifferenceDrawing
           geometry={walk.geometry}
@@ -105,77 +105,97 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
 
   return (
     <div>
-      {/*
-        Focusable, because below `md` this is a horizontal scroller and there
-        is nothing inside either pane to tab to — the drawings and roses are
-        images, the metric columns are description lists. Without a focus stop
-        the walking pane was unreachable without a pointer, which also caught
-        anyone at 200% zoom on a 1280 px screen.
+      <div className="md:grid md:grid-cols-[1fr_auto_1fr] md:items-start md:gap-6">
+        {/*
+          `md:contents` is what lets the delta exist once.
 
-        `role="group"` and a name because there is no native element for a
-        scrollable region: tabIndex alone would add a focus stop that announces
-        nothing at all.
-      */}
-      <div
-        tabIndex={0}
-        role="group"
-        aria-label={d('pairPanes', locale)}
-        className="flex snap-x snap-mandatory gap-8 overflow-x-auto pb-4 md:grid md:grid-cols-[1fr_auto_1fr] md:items-start md:gap-6 md:overflow-visible md:pb-0"
-      >
-        <section className="min-w-pane shrink-0 snap-center md:col-start-1 md:min-w-0">
-          <h2 className="m-0 font-sans text-lg font-semibold" style={{ color: 'var(--drive)' }}>
-            {d('drive', locale)}
-          </h2>
-          <NetworkDrawing
-            geometry={drive.geometry}
-            radiusM={radiusM}
-            size={420}
-            responsive
-            label={`${bundle.site.name} — ${d('drive', locale)}`}
-          />
-          <Rose locale={locale} size={220} series={[driveRose]} />
-          <div className="mt-4">
-            <MetricColumn metrics={drive.metrics} mode="drive" locale={locale} notes />
-          </div>
-          <div className="mt-6">
-            <WorkingColumn
-              metrics={drive.metrics}
-              mode="drive"
+          The delta belongs between the panes on desktop and beneath them on a
+          phone, and it used to get there by being rendered twice — one copy
+          hidden at each breakpoint. That is a hidden duplicate of the overlaid
+          rose, its key and ten rows on every pair page. Dissolving the swipe
+          container's box at `md` makes the two panes direct children of the
+          grid, so the delta can be a third child placed into the middle column
+          from a DOM position that also reads correctly beneath them.
+
+          Reading order becomes drive, walk, delta rather than drive, delta,
+          walk — each network read whole, then the comparison. The visual
+          arrangement is unchanged.
+
+          Focusable, because below `md` this is a horizontal scroller and there
+          is nothing inside either pane to tab to — the drawings and roses are
+          images, the metric columns are description lists. Without a focus stop
+          the walking pane was unreachable without a pointer, which also caught
+          anyone at 200% zoom on a 1280 px screen.
+
+          `role="group"` and a name because there is no native element for a
+          scrollable region: tabIndex alone would add a focus stop that
+          announces nothing at all. At `md` the element has no box of its own,
+          so `globals.css` draws its focus ring on the panes instead.
+
+          The bottom hairline is here rather than on the delta because it also
+          has to vanish at `md`, and a box that does not exist cannot draw a
+          border — one rule instead of two that have to agree.
+        */}
+        <div
+          tabIndex={0}
+          role="group"
+          aria-label={d('pairPanes', locale)}
+          className="pair-panes flex snap-x snap-mandatory gap-8 overflow-x-auto border-b border-rule-strong pb-4 md:contents"
+        >
+          <section className="min-w-pane shrink-0 snap-center md:col-start-1 md:row-start-1 md:min-w-0">
+            <h2 className="m-0 font-serif text-lg font-semibold" style={{ color: 'var(--drive)' }}>
+              {d('drive', locale)}
+            </h2>
+            <NetworkDrawing
+              geometry={drive.geometry}
               radiusM={radiusM}
-              locale={locale}
+              size={420}
+              responsive
+              label={`${bundle.site.name} — ${d('drive', locale)}`}
             />
-          </div>
-        </section>
+            <Rose locale={locale} size={220} series={[driveRose]} />
+            <div className="mt-4">
+              <MetricColumn metrics={drive.metrics} mode="drive" locale={locale} notes />
+            </div>
+            <div className="mt-6">
+              <WorkingColumn
+                metrics={drive.metrics}
+                mode="drive"
+                radiusM={radiusM}
+                locale={locale}
+              />
+            </div>
+          </section>
 
-        {/* Desktop: the delta sits between the two panes, so the comparison is
-            read across rather than remembered. */}
-        <div className="hidden md:col-start-2 md:block md:border-x md:border-rule-strong md:px-6">
-          {delta}
+          <section className="min-w-pane shrink-0 snap-center md:col-start-3 md:row-start-1 md:min-w-0">
+            <h2 className="m-0 font-serif text-lg font-semibold" style={{ color: 'var(--walk)' }}>
+              {d('walk', locale)}
+            </h2>
+            <NetworkDrawing
+              geometry={walk.geometry}
+              radiusM={radiusM}
+              size={420}
+              responsive
+              label={`${bundle.site.name} — ${d('walk', locale)}`}
+            />
+            <Rose locale={locale} size={220} series={[walkRose]} />
+            <div className="mt-4">
+              <MetricColumn metrics={walk.metrics} mode="walk" locale={locale} notes />
+            </div>
+            <div className="mt-6">
+              <WorkingColumn metrics={walk.metrics} mode="walk" radiusM={radiusM} locale={locale} />
+            </div>
+          </section>
         </div>
 
-        <section className="min-w-pane shrink-0 snap-center md:col-start-3 md:min-w-0">
-          <h2 className="m-0 font-sans text-lg font-semibold" style={{ color: 'var(--walk)' }}>
-            {d('walk', locale)}
-          </h2>
-          <NetworkDrawing
-            geometry={walk.geometry}
-            radiusM={radiusM}
-            size={420}
-            responsive
-            label={`${bundle.site.name} — ${d('walk', locale)}`}
-          />
-          <Rose locale={locale} size={220} series={[walkRose]} />
-          <div className="mt-4">
-            <MetricColumn metrics={walk.metrics} mode="walk" locale={locale} notes />
-          </div>
-          <div className="mt-6">
-            <WorkingColumn metrics={walk.metrics} mode="walk" radiusM={radiusM} locale={locale} />
-          </div>
-        </section>
+        {/* Beneath the panes on a phone, between them on desktop — the same
+            element, placed rather than duplicated. The comparison is read
+            across on a wide screen and pinned under the swipe on a narrow one
+            (DESIGN.md §6). */}
+        <div className="mt-6 md:col-start-2 md:row-start-1 md:mt-0 md:border-x md:border-rule-strong md:px-6">
+          {delta}
+        </div>
       </div>
-
-      {/* Narrow screens swipe between the two panes with the delta beneath. */}
-      <div className="mt-6 border-t border-rule-strong pt-4 md:hidden">{delta}</div>
 
       <section className="mt-12 border-t border-rule-strong pt-6">{difference}</section>
 
