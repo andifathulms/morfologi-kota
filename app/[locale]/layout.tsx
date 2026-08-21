@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { IBM_Plex_Mono, IBM_Plex_Sans, Source_Serif_4 } from 'next/font/google'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
@@ -36,6 +36,19 @@ export function generateStaticParams(): { locale: Locale }[] {
   return LOCALES.map((locale) => ({ locale }))
 }
 
+/*
+ * The sheet, declared to the browser chrome as well as to the page.
+ *
+ * On Android the address bar takes this colour, so without it a plate on an
+ * uncoated warm ground opens under a strip of the browser's default grey.
+ * One value, not a light/dark pair: DESIGN.md §11 — there is no dark mode to
+ * switch to.
+ */
+export const viewport: Viewport = {
+  themeColor: '#F7F4EC',
+  colorScheme: 'light',
+}
+
 /**
  * Sharing metadata.
  *
@@ -61,6 +74,21 @@ export function generateMetadata({ params }: { params: { locale: string } }): Me
     ...(siteUrl ? { metadataBase: new URL(siteUrl) } : {}),
     title,
     description,
+    /*
+     * A static file under `public/`, not `app/manifest.ts`.
+     *
+     * The route convention emits the manifest in the right place and then
+     * links it as `/manifest.webmanifest` with no basePath, and it wins over
+     * this field, so under a project Pages deployment the link resolved to the
+     * domain root where this site is not. Nothing visibly breaks — the browser
+     * fetches the manifest rather than the page requesting it — the icons are
+     * simply never found.
+     *
+     * Every URL inside the file is relative to the file, so the manifest needs
+     * no knowledge of the basePath at all and dev and Pages read the same
+     * bytes.
+     */
+    manifest: `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/manifest.webmanifest`,
     alternates: alternatesFor(locale, 'lempeng'),
     openGraph: {
       type: 'website',
