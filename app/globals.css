@@ -130,6 +130,26 @@ body {
 }
 
 /*
+ * Landing on an anchor.
+ *
+ * The plate sends a reader to `/metode#pemilihan` — the candidates measured
+ * and not adopted — and they arrived at a heading jammed against the top edge
+ * of the window with nothing to say that is where they had been sent. The rule
+ * is the one the asides already use for a quoted aside, so the mark is a
+ * vocabulary the page has rather than a new one, and the negative margin keeps
+ * the heading on the same measure as the prose under it.
+ */
+:target {
+  scroll-margin-top: var(--space-6);
+}
+
+h2:target {
+  border-left: 2px solid var(--ink);
+  margin-left: calc(var(--space-3) * -1);
+  padding-left: var(--space-3);
+}
+
+/*
  * The pair's swipe container.
  *
  * Below `md` it is a horizontal scroller with a focus stop, because there is
