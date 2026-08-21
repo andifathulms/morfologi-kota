@@ -65,7 +65,11 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
 
       <header className="mt-4 max-w-prose">
         <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">{site.name}</h1>
-        <p className="m-0 font-sans text-base text-ink-subtle">
+        {/* The caption tier. The same datum is set at 14 on all sixteen plate
+            cards, and the same datum should not be set two ways — it names the
+            place and its type, which is a caption rather than a sentence
+            (DESIGN.md §7). */}
+        <p className="m-0 font-sans text-xs text-ink-subtle">
           {site.city} · {t(SITE_TYPE_LABEL[site.type] ?? { id: site.type, en: site.type }, locale)}
         </p>
         <p className="mt-4 font-serif text-md leading-relaxed">{t(site.note, locale)}</p>
