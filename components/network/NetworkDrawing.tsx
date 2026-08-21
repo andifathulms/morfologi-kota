@@ -1,5 +1,3 @@
-import type { Mode } from '@/lib/tags'
-
 /**
  * The network drawing.
  *
@@ -25,8 +23,6 @@ export interface NetworkDrawingProps {
   readonly radiusM: number
   readonly size?: number
   readonly animate?: boolean
-  /** Only used for the accessible label — the drawing is ink, never the mode hue. */
-  readonly mode: Mode
   readonly label: string
   /** How many groups the drawing is staggered across. */
   readonly buckets?: number
@@ -186,7 +182,7 @@ export function NetworkDifferenceDrawing({
   buckets = 8,
   responsive = false,
   instanceId,
-}: Omit<NetworkDrawingProps, 'mode'> & {
+}: NetworkDrawingProps & {
   readonly walkOnlyIndices: readonly number[]
 }) {
   const clipId = `clip-diff-${label.replace(/[^a-z0-9]/gi, '')}${instanceId === undefined ? '' : `-${instanceId}`}`

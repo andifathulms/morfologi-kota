@@ -52,7 +52,6 @@ export function SiteCard({
         radiusM={entry.radiusM}
         size={320}
         responsive
-        mode={mode}
         label={`${entry.name} — ${d(mode === 'drive' ? 'drive' : 'walk', locale)}`}
       />
 

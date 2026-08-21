@@ -193,7 +193,6 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
                     radiusM={hero.bundle.radiusM}
                     size={320}
                     responsive
-                    mode={mode}
                     label={`${hero.row.site.name} — ${d(mode, locale)}`}
                     instanceId="contoh"
                   />

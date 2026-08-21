@@ -51,7 +51,6 @@ export function ReferenceStrip({
                 radiusM={network.radiusM}
                 size={150}
                 animate={false}
-                mode="drive"
                 label={t(network.label, locale)}
                 instanceId={`ref-${network.id}`}
               />

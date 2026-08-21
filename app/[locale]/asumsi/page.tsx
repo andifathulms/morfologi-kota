@@ -500,7 +500,6 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                             size={240}
                             responsive
                             animate={false}
-                            mode={mode}
                             /* Named by the mapping alone: the site is the h3
                                above and the mode is the h4, so the other two
                                thirds of this name were already in the reading

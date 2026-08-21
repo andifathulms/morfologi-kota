@@ -131,7 +131,6 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
             radiusM={radiusM}
             size={420}
             responsive
-            mode="drive"
             label={`${bundle.site.name} — ${d('drive', locale)}`}
           />
           <Rose locale={locale} size={220} series={[driveRose]} />
@@ -163,7 +162,6 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
             radiusM={radiusM}
             size={420}
             responsive
-            mode="walk"
             label={`${bundle.site.name} — ${d('walk', locale)}`}
           />
           <Rose locale={locale} size={220} series={[walkRose]} />
