@@ -150,6 +150,29 @@ h2:target {
 }
 
 /*
+ * Wrapping.
+ *
+ * §7 fixes the family, the scale and the weights and says nothing about where
+ * a line breaks, which is the part a reader notices without being able to name
+ * it: a 36 px serif heading with one word alone on its second line, or a
+ * paragraph ending on a single orphan. `balance` is capped at a few lines by
+ * every engine that implements it, so it goes on headings only; prose gets
+ * `pretty`, which is the cheaper last-line pass.
+ */
+h1,
+h2,
+h3,
+h4 {
+  text-wrap: balance;
+}
+
+p,
+figcaption,
+li {
+  text-wrap: pretty;
+}
+
+/*
  * The pair's swipe container.
  *
  * Below `md` it is a horizontal scroller with a focus stop, because there is
