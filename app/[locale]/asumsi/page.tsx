@@ -485,7 +485,11 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                   >
                     {d(mode, locale)}
                   </h4>
-                  <div className="mt-2 grid grid-cols-2 gap-4 md:grid-cols-3">
+                  {/* One cell per mapping, and there are three of them: a
+                      two-column grid left an empty cell below `md`, eight
+                      times over. Stacked on a phone, where a 160 px disc was
+                      losing the fine grain the figure exists to show. */}
+                  <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-3">
                     {alternates.map((alternate) => {
                       const mapping = TAG_MAPPINGS.find((m) => m.id === alternate.mappingId)
                       const geometry =
@@ -516,9 +520,8 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                             instanceId={`${slug}-${mode}-${alternate.mappingId}`}
                           />
                           <p className="tabular m-0 mt-1 font-mono text-xs">
-                            {mapping === undefined ? alternate.mappingId : t(mapping.label, locale)}
-                            {alternate.mappingId === DEFAULT_TAG_MAPPING.id ? ' ·' : ' ·'}{' '}
-                            {kilometres(lengthM)}
+                            {mapping === undefined ? alternate.mappingId : t(mapping.label, locale)}{' '}
+                            · {kilometres(lengthM)}
                           </p>
                         </div>
                       )
