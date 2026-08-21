@@ -99,6 +99,37 @@ body {
 }
 
 /*
+ * Hover, and where it is allowed to appear.
+ *
+ * There was none anywhere in the product. Both chip groups declare
+ * `transition-colors duration-fast ease-house` and had nothing but `:checked`
+ * to transition to, so a control the cursor already calls clickable answered
+ * only after it had been clicked. §8 covers this — everything that is not the
+ * one orchestrated moment is a state change, and 120 ms is the token for it.
+ *
+ * The chip takes the ink edge rather than the ink ground: the ground is what
+ * `:checked` means, and a hover that previews the selected state says the
+ * choice has been made when it has not.
+ *
+ * Links get the underline the current-page nav link already uses, which also
+ * gives the two `no-underline` links — the masthead and every card title — the
+ * only hover response they have. Behind `hover: hover`, so a touch device does
+ * not carry a state it cannot leave.
+ */
+@media (hover: hover) {
+  .plate-chips label:hover,
+  .mapping-chips label:hover {
+    border-color: var(--ink);
+  }
+
+  a:hover {
+    text-decoration-line: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+}
+
+/*
  * The pair's swipe container.
  *
  * Below `md` it is a horizontal scroller with a focus stop, because there is
