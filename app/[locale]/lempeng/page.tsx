@@ -232,13 +232,13 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
                   series={[
                     {
                       shares: hero.bundle.drive.metrics.rose.shares,
-                      mode: 'drive',
+                      kind: 'drive',
                       orientationEntropy: hero.bundle.drive.metrics.orientationEntropy,
                       orientationOrder: hero.bundle.drive.metrics.orientationOrder,
                     },
                     {
                       shares: hero.bundle.walk.metrics.rose.shares,
-                      mode: 'walk',
+                      kind: 'walk',
                       orientationEntropy: hero.bundle.walk.metrics.orientationEntropy,
                       orientationOrder: hero.bundle.walk.metrics.orientationOrder,
                     },

@@ -24,13 +24,13 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
 
   const driveRose = {
     shares: drive.metrics.rose.shares,
-    mode: 'drive' as const,
+    kind: 'drive' as const,
     orientationEntropy: drive.metrics.orientationEntropy,
     orientationOrder: drive.metrics.orientationOrder,
   }
   const walkRose = {
     shares: walk.metrics.rose.shares,
-    mode: 'walk' as const,
+    kind: 'walk' as const,
     orientationEntropy: walk.metrics.orientationEntropy,
     orientationOrder: walk.metrics.orientationOrder,
   }

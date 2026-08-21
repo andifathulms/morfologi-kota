@@ -63,7 +63,11 @@ export function ReferenceStrip({
                 series={[
                   {
                     shares: network.rose.shares,
-                    mode: 'drive',
+                    /* Neither network. A perfect grid is not a driving one,
+                       and the two hues belong to the drive/walk gap alone
+                       (DESIGN.md §3) — so these draw in ink and are named by
+                       the heading above rather than by a mode they are not. */
+                    kind: 'reference',
                     orientationEntropy: network.orientationEntropy,
                     orientationOrder: network.orientationOrder,
                   },

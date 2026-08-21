@@ -64,13 +64,13 @@ export function SiteCard({
           series={[
             {
               shares: entry.drive.rose.shares,
-              mode: 'drive',
+              kind: 'drive',
               orientationEntropy: entry.drive.orientationEntropy,
               orientationOrder: entry.drive.orientationOrder,
             },
             {
               shares: entry.walk.rose.shares,
-              mode: 'walk',
+              kind: 'walk',
               orientationEntropy: entry.walk.orientationEntropy,
               orientationOrder: entry.walk.orientationOrder,
             },

@@ -34,9 +34,20 @@ import { fixed, percent } from '@/lib/format'
 const VIEW = 100
 const RING = 78
 
+/**
+ * What a series is a series *of*.
+ *
+ * The two modes carry the product's two hues, and they carry them alone:
+ * `--drive` and `--walk` exist to make the drive/walk gap the only coloured
+ * thing on the page (DESIGN.md §3). The calibration fixtures are neither
+ * mode — a perfect grid is not a driving network — so they are `reference`,
+ * and they are drawn in ink.
+ */
+export type RoseSeriesKind = Mode | 'reference'
+
 export interface RoseSeries {
   readonly shares: readonly number[]
-  readonly mode: Mode
+  readonly kind: RoseSeriesKind
   readonly orientationEntropy: number
   readonly orientationOrder: number
 }
@@ -69,8 +80,44 @@ function wedgePath(index: number, radius: number): string {
   return `M 0 0 L ${x1.toFixed(2)} ${y1.toFixed(2)} A ${radius.toFixed(2)} ${radius.toFixed(2)} 0 0 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z`
 }
 
-function strokeFor(mode: Mode): string {
-  return mode === 'drive' ? 'var(--drive)' : 'var(--walk)'
+function inkFor(kind: RoseSeriesKind): string {
+  switch (kind) {
+    case 'drive':
+      return 'var(--drive)'
+    case 'walk':
+      return 'var(--walk)'
+    /* Not a hue. A calibration fixture is neither network, and spending one of
+       the two inks on it would put colour on something that is not the
+       comparison (DESIGN.md §3). */
+    case 'reference':
+      return 'var(--ink)'
+    default: {
+      const never: never = kind
+      throw new Error(`unknown series kind: ${String(never)}`)
+    }
+  }
+}
+
+/**
+ * The series' name, or nothing where it does not have one.
+ *
+ * A reference network is titled by the figure it sits in — its own heading and
+ * its drawing's label — so naming it here would only give it a name it is not.
+ * It still prints its H and its φ, which is what §4 requires of every rose.
+ */
+function nameFor(kind: RoseSeriesKind, locale: Locale): string | undefined {
+  switch (kind) {
+    case 'drive':
+      return d('drive', locale)
+    case 'walk':
+      return d('walk', locale)
+    case 'reference':
+      return undefined
+    default: {
+      const never: never = kind
+      throw new Error(`unknown series kind: ${String(never)}`)
+    }
+  }
 }
 
 /**
@@ -83,8 +130,10 @@ function strokeFor(mode: Mode): string {
  * with it gets the overprint. Presentation attributes lose to a stylesheet
  * rule, which is what makes the enhancement work with no script.
  */
-function overlaid(mode: Mode): { fillOpacity: number; strokeWidth: number } {
-  return mode === 'drive' ? { fillOpacity: 0.6, strokeWidth: 0.5 } : { fillOpacity: 0.14, strokeWidth: 2 }
+function overlaid(kind: RoseSeriesKind): { fillOpacity: number; strokeWidth: number } {
+  // Only ever reached with two series, and a reference network is never one of
+  // a pair — it is a single fixture standing on its own.
+  return kind === 'walk' ? { fillOpacity: 0.14, strokeWidth: 2 } : { fillOpacity: 0.6, strokeWidth: 0.5 }
 }
 
 export function Rose({
@@ -113,10 +162,11 @@ export function Rose({
         style={series.length > 1 ? { isolation: 'isolate' } : undefined}
         role="img"
         aria-label={series
-          .map(
-            (s) =>
-              `${d(s.mode === 'drive' ? 'drive' : 'walk', locale)}: H ${fixed(s.orientationEntropy, 2)}, φ ${fixed(s.orientationOrder, 2)}`,
-          )
+          .map((s) => {
+            const name = nameFor(s.kind, locale)
+            const numbers = `H ${fixed(s.orientationEntropy, 2)}, φ ${fixed(s.orientationOrder, 2)}`
+            return name === undefined ? numbers : `${name}: ${numbers}`
+          })
           .join('; ')}
       >
         {/* The bound: a hairline circle at the maximum share. */}
@@ -154,12 +204,12 @@ export function Rose({
             const range = binRangeDeg(index)
             return (
               <path
-                key={`${s.mode}-${index}`}
+                key={`${s.kind}-${index}`}
                 d={wedgePath(index, radius)}
-                fill={strokeFor(s.mode)}
-                fillOpacity={series.length > 1 ? overlaid(s.mode).fillOpacity : 0.9}
-                stroke={strokeFor(s.mode)}
-                strokeWidth={series.length > 1 ? overlaid(s.mode).strokeWidth : 0.5}
+                fill={inkFor(s.kind)}
+                fillOpacity={series.length > 1 ? overlaid(s.kind).fillOpacity : 0.9}
+                stroke={inkFor(s.kind)}
+                strokeWidth={series.length > 1 ? overlaid(s.kind).strokeWidth : 0.5}
                 strokeLinejoin="round"
                 className={[series.length > 1 ? 'rose-ink' : '', animate ? 'rose-bar' : '']
                   .filter(Boolean)
@@ -167,7 +217,13 @@ export function Rose({
                 style={animate ? { animationDelay: `${240 + index * 8}ms` } : undefined}
               >
                 <title>
-                  {`${d(s.mode === 'drive' ? 'drive' : 'walk', locale)} · ${range.startDeg.toFixed(0)}°–${range.endDeg.toFixed(0)}° · ${percent(share, 1)}`}
+                  {[
+                    nameFor(s.kind, locale),
+                    `${range.startDeg.toFixed(0)}°–${range.endDeg.toFixed(0)}°`,
+                    percent(share, 1),
+                  ]
+                    .filter((part) => part !== undefined)
+                    .join(' · ')}
                 </title>
               </path>
             )
@@ -177,28 +233,33 @@ export function Rose({
 
       {caption ? (
         <figcaption className="tabular mt-1 font-mono text-xs">
-          {series.map((s) => (
-            <span key={s.mode} className="mr-4 inline-flex items-center gap-1">
-              {series.length > 1 ? (
-                <svg width={10} height={10} viewBox="0 0 10 10" aria-hidden="true">
-                  <rect
-                    x={s.mode === 'drive' ? 0.5 : 1}
-                    y={s.mode === 'drive' ? 0.5 : 1}
-                    width={s.mode === 'drive' ? 9 : 8}
-                    height={s.mode === 'drive' ? 9 : 8}
-                    fill={strokeFor(s.mode)}
-                    fillOpacity={overlaid(s.mode).fillOpacity}
-                    stroke={strokeFor(s.mode)}
-                    strokeWidth={s.mode === 'drive' ? 0.5 : 2}
-                  />
-                </svg>
-              ) : null}
-              <span style={{ color: strokeFor(s.mode) }}>
-                {d(s.mode === 'drive' ? 'drive' : 'walk', locale)}
-              </span>{' '}
-              H {fixed(s.orientationEntropy, 3)} · φ {fixed(s.orientationOrder, 2)}
-            </span>
-          ))}
+          {series.map((s) => {
+            const name = nameFor(s.kind, locale)
+            return (
+              <span key={s.kind} className="mr-4 inline-flex items-center gap-1">
+                {series.length > 1 ? (
+                  <svg width={10} height={10} viewBox="0 0 10 10" aria-hidden="true">
+                    <rect
+                      x={s.kind === 'walk' ? 1 : 0.5}
+                      y={s.kind === 'walk' ? 1 : 0.5}
+                      width={s.kind === 'walk' ? 8 : 9}
+                      height={s.kind === 'walk' ? 8 : 9}
+                      fill={inkFor(s.kind)}
+                      fillOpacity={overlaid(s.kind).fillOpacity}
+                      stroke={inkFor(s.kind)}
+                      strokeWidth={s.kind === 'walk' ? 2 : 0.5}
+                    />
+                  </svg>
+                ) : null}
+                {name === undefined ? null : (
+                  <>
+                    <span style={{ color: inkFor(s.kind) }}>{name}</span>{' '}
+                  </>
+                )}
+                H {fixed(s.orientationEntropy, 3)} · φ {fixed(s.orientationOrder, 2)}
+              </span>
+            )
+          })}
         </figcaption>
       ) : null}
 
