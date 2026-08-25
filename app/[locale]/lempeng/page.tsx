@@ -310,7 +310,13 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
               : `That is what the numbers say at these ${readable.length} sites. It is not a statement about Indonesian urban form — that would need far wider gang coverage than currently exists, particularly for perumahan clusters, not one of which cleared the threshold.`}
           </p>
           <div className="mt-4 overflow-x-auto">
-            <table className="tabular w-full max-w-prose border-collapse font-mono text-xs">
+            {/*
+              Not `max-w-prose`. That cap is 68 characters of whatever font the
+              element is set in, and this one is mono at 14 — so it resolved to
+              about 570 px and squeezed six columns into two thirds of the room
+              the section had. A measure is for prose; a table gets a width.
+            */}
+            <table className="tabular w-full max-w-table border-collapse font-mono text-xs">
               <caption className="sr-only">
                 {locale === 'id'
                   ? 'Selisih jalan kaki dikurangi kendara pada lokasi dengan cakupan gang memadai, diurutkan menurut tambahan panjang jaringan.'

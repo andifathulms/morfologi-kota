@@ -77,7 +77,14 @@ const config: Config = {
        * them, and an arbitrary value in one component is how a scale stops
        * being one.
        */
-      maxWidth: { plate: '1440px', prose: '68ch', figure: '42rem' },
+      /*
+       * `table` is the width a data table reads at, and it is a separate token
+       * because `prose` cannot do the job: `ch` is a unit of the element's own
+       * font, so 68ch on a monospace table is 68 monospace characters — far
+       * narrower than the same cap on serif prose, and nothing in the class
+       * name says so.
+       */
+      maxWidth: { plate: '1440px', prose: '68ch', figure: '42rem', table: '52rem' },
       /* The width a pane occupies in the pair view's narrow-screen swipe. */
       minWidth: { pane: '85vw' },
     },
