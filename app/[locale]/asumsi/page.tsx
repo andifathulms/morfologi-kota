@@ -107,7 +107,17 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
 
   return (
     <div>
-      <section className="max-w-prose">
+      {/*
+       * The opening runs in two columns from `xl`, as the plate's does: the
+       * statement of what a tag mapping is on the left, the conclusion drawn
+       * from the tables below it on the right. Both are prose and both keep
+       * their measure — what changes is that the second one stops sitting
+       * under a screen of empty sheet.
+       *
+       * Placement is explicit, so reading order is unchanged.
+       */}
+      <div className="xl:grid xl:grid-cols-2 xl:items-start xl:gap-x-12">
+      <section className="max-w-prose xl:col-start-1 xl:row-start-1">
         <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">
           {locale === 'id' ? 'Asumsi' : 'Assumptions'}
         </h1>
@@ -123,7 +133,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
         </p>
       </section>
 
-      <section className="mt-12 max-w-prose">
+      <section className="mt-12 max-w-prose xl:col-start-2 xl:row-start-1 xl:mt-0">
         <h2 className="m-0 font-serif text-lg font-semibold">
           {locale === 'id' ? 'Apa yang bertahan, apa yang tidak' : 'What survives, and what does not'}
         </h2>
@@ -153,6 +163,8 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
             : 'The pattern makes sense. Measures that answer “which way do the streets run” survive, because adding or removing a class rarely changes the overall directions. Measures that answer “how much street is there” do not, because that is exactly what the mapping decision changes. φ falls between the two: it is derived from entropy, but the square in its formula amplifies a small movement.'}
         </p>
       </section>
+
+      </div>
 
       <section className="mt-12">
         <h2 className="m-0 mb-4 font-serif text-lg font-semibold">
@@ -280,7 +292,14 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                       aria-label={`${d('tableRegion', locale)} — ${t(mapping.label, locale)}`}
                       className="mt-4 overflow-x-auto"
                     >
-                      <table className="tabular w-full border-collapse font-mono text-xs">
+                      {/*
+                        Five columns, so it gets a width. Unbounded it ran the
+                        full 1408 px of the plate and spread five short cells
+                        across 280 px each, which reads as a broken layout
+                        rather than a wide one. The seven-column table below
+                        genuinely needs the room and keeps it.
+                      */}
+                      <table className="tabular w-full max-w-table border-collapse font-mono text-xs">
                         <caption className="sr-only">
                           {locale === 'id'
                             ? `Kepekaan tiap metrik terhadap pemetaan ${mapping.id}.`
@@ -544,7 +563,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
             : 'The headline finding depends on gang being mapped. If a kampung’s alleys are absent from OpenStreetMap its walking network collapses toward its driving network and the gap disappears — not because it is not there, but because nobody mapped it. This is a measure of the data, not of the place.'}
         </p>
         <div className="mt-4 overflow-x-auto">
-          <table className="tabular w-full border-collapse font-mono text-xs">
+          <table className="tabular w-full max-w-table border-collapse font-mono text-xs">
             <caption className="sr-only">
               {locale === 'id'
                 ? 'Cakupan gang per lokasi, dengan keyakinan dan kerapatannya.'
