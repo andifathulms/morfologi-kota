@@ -145,8 +145,22 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
        * detail, caveat, numbers, table — four hundred words and no drawing.
        * Nothing has been cut: the coverage caveat is still ahead of every
        * figure it qualifies, which is the only ordering PRD §4 permits.
+       *
+       * The opening runs in two columns from `xl`, and the placement is
+       * explicit rather than implied by source order for exactly that reason.
+       * The argument column — claim, count, caveat — holds the left at prose
+       * measure; the worked example takes the right and spans both of its
+       * rows. Reading and focus order are unchanged, because each section
+       * names the cell it belongs in and none of them are reordered.
+       *
+       * `xl`, not `lg`. Between 1024 and 1280 the argument column plus the
+       * gap leaves the figure less room than it has when the page is one
+       * column, so the two discs would come out smaller than they are now —
+       * a layout that fills the width by shrinking the thing worth looking at.
+       * Below that the page stacks in the same order it always did.
        */}
-      <section className="mb-12 max-w-prose">
+      <div className="xl:grid xl:grid-cols-[minmax(0,32rem)_minmax(0,1fr)] xl:items-start xl:gap-x-12">
+      <section className="mb-12 max-w-prose xl:col-start-1 xl:row-start-1 xl:mb-8">
         <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">
           {locale === 'id'
             ? 'Lingkungan yang sama, dua kota berbeda'
@@ -160,7 +174,10 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
       </section>
 
       {hero !== undefined ? (
-        <section className="mb-12" aria-labelledby="contoh">
+        <section
+          className="mb-12 xl:col-start-2 xl:row-start-1 xl:row-span-2 xl:mb-0"
+          aria-labelledby="contoh"
+        >
           {/*
             A label, not a heading. It introduces one figure rather than a
             section, and as an h2 it was a third visual treatment for a level
@@ -179,7 +196,13 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
               on a 360 px phone two discs are 150 px each and the fine grain
               that is the whole point of the figure stops resolving.
             */}
-            <div className="grid max-w-figure grid-cols-1 gap-6 sm:grid-cols-2">
+            {/*
+              `max-w-figure` bounds the pair while it is the full width of the
+              page; in the two-column opening the column bounds it instead, and
+              the cap would only hold the discs at two thirds of the room they
+              have. The fine grain is the whole point of the figure.
+            */}
+            <div className="grid max-w-figure grid-cols-1 gap-6 sm:grid-cols-2 xl:max-w-none">
               {(['drive', 'walk'] as const).map((mode) => (
                 <div key={mode}>
                   <p className="m-0 mb-1 flex items-center gap-2 font-sans text-base font-semibold">
@@ -191,7 +214,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
                   <NetworkDrawing
                     geometry={hero.bundle[mode].plateGeometry}
                     radiusM={hero.bundle.radiusM}
-                    size={320}
+                    size={440}
                     responsive
                     label={`${hero.row.site.name} — ${d(mode, locale)}`}
                     instanceId="contoh"
@@ -219,7 +242,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
               they already suspected — and with no idea what the two coloured
               shapes on every card are for.
             */}
-            <div className="mt-6 max-w-figure">
+            <div className="mt-6 max-w-figure xl:max-w-none">
               <p className="m-0 max-w-prose font-serif text-md leading-relaxed">
                 {d('heroBridge', locale)}
               </p>
@@ -257,7 +280,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
         </section>
       ) : null}
 
-      <section className="mb-12 max-w-prose">
+      <section className="mb-12 max-w-prose xl:col-start-1 xl:row-start-2 xl:mb-0">
         <p className="tabular m-0 font-mono text-xs">
           {manifest.sites.length} {locale === 'id' ? 'lokasi' : 'sites'} · r = {manifest.radiusM} m ·
           36 bin ·{' '}
@@ -291,6 +314,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
           </p>
         </aside>
       </section>
+      </div>
 
       {readable.length > 0 && kampung.length > 0 && planned.length > 0 ? (
         <section className="mb-12">
