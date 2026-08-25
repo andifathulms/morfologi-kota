@@ -151,12 +151,22 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
   )
 
   return (
-    <div className="max-w-prose">
+    /*
+     * The measure moves off the page and onto the prose.
+     *
+     * The whole document used to sit inside `max-w-prose`, which is right for
+     * a paragraph and wrong for everything else on it: the survey table has
+     * five columns and one of them is a sentence, and it was being asked to
+     * fit the width of a line of running text. Nothing here ever used more
+     * than 640 px of the plate's 1408. Each section now takes the measure it
+     * needs — prose keeps it, tables and lists do not.
+     */
+    <div>
       <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">
         {locale === 'id' ? 'Metode' : 'Method'}
       </h1>
 
-      <section className="mt-8">
+      <section className="mt-8 max-w-prose">
         <h2 className="m-0 font-serif text-lg font-semibold">
           {locale === 'id' ? 'Rujukan metode' : 'Method reference'}
         </h2>
@@ -171,7 +181,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
         </p>
       </section>
 
-      <section className="mt-12">
+      <section className="mt-12 max-w-prose">
         <h2 className="m-0 font-serif text-lg font-semibold">
           {locale === 'id' ? 'Parameter' : 'Parameters'}
         </h2>
@@ -198,11 +208,21 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
         <h2 className="m-0 font-serif text-lg font-semibold">
           {locale === 'id' ? 'Definisi' : 'Definitions'}
         </h2>
-        <dl className="mt-4">
+        {/*
+          A reference list, not a narrative. Nobody reads seven definitions in
+          order; they arrive looking for φ. Two columns from `xl` halves the
+          distance to any one of them, and each body still sits at its own
+          measure because the column is narrower than the page.
+        */}
+        <dl className="mt-4 xl:grid xl:grid-cols-2 xl:gap-x-12">
           {definitions.map((definition) => (
             <div key={definition.term} className="mt-4 border-t border-rule-strong pt-2">
               <dt className="font-mono text-xs font-semibold">{definition.term}</dt>
-              <dd className="m-0 mt-1 font-serif text-md leading-relaxed">
+              {/* The measure rides on the body, not on the list. In two
+                  columns the column is the narrower bound; in one it is this,
+                  and without it a definition ran the full width of the plate
+                  the moment the page-wide cap came off. */}
+              <dd className="m-0 mt-1 max-w-prose font-serif text-md leading-relaxed">
                 {t(definition.body, locale)}
               </dd>
             </div>
@@ -210,7 +230,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
         </dl>
       </section>
 
-      <section className="mt-12">
+      <section className="mt-12 max-w-prose">
         <h2 className="m-0 font-serif text-lg font-semibold">
           {locale === 'id' ? 'Bagaimana angkanya diuji' : 'How the numbers are tested'}
         </h2>
@@ -221,7 +241,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
         </p>
       </section>
 
-      <section className="mt-12">
+      <section className="mt-12 max-w-prose">
         <h2 className="m-0 font-serif text-lg font-semibold">
           {locale === 'id' ? 'Batasan' : 'Limitations'}
         </h2>
@@ -257,7 +277,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
             : `${cleared} of ${survey.candidates.length} surveyed candidates clear the thin-coverage threshold (${percent(survey.thinThreshold, 0)}). Of the ${perumahanCandidates.length} perumahan cluster candidates, not one does — ${perumahanRange}. That bounds what the kampung-versus-perumahan comparison can currently say, and it is a statement about OpenStreetMap rather than about the places: the gang are unmapped, not absent.`}
         </p>
         <div className="mt-4 overflow-x-auto">
-          <table className="tabular w-full border-collapse font-mono text-xs">
+          <table className="tabular w-full max-w-table border-collapse font-mono text-xs">
             <caption className="sr-only">
               {locale === 'id'
                 ? 'Kandidat yang disurvei, diurutkan menurut cakupan gang, dengan status adopsinya.'
@@ -340,6 +360,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
         <h2 className="m-0 font-serif text-lg font-semibold">
           {locale === 'id' ? 'Data dan lisensi' : 'Data and licence'}
         </h2>
+        <div className="max-w-prose">
         <p className="mt-2 font-serif text-md leading-relaxed">
           {locale === 'id'
             ? 'Geometri jalan berasal dari OpenStreetMap, © OpenStreetMap contributors, tersedia di bawah Open Database License (ODbL) 1.0. Geometri dan metrik yang dihasilkan di sini adalah basis data turunan, sehingga membawa ODbL dan ditawarkan dengan lisensi yang sama.'
@@ -363,7 +384,10 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
             ? 'Share-alike berarti basis data turunan ini bukan hanya diatribusikan, melainkan ditawarkan. Berikut berkas yang sama persis dengan yang dipakai merender halaman-halaman ini.'
             : 'Share-alike means this derived database is not merely attributed but offered. These are the same files these pages were rendered from.'}
         </p>
-        <ul className="mt-2 list-none p-0 font-mono text-xs leading-relaxed">
+        </div>
+        {/* Seventeen files. A single column of them ran longer than every
+            other section on the page combined. */}
+        <ul className="mt-2 list-none p-0 font-mono text-xs leading-relaxed sm:columns-2 xl:columns-3">
           <li>
             <a href={manifestDataPath()} download>
               manifest.json
