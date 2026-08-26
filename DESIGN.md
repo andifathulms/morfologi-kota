@@ -38,17 +38,27 @@ That register also does real work. §4 forbids scoring kampung against perumahan
 
 ```
 --plate        #F7F4EC   uncoated stock
---ink          #16140F   network lines, text, rose outlines      16.7:1
---ink-muted    #44403A   secondary prose                          9.4:1
---ink-subtle   #5B564E   labels, captions, units                  6.6:1
---rule-strong  #8B8375   card edges, section boundaries           3.4:1
---rule         #B5AE9F   decorative hairlines: rings, circles     2.0:1
---rule-faint   #C9C3B5   row separators inside a table            1.6:1
+--ink          #141209   network lines, text, rose outlines      17.1:1
+--ink-muted    #3B372F   long-form prose                         10.8:1
+--ink-subtle   #544F45   labels, captions, units                  7.4:1
+--rule-strong  #6E675A   structural: card rules, section edges     5.1:1
+--rule         #928A78   informative: sampling circle, rose ring   3.1:1
+--rule-faint   #C4BDAE   decorative: row separators                1.7:1
 ```
 
 The networks are drawn in ink on plate. Nothing else. A street network rendered in colour becomes decoration; rendered in black it stays evidence.
 
 The ground is warm because neither ink is one a press would put on bright white. Every text role clears AA on it and the measured ratio is written beside the token, in `globals.css` as well as here — a muted step whose contrast nobody wrote down is how `text-ink/50` once shipped at 3.5:1.
+
+### The neutrals are a ladder, and every rung has a job
+
+The sheet and the two hues have not moved. Everything between them has, because three of the rungs used to do nearly the same thing and two of them could not draw a boundary a reader could see.
+
+**`rule` carries information, so it clears 3:1.** The sampling circle is the edge of the sample and the rose's ring is the bound its bars are read against. Neither is decoration, and at 2.0:1 both were lines you could only see once you knew they were there.
+
+**`rule-faint` is below 3:1 on purpose and is the only token that is.** It separates rows in a column whose figures are already aligned and whose labels are already present; nothing in the table depends on seeing it. A row rule that competes with its own numbers is how ten metrics became a grey block twice the weight of the drawing above them.
+
+**The ratios are asserted, not remembered.** `tests/unit/palette.test.ts` recomputes every one of them from the hex beside it and fails when a colour and its comment drift apart — which is the failure a written-down number can never catch on its own, because the page still renders perfectly with the wrong figure in the margin. It also holds the ladder in descending order and refuses a second rung below 3:1.
 
 ### The only two hues in the product
 
@@ -72,7 +82,7 @@ this exception.
 
 **They are two press inks, and where they overlap they overprint.** In the paired rose both series multiply, so the overlap is the colour the two inks make together — the operation a two-colour press performs, and the reason this palette belongs to this product rather than to any product. `--overprint` is declared only so a key can draw a swatch and so a browser without `mix-blend-mode` has something to fall back to; on the page it is produced, never painted.
 
-**The overprint does not replace the shape cue, and must not be allowed to.** Blue and brick sit at 1.4:1 to each other, so they are not separable by luminance and never were. Overprint distinguishes the *overlap*; the heavy outline on walk distinguishes the *two networks*. A reader who separates neither hue still reads three regions. Removing the outline because the overlap now has a colour would quietly return the product to hue-only encoding.
+**The overprint does not replace the shape cue, and must not be allowed to.** Blue and brick sit at 1.4:1 to each other — a figure the palette test records rather than tolerates — so they are not separable by luminance and never were. Overprint distinguishes the *overlap*; the heavy outline on walk distinguishes the *two networks*. A reader who separates neither hue still reads three regions. Removing the outline because the overlap now has a colour would quietly return the product to hue-only encoding.
 
 ### Nothing else gets a colour
 

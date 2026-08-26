@@ -22,17 +22,44 @@
    * brick, and the ground is the warm sheet neither of them would print on if
    * it were bright white.
    *
+   * The neutrals are a ladder and every rung has a job. The sheet and the two
+   * hues are unchanged; what moved is everything between them, because three
+   * of the rungs used to do nearly the same thing and two of them could not
+   * draw a boundary a reader could see:
+   *
+   *   ink          17.1  text
+   *   ink-muted    10.8  long-form prose
+   *   ink-subtle    7.4  labels, units, captions
+   *   rule-strong   5.1  structural — a card's rule, a section boundary
+   *   rule          3.1  informative — the sampling circle, the rose's bound
+   *   rule-faint    1.7  decorative — row separators, and nothing else
+   *
+   * `rule` carries information: the sampling circle is the edge of the sample
+   * and the rose's ring is the bound its bars are read against, so it clears
+   * the 3:1 that WCAG asks of a graphic a reader needs. It used to sit at
+   * 2.0, which is a line you can only see if you already know it is there.
+   *
+   * `rule-faint` is below 3:1 deliberately and is the only token that is. It
+   * separates rows in a column whose figures are already aligned and whose
+   * labels are already there; nothing in the table depends on seeing it, and
+   * a row rule that competes with its own numbers is how ten metrics became
+   * a grey block twice the weight of the drawing above them.
+   *
+   * Every ratio here is asserted rather than written down and hoped for —
+   * `tests/unit/palette.test.ts` recomputes each one from the hex beside it
+   * and fails if the comment and the colour have drifted apart.
+   *
    * `--overprint` is not chosen. It is drive multiplied by walk, which is what
    * the two inks make where they overlap — computed once here so a swatch can
    * be drawn, and produced for real by `mix-blend-mode` in the rose.
    */
   --plate: #f7f4ec;
-  --ink: #16140f; /* 16.7:1 */
-  --ink-muted: #44403a; /*  9.4:1 — long-form secondary prose */
-  --ink-subtle: #5b564e; /*  6.6:1 — labels, captions, units, quote bars */
-  --rule-strong: #8b8375; /*  3.4:1 — card edges and section boundaries */
-  --rule: #b5ae9f; /*  2.0:1 — decorative hairlines: rings, sampling circles */
-  --rule-faint: #c9c3b5; /*  1.6:1 — row separators inside a bordered table */
+  --ink: #141209; /* 17.1:1 */
+  --ink-muted: #3b372f; /* 10.8:1 — long-form secondary prose */
+  --ink-subtle: #544f45; /*  7.4:1 — labels, captions, units, quote bars */
+  --rule-strong: #6e675a; /*  5.1:1 — structural: card rules, section boundaries */
+  --rule: #928a78; /*  3.1:1 — informative hairlines: rings, sampling circles */
+  --rule-faint: #c4bdae; /*  1.7:1 — row separators inside a bordered table */
   --drive: #1f4e6b; /*  8.1:1 */
   --walk: #a3431f; /*  5.7:1 */
   --overprint: #13140d; /* 16.9:1 — drive × walk, where both networks run */
@@ -290,8 +317,9 @@ li {
  * DESIGN.md §3 fixes the palette, and this does not replace it: it is the same
  * two hues taken darker, plus the hairlines made visible, for a reader who has
  * asked their system for more contrast. Measured on plate — walk goes from
- * 5.7:1 to 8.1:1, drive from 8.1:1 to 10.7:1, the card edge from 3.4:1 to
- * 8.4:1, and the decorative hairline from 2.0:1 to 5.4:1.
+ * 5.7:1 to 8.1:1, drive from 8.1:1 to 10.7:1, the structural rule from 5.1:1
+ * to 8.4:1, and the informative hairline from 3.1:1 to 5.4:1. Every step is
+ * asserted to be a step up, in the same test that checks the base ladder.
  *
  * Redefining the tokens is now the whole of it. The utility classes resolve to
  * the same custom properties, so the two `!important` overrides this block
