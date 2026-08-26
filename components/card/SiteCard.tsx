@@ -81,6 +81,10 @@ export function SiteCard({
           the card's headline, so H is stated once rather than twice
           (DESIGN.md §7, and Invariants §12: a rose without its numbers is a
           shape, not a measurement). */}
+      {/* `data-card` is the density control's handle (DESIGN.md §6). The
+          drawing, the coverage line and the rose table carry none, because no
+          density mode is allowed to drop them. */}
+      <div data-card="rose">
       <Rose
         locale={locale}
         size={196}
@@ -101,8 +105,11 @@ export function SiteCard({
           },
         ]}
       />
+      </div>
 
-      <MetricColumn metrics={metrics} mode={mode} locale={locale} headlined />
+      <div data-card="metrics">
+        <MetricColumn metrics={metrics} mode={mode} locale={locale} headlined />
+      </div>
 
       {/* DESIGN.md §10 — every rose has a table equivalent, always available.
           Collapsed so it does not crowd the plate, present so it is never a
@@ -128,13 +135,16 @@ export function SiteCard({
 
       {/* DESIGN.md §7 — 14px is captions, units and citations. This is a
           sentence about the place, so it is body size. */}
-      <p className="m-0 max-w-prose font-serif text-base leading-snug text-ink-muted">
+      <p
+        data-card="note"
+        className="m-0 max-w-prose font-serif text-base leading-snug text-ink-muted"
+      >
         {t(entry.note, locale)}
       </p>
 
       {/* DESIGN.md §9 — the legend contract, on every card. The coverage half
           of it is stated at the top, where it can still change a reading. */}
-      <footer className="tabular mt-auto border-t border-rule pt-2 font-mono text-xs">
+      <footer data-card="footer" className="tabular mt-auto border-t border-rule pt-2 font-mono text-xs">
         <p className="m-0">
           {d('radius', locale)} {entry.radiusM} m · 36 bin
         </p>

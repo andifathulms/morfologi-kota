@@ -106,6 +106,28 @@ const dictionary = {
     id: 'Semua yang di atas, ditambah gang, jalur pejalan kaki dan tangga.',
     en: 'All of the above, plus gang, footpaths and steps.',
   },
+  /*
+   * The sort control's three groups.
+   *
+   * What the site is, what one network measures, and what the two networks
+   * differ by. The third is the product's subject and the first is not a
+   * measurement at all, which is the distinction that was missing when all
+   * eleven chips were set alike.
+   */
+  sortGroupIdentity: { id: 'Lokasi', en: 'Site' },
+  sortGroupMode: { id: 'Per moda', en: 'Per mode' },
+  sortGroupGap: { id: 'Selisih moda', en: 'Between modes' },
+  orderHeading: { id: 'Urutan', en: 'Order' },
+  orderAsListed: { id: 'Seperti tertulis', en: 'As listed' },
+  orderReversed: { id: 'Dibalik', en: 'Reversed' },
+  densityHeading: { id: 'Kerapatan', en: 'Density' },
+  densityFull: { id: 'Penuh', en: 'Full' },
+  densityCompact: { id: 'Ringkas', en: 'Compact' },
+  densityContact: { id: 'Lembar kontak', en: 'Contact sheet' },
+  controlNote: {
+    id: 'Tiap metrik dimulai dari yang terbesar dan nama dimulai dari A; “Dibalik” membalik urutan itu. Kerapatan mengubah seberapa banyak bagian kartu yang digambar, bukan apa yang dikatakannya: tabel rose tetap tersedia pada ketiga pilihan.',
+    en: 'Each metric starts largest-first and the name starts at A; “Reversed” turns that around. Density changes how much of each card is drawn, not what it says: the rose table stays available in all three.',
+  },
   sortNotRanking: {
     id: 'Mengurutkan ulang memunculkan pola pada keseluruhan set. Ini bukan peringkat: tidak ada posisi yang lebih baik daripada posisi lain. Alamat di bilah URL mengikuti pilihan Anda, jadi urutan yang layak ditunjukkan dapat dikirim sebagai tautan.',
     en: 'Re-sorting makes a pattern across the set visible. It is not a ranking: no position in the order is better than another. The address bar follows your choice, so a sort worth showing someone can be sent as a link.',

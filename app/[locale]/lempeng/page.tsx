@@ -64,17 +64,56 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
     },
   }))
 
+  /*
+   * Grouped by the question the sort answers, not by the order they were
+   * written in (DESIGN.md §6). `identity` is what the site is and is not a
+   * measurement; `mode` is a figure for one network; `gap` is the difference
+   * between the two, which is the product's subject — and coverage belongs
+   * there, because it is the thing that decides whether a gap can be read at
+   * all.
+   *
+   * The mode suffix stays on every chip in the per-mode group, verbose as it
+   * is. φ for the driving network and φ for the walking network are different
+   * numbers, and a legend reading `Per moda` above a chip reading `φ` does not
+   * say which one is being sorted by — precision is worth ten repetitions of
+   * one word.
+   */
   const options: SortOption[] = [
-    { key: 'entropyDrive', label: `H — ${d('drive', locale)}`, descending: true },
-    { key: 'entropyWalk', label: `H — ${d('walk', locale)}`, descending: true },
-    { key: 'entropyDelta', label: `ΔH — ${d('walk', locale)} − ${d('drive', locale)}`, descending: true },
-    { key: 'phiDrive', label: `φ — ${d('drive', locale)}`, descending: true },
-    { key: 'circuityDrive', label: `${d('circuity', locale)} — ${d('drive', locale)}`, descending: true },
-    { key: 'deadEndDrive', label: `${d('deadEnd', locale)} — ${d('drive', locale)}`, descending: true },
-    { key: 'fourWayDrive', label: `${d('fourWay', locale)} — ${d('drive', locale)}`, descending: true },
-    { key: 'densityDrive', label: `${d('intersectionDensity', locale)} — ${d('drive', locale)}`, descending: true },
-    { key: 'lengthDelta', label: `Δ ${d('totalLength', locale)}`, descending: true },
-    { key: 'coverage', label: d('coverage', locale), descending: true },
+    { key: 'entropyDrive', label: `H — ${d('drive', locale)}`, descending: true, group: 'mode' },
+    { key: 'entropyWalk', label: `H — ${d('walk', locale)}`, descending: true, group: 'mode' },
+    { key: 'phiDrive', label: `φ — ${d('drive', locale)}`, descending: true, group: 'mode' },
+    {
+      key: 'circuityDrive',
+      label: `${d('circuity', locale)} — ${d('drive', locale)}`,
+      descending: true,
+      group: 'mode',
+    },
+    {
+      key: 'deadEndDrive',
+      label: `${d('deadEnd', locale)} — ${d('drive', locale)}`,
+      descending: true,
+      group: 'mode',
+    },
+    {
+      key: 'fourWayDrive',
+      label: `${d('fourWay', locale)} — ${d('drive', locale)}`,
+      descending: true,
+      group: 'mode',
+    },
+    {
+      key: 'densityDrive',
+      label: `${d('intersectionDensity', locale)} — ${d('drive', locale)}`,
+      descending: true,
+      group: 'mode',
+    },
+    {
+      key: 'entropyDelta',
+      label: `ΔH — ${d('walk', locale)} − ${d('drive', locale)}`,
+      descending: true,
+      group: 'gap',
+    },
+    { key: 'lengthDelta', label: `Δ ${d('totalLength', locale)}`, descending: true, group: 'gap' },
+    { key: 'coverage', label: d('coverage', locale), descending: true, group: 'gap' },
   ]
 
   const cards = manifest.sites.map((entry) => (
@@ -434,6 +473,11 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
         sortLabel={d('sortBy', locale)}
         nameLabel={d('sortName', locale)}
         note={d('sortNotRanking', locale)}
+        sheetLegend={
+          locale === 'id'
+            ? `Lembar kontak — jaringan kendara, ${manifest.sites.length} lokasi, r = ${manifest.radiusM} m, tinta seragam. Jari-jari sama untuk seluruh set, jadi dicetak sekali di sini dan bukan pada tiap cakram.`
+            : `Contact sheet — the driving network, ${manifest.sites.length} sites, r = ${manifest.radiusM} m, uniform ink. The radius is the same across the set, so it is printed once here rather than on every disc.`
+        }
       >
         {cards}
       </PlateGrid>

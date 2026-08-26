@@ -1,5 +1,5 @@
 import { UrlState } from '@/components/controls/UrlState'
-import type { Locale } from '@/lib/i18n'
+import { d, type Locale } from '@/lib/i18n'
 
 /**
  * The plate: small multiples, sortable by any metric (PRD §6.1).
@@ -27,6 +27,28 @@ import type { Locale } from '@/lib/i18n'
  * and leaves the DOM alone, so reading and focus order stay alphabetical after
  * a re-sort, and nothing announces that anything changed. That needs the order
  * computed into the markup — URL state and a server-rendered order.
+ *
+ * ## The control is a control, not a tag cloud
+ *
+ * Eleven chips of equal weight, wrapping to two rows, with `Nama` set exactly
+ * like `ΔH — Jalan kaki − Kendara`: sorting is the plate's main verb and it
+ * looked like a list of labels somebody had run out of room for. It is now
+ * three named groups — what the site *is*, a figure *per mode*, and the *gap*
+ * between the two modes — which is the only distinction that matters when
+ * choosing one, since the third group is the product's subject and the first
+ * is not a measurement at all.
+ *
+ * Direction is its own control rather than a property of each metric that a
+ * reader cannot see. Every metric starts largest-first and the name starts
+ * A–Z, because that is what each is usually read for; reversing is one chip
+ * and it says so.
+ *
+ * Density is the honest answer to a card that is taller than it is wide.
+ * Nothing is hidden by default and nothing is removed from the document: the
+ * reader chooses how much of each card to draw, from the full figure down to
+ * a contact sheet of discs. The rose table stays reachable in every mode
+ * (DESIGN.md §10) — it is one line of summary text and it is never the thing
+ * a density mode drops.
  */
 
 export interface SortableSite {
@@ -35,30 +57,131 @@ export interface SortableSite {
   readonly values: Readonly<Record<string, number>>
 }
 
+/**
+ * Which of the three questions a sort answers: what the site is, what one
+ * network measures, or what the two networks differ by.
+ */
+export type SortGroup = 'identity' | 'mode' | 'gap'
+
 export interface SortOption {
   readonly key: string
   readonly label: string
   /** Larger first is the natural reading for most of these. */
   readonly descending: boolean
+  readonly group: SortGroup
 }
 
 const NAME_KEY = 'name'
+const GROUPS: readonly SortGroup[] = ['identity', 'mode', 'gap']
+
+/** As listed, or reversed. Both are orders; neither is a ranking. */
+const ORDERS = ['awal', 'balik'] as const
+type Order = (typeof ORDERS)[number]
+
+/** How much of each card is drawn. Full, without the columns, or discs only. */
+const DENSITIES = ['penuh', 'ringkas', 'kontak'] as const
+type Density = (typeof DENSITIES)[number]
+
+function groupLabel(group: SortGroup, locale: Locale): string {
+  switch (group) {
+    case 'identity':
+      return d('sortGroupIdentity', locale)
+    case 'mode':
+      return d('sortGroupMode', locale)
+    case 'gap':
+      return d('sortGroupGap', locale)
+    default: {
+      const never: never = group
+      throw new Error(`unknown sort group: ${String(never)}`)
+    }
+  }
+}
+
+function orderLabel(order: Order, locale: Locale): string {
+  return order === 'awal' ? d('orderAsListed', locale) : d('orderReversed', locale)
+}
+
+function densityLabel(density: Density, locale: Locale): string {
+  switch (density) {
+    case 'penuh':
+      return d('densityFull', locale)
+    case 'ringkas':
+      return d('densityCompact', locale)
+    case 'kontak':
+      return d('densityContact', locale)
+    default: {
+      const never: never = density
+      throw new Error(`unknown density: ${String(never)}`)
+    }
+  }
+}
 
 function orderFor(
   sites: readonly SortableSite[],
   option: SortOption | undefined,
   locale: Locale,
+  reversed: boolean,
 ): Map<string, number> {
+  const descending = option === undefined ? false : option.descending !== reversed
   const sorted = [...sites].sort((a, b) => {
-    if (option === undefined) return a.name.localeCompare(b.name, locale)
+    if (option === undefined) {
+      const byName = a.name.localeCompare(b.name, locale)
+      return reversed ? -byName : byName
+    }
     const left = a.values[option.key] ?? 0
     const right = b.values[option.key] ?? 0
     if (left === right) return a.name.localeCompare(b.name, locale)
-    return option.descending ? right - left : left - right
+    return descending ? right - left : left - right
   })
   const positions = new Map<string, number>()
   sorted.forEach((site, index) => positions.set(site.slug, index))
   return positions
+}
+
+/** The radios for one group, followed by the chips they drive. */
+function ChipGroup({
+  legend,
+  name,
+  idPrefix,
+  items,
+  checked,
+}: {
+  readonly legend: string
+  readonly name: string
+  readonly idPrefix: string
+  readonly items: readonly { key: string; label: string }[]
+  readonly checked: string
+}) {
+  return (
+    <fieldset className="m-0 border-0 p-0">
+      <legend className="p-0 font-mono text-xs uppercase tracking-wide text-ink-subtle">
+        {legend}
+      </legend>
+      {/* Inside the fieldset, before the chips: `~` needs them to precede the
+          labels they highlight, and the legend needs them to be its own. */}
+      {items.map((item) => (
+        <input
+          key={item.key}
+          type="radio"
+          name={name}
+          id={`${idPrefix}${item.key}`}
+          defaultChecked={item.key === checked}
+          className="sr-only"
+        />
+      ))}
+      <div className="plate-chips mt-2 flex flex-wrap gap-2">
+        {items.map((item) => (
+          <label
+            key={item.key}
+            htmlFor={`${idPrefix}${item.key}`}
+            className="cursor-pointer border border-rule-strong px-2 py-1 font-mono text-xs transition-colors duration-fast ease-house"
+          >
+            {item.label}
+          </label>
+        ))}
+      </div>
+    </fieldset>
+  )
 }
 
 export function PlateGrid({
@@ -69,6 +192,7 @@ export function PlateGrid({
   sortLabel,
   nameLabel,
   note,
+  sheetLegend,
 }: {
   readonly sites: readonly SortableSite[]
   readonly options: readonly SortOption[]
@@ -78,28 +202,81 @@ export function PlateGrid({
   readonly nameLabel: string
   /** One line saying what re-sorting is for, and that it is not a ranking. */
   readonly note?: string
+  /**
+   * The line the contact sheet is captioned with. It carries the radius the
+   * cards stop printing in that mode, so the parameter is stated once for one
+   * figure rather than sixteen times inside it (DESIGN.md §6, §9).
+   */
+  readonly sheetLegend?: string
 }) {
   const all: SortOption[] = [
-    { key: NAME_KEY, label: nameLabel, descending: false },
+    { key: NAME_KEY, label: nameLabel, descending: false, group: 'identity' },
     ...options,
   ]
 
-  const rules = all
-    .flatMap((option) => {
-      const order = orderFor(sites, option.key === NAME_KEY ? undefined : option, locale)
-      const orderRules = [...order.entries()].map(
-        ([slug, position]) =>
-          `.plate:has(#sort-${option.key}:checked) .plate-grid>[data-slug="${slug}"]{order:${position}}`,
+  /*
+   * Every ordering, twice: as listed and reversed.
+   *
+   * That is two rules per site per metric — a few hundred selectors, tens of
+   * kilobytes, and it is the price of the whole control working with no
+   * script. CSS cannot derive the reversed position from the forward one, so
+   * the alternative is not a cleverer stylesheet but a client component and a
+   * thousand SVG paths crossing the hydration boundary, which is the trade
+   * this page has already refused once.
+   */
+  const orderRules = all.flatMap((option) =>
+    ORDERS.flatMap((order) => {
+      const positions = orderFor(
+        sites,
+        option.key === NAME_KEY ? undefined : option,
+        locale,
+        order === 'balik',
       )
-      // The chips are siblings of the radios inside the fieldset, so these two
-      // stay on `~` — only the grid, which is outside it, needs `:has()`.
-      return [
-        ...orderRules,
-        `#sort-${option.key}:checked~.plate-chips label[for="sort-${option.key}"]{background:var(--ink);color:var(--plate)}`,
-        `#sort-${option.key}:focus-visible~.plate-chips label[for="sort-${option.key}"]{outline:3px solid var(--ink);outline-offset:2px}`,
-      ]
-    })
-    .join('')
+      return [...positions.entries()].map(
+        ([slug, position]) =>
+          `.plate:has(#sort-${option.key}:checked):has(#order-${order}:checked) .plate-grid>[data-slug="${slug}"]{order:${position}}`,
+      )
+    }),
+  )
+
+  /* The chips are siblings of their own radios, so these stay on `~`. */
+  const chipRules = [
+    ...all.map((option) => `sort-${option.key}`),
+    ...ORDERS.map((order) => `order-${order}`),
+    ...DENSITIES.map((density) => `density-${density}`),
+  ].flatMap((id) => [
+    `#${id}:checked~.plate-chips label[for="${id}"]{background:var(--ink);color:var(--plate)}`,
+    `#${id}:focus-visible~.plate-chips label[for="${id}"]{outline:3px solid var(--ink);outline-offset:2px}`,
+  ])
+
+  /*
+   * Density.
+   *
+   * `ringkas` drops the metric column and the note — the apparatus — and keeps
+   * the drawing, the rose and its numbers. `kontak` keeps the drawing alone,
+   * at six to a row: the literal promise of small multiples, which this plate
+   * has never actually been able to keep at any scroll position.
+   *
+   * The rose table survives both. It is the one element §10 forbids making a
+   * fallback, and a density control that quietly dropped it would be exactly
+   * that with a friendlier name.
+   */
+  const densityRules = [
+    `.plate:has(#density-ringkas:checked) [data-card="metrics"],`,
+    `.plate:has(#density-ringkas:checked) [data-card="note"]{display:none}`,
+    `.plate:has(#density-kontak:checked) [data-card="metrics"],`,
+    `.plate:has(#density-kontak:checked) [data-card="note"],`,
+    `.plate:has(#density-kontak:checked) [data-card="rose"],`,
+    `.plate:has(#density-kontak:checked) [data-card="footer"]{display:none}`,
+    /* The radius leaves the card and is stated once for the sheet — see the
+       legend rendered above the grid, and DESIGN.md §6. */
+    `.plate [data-sheet-legend]{display:none}`,
+    `.plate:has(#density-kontak:checked) [data-sheet-legend]{display:block}`,
+    `@media (min-width:768px){.plate:has(#density-kontak:checked) .plate-grid{grid-template-columns:repeat(4,minmax(0,1fr))}}`,
+    `@media (min-width:1280px){.plate:has(#density-kontak:checked) .plate-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}`,
+  ].join('')
+
+  const rules = [...orderRules, ...chipRules].join('') + densityRules
 
   return (
     <div className="plate">
@@ -116,33 +293,50 @@ export function PlateGrid({
       <fieldset className="plate-controls m-0 mb-6 border-0 p-0">
         <legend className="p-0 font-sans text-base font-semibold">{sortLabel}</legend>
         {note !== undefined ? (
-          <p className="m-0 mb-3 mt-1 max-w-prose font-sans text-base leading-snug text-ink-subtle">
+          <p className="m-0 mb-4 mt-1 max-w-prose font-sans text-base leading-snug text-ink-subtle">
             {note}
           </p>
         ) : null}
-        {/* Inside the fieldset, so the legend above is their group name. */}
-        {all.map((option) => (
-          <input
-            key={option.key}
-            type="radio"
-            name="plate-sort"
-            id={`sort-${option.key}`}
-            defaultChecked={option.key === NAME_KEY}
-            className="sr-only"
-          />
-        ))}
 
-        <div className="plate-chips flex flex-wrap gap-2">
-          {all.map((option) => (
-            <label
-              key={option.key}
-              htmlFor={`sort-${option.key}`}
-              className="cursor-pointer border border-rule-strong px-2 py-1 font-mono text-xs transition-colors duration-fast ease-house"
-            >
-              {option.label}
-            </label>
-          ))}
+        <div className="flex flex-wrap gap-x-8 gap-y-4">
+          {GROUPS.map((group) => {
+            const items = all.filter((option) => option.group === group)
+            if (items.length === 0) return null
+            return (
+              <ChipGroup
+                key={group}
+                legend={groupLabel(group, locale)}
+                name="plate-sort"
+                idPrefix="sort-"
+                checked={NAME_KEY}
+                items={items.map((option) => ({ key: option.key, label: option.label }))}
+              />
+            )
+          })}
+
+          <ChipGroup
+            legend={d('orderHeading', locale)}
+            name="plate-order"
+            idPrefix="order-"
+            checked="awal"
+            items={ORDERS.map((order) => ({ key: order, label: orderLabel(order, locale) }))}
+          />
+
+          <ChipGroup
+            legend={d('densityHeading', locale)}
+            name="plate-density"
+            idPrefix="density-"
+            checked="penuh"
+            items={DENSITIES.map((density) => ({
+              key: density,
+              label: densityLabel(density, locale),
+            }))}
+          />
         </div>
+
+        <p className="m-0 mt-3 max-w-prose font-sans text-base leading-snug text-ink-subtle">
+          {d('controlNote', locale)}
+        </p>
       </fieldset>
 
       {/* After the radios, before the grid: the radio is set before a single
@@ -155,6 +349,20 @@ export function PlateGrid({
         keys={all.map((option) => option.key)}
         defaultKey={NAME_KEY}
       />
+      <UrlState
+        param="arah"
+        name="plate-order"
+        idPrefix="order-"
+        keys={[...ORDERS]}
+        defaultKey="awal"
+      />
+      <UrlState
+        param="rapat"
+        name="plate-density"
+        idPrefix="density-"
+        keys={[...DENSITIES]}
+        defaultKey="penuh"
+      />
 
       {/*
         Rows are further apart than columns, and deliberately so. The cards
@@ -163,6 +371,12 @@ export function PlateGrid({
         white space above it to read as the start of something rather than as
         the underside of the card before it.
       */}
+      {sheetLegend === undefined ? null : (
+        <p data-sheet-legend className="tabular mb-4 font-mono text-xs">
+          {sheetLegend}
+        </p>
+      )}
+
       <div className="plate-grid grid grid-cols-1 gap-x-6 gap-y-12 md:grid-cols-2 xl:grid-cols-4">
         {children.map((child, index) => {
           const site = sites[index]

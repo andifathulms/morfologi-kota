@@ -127,6 +127,32 @@ note · rose table · radius
 
 **The card is bounded by a rule across its top, not a box on four sides.** A box at every edge makes sixteen documents; a top rule makes one plate of sixteen figures. Small multiples work when the eye can sweep a row of roses or run down a column of the same number, and a border interrupts exactly that sweep. Rows are spaced further apart than columns so the rule reads as the start of a card rather than the underside of the one above.
 
+### The control is a control
+
+Sorting is the plate's main verb, so it is set as one. Three named groups — **the site**, **per mode**, **between modes** — because that is the only distinction that matters when choosing a sort: the third is the product's subject, the second is a figure for one network, and the first is not a measurement at all. Eleven chips of equal weight, wrapping into two rows, is a tag cloud.
+
+**Direction is its own control.** Each metric starts largest-first and the name starts at A; *Reversed* turns that around, and says so, instead of hiding the direction inside each metric where a reader cannot see it.
+
+**Every chip keeps its mode.** `φ` and `φ — Jalan kaki` are different numbers, and a group legend cannot disambiguate a chip that omits which network it sorts by. Ten repetitions of one word is the price of precision, and this product pays it.
+
+### Density — three ways to draw the same card
+
+The card is taller than it is wide and the plate promises the whole set at once. The honest resolution is not to hide half of it by default but to let the reader choose how much of each card is drawn:
+
+```
+Penuh          the full figure — drawing, rose, metrics, note
+Ringkas        drops the metric column and the note
+Lembar kontak  the drawings alone, six to a row
+```
+
+**Nothing is removed from the document and nothing is hidden by default.** A mode changes how much of a card is drawn, never what it says.
+
+**The rose table survives every mode.** §10 forbids making it a fallback, and a density control that quietly dropped it would be exactly that under a friendlier name.
+
+**The coverage line survives every mode**, for the same reason: it is the qualifier on the comparison, not an ornament of the full card.
+
+**The contact sheet states the radius once, for the sheet.** It is the one exception to the rule that every card prints its own, and it is allowed because the radius is fixed across the set, the sheet is a single figure with a single caption, and the alternative is sixteen copies of one parameter inside a figure whose whole point is that nothing but the shape is on it. §6's rule is against a radius that varies silently; a sheet legend states it louder than a card footer does.
+
 **The pair** opens a site into two columns, drive on the left and walk on the right, each with its own network, rose and metrics, and a delta column between them. **Never stacked vertically** — the comparison must be side by side to read as a comparison.
 
 Desktop: four cards per row on the plate, two columns plus deltas in the pair. Mobile: one card per row; the pair becomes a swipe between two panes with the delta column pinned beneath, since side-by-side is unreadable at that width.
@@ -216,6 +242,8 @@ And the method page carries the Boeing citation, the metric definitions, the tag
 - No coverage flag printed below the numbers it qualifies.
 - No headline figure that repeats a number the same card already prints.
 - No vertical stacking of the drive/walk pair on desktop.
+- No density mode that drops the rose table or the coverage line.
+- No sort chip that omits which mode it sorts by.
 - No basemap, labels, or landmarks under the networks.
 - No dark mode.
 - No component library.
