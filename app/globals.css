@@ -267,6 +267,36 @@ li {
 }
 
 /*
+ * The distribution ruler — DESIGN.md §6a.
+ *
+ * Every stroke here is declared once instead of on each element. There is one
+ * tick per site on every ruler and two rulers per card, so ticks grow with the
+ * square of the set: at 27 sites that is 1,458 elements, and three presentation
+ * attributes repeated 1,458 times is a quarter of a megabyte of document
+ * saying the same thing over and over.
+ *
+ * `vector-effect` is what keeps a hairline a hairline: the ruler is drawn in a
+ * 100-unit viewBox stretched to whatever width its column has, so without it a
+ * tick comes out several pixels wide on a wide card and sub-pixel on a phone.
+ */
+.ruler-axis {
+  stroke: var(--rule);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.ruler-ticks line {
+  stroke: var(--rule-strong);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.ruler-mark {
+  stroke-width: 3;
+  vector-effect: non-scaling-stroke;
+}
+
+/*
  * DESIGN.md §8 — the one orchestrated moment: the network draws while the
  * rose fills bin by bin, so the histogram is visibly derived from the drawing
  * rather than appearing beside it. Pure CSS, so it costs no JavaScript.

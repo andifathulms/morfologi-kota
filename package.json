@@ -20,7 +20,8 @@
     "lint": "next lint",
     "data:publish": "node scripts/publish-data.mjs",
     "data:survey": "tsx scripts/survey-coverage.ts",
-    "audit:a11y": "node scripts/audit-a11y.mjs"
+    "audit:a11y": "node scripts/audit-a11y.mjs",
+    "data:discover": "tsx scripts/find-candidates.ts"
   },
   "dependencies": {
     "next": "14.2.5",

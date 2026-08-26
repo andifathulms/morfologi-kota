@@ -39,6 +39,11 @@ const FORBIDDEN_KEY = /^(score|grade|rank|ranking|rating|index|liveability|walka
 const failures: string[] = []
 const notes: string[] = []
 
+/** One decimal, for a message a human has to act on. */
+function percentOf(share: number): string {
+  return `${(share * 100).toFixed(1)}%`
+}
+
 function check(condition: boolean, message: string): void {
   if (!condition) failures.push(message)
 }
@@ -280,6 +285,35 @@ async function main(): Promise<void> {
         `survey: candidate ${candidate.label} claims to be site "${candidate.adoptedAs}", which does not exist`,
       )
     }
+    /*
+     * The survey has to predict the pipeline, or it is not a survey.
+     *
+     * Both measure the same thing — footway share inside an 800 m disc, same
+     * tag mapping, same code — so an adopted site and the candidate it came
+     * from must agree. When they do not, one of them is sampling a different
+     * place, and the failure is silent in every other check: the site builds,
+     * the invariants hold, the page renders, and the number is simply about
+     * somewhere else.
+     *
+     * This is not hypothetical. Two of the sites in this set were entered with
+     * coordinates from an earlier run of the candidate search, after the
+     * search was re-ranked and its cells relabelled. Gadang built cleanly at
+     * 14.0% coverage against a survey row reading 25.3%, and nothing but this
+     * comparison would have said so.
+     */
+    for (const candidate of survey.candidates) {
+      if (candidate.adoptedAs === null) continue
+      const site = manifest.sites.find((entry) => entry.slug === candidate.adoptedAs)
+      if (site === undefined) continue
+      const drift = Math.abs(site.coverage.pedestrianShare - candidate.pedestrianShare)
+      check(
+        drift < 0.01,
+        `survey: candidate ${candidate.label} measured ${percentOf(candidate.pedestrianShare)} ` +
+          `but site "${site.slug}" builds at ${percentOf(site.coverage.pedestrianShare)} — ` +
+          `the two are sampling different places, most likely a centre entered from a stale search`,
+      )
+    }
+
     const cleared = survey.candidates.filter((c) => c.confidence !== 'thin').length
     notes.push(
       `Survey: ${cleared} of ${survey.candidates.length} candidate centres clear the thin threshold.`,

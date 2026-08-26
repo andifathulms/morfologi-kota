@@ -78,8 +78,15 @@ const OVERPASS_ENDPOINT = 'https://overpass-api.de/api/interpreter'
  * Sequential and spaced by every caller: Overpass is volunteer-funded and its
  * operators ask that it not be hammered. Every response is cached, so a second
  * run of the pipeline touches the service not at all.
+ *
+ * Six attempts rather than three, and the backoff is exponential from three
+ * seconds. A long survey run meets 429 (the service asking for room), 504 (a
+ * query that timed out under load) and the occasional connect timeout, none
+ * of which mean the data is unavailable — they mean not now. Because every
+ * success is cached, a run that gives up simply resumes where it stopped, so
+ * patience here costs nothing and impatience costs the whole run.
  */
-export async function fetchOverpass(query: string, attempts = 3): Promise<OverpassResponse> {
+export async function fetchOverpass(query: string, attempts = 6): Promise<OverpassResponse> {
   let lastError: unknown
   for (let attempt = 1; attempt <= attempts; attempt += 1) {
     try {

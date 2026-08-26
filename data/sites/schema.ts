@@ -371,6 +371,16 @@ export const surveyCandidateSchema = z.object({
   walkLengthM: z.number().min(0),
   driveLengthM: z.number().min(0),
   confidence: z.enum(['thin', 'moderate', 'good']),
+  /**
+   * The share of this disc's pedestrian length that lies inside a mapped park,
+   * garden, wood or cemetery. Null where it was not asked — a candidate below
+   * the threshold is not adopted whatever its parks look like.
+   *
+   * Coverage cannot tell a garden path from a gang: both are `highway=footway`
+   * and both are counted. This is the number that says whether a well-covered
+   * candidate is well covered in alleys or in lawn.
+   */
+  parkShare: z.number().min(0).max(1).nullable(),
   /** Whether this candidate is in the comparison set, and under which slug. */
   adoptedAs: z.string().nullable(),
   /**

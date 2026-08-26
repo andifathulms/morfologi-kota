@@ -111,29 +111,33 @@ export function DistributionRuler({
         className="block h-3 w-full"
         aria-hidden="true"
       >
-        <line x1={0} y1={5} x2={100} y2={5} stroke="var(--rule)" strokeWidth={1} vectorEffect="non-scaling-stroke" />
-        {points.map((point) => (
-          <line
-            key={point.slug}
-            data-tick={point.slug}
-            x1={rulerPosition(point.value, min, max)}
-            y1={3}
-            x2={rulerPosition(point.value, min, max)}
-            y2={7}
-            stroke="var(--rule-strong)"
-            strokeWidth={1}
-            vectorEffect="non-scaling-stroke"
-          />
-        ))}
-        <line
-          x1={x}
-          y1={0}
-          x2={x}
-          y2={10}
-          stroke={ink}
-          strokeWidth={3}
-          vectorEffect="non-scaling-stroke"
-        />
+        <line className="ruler-axis" x1={0} y1={5} x2={100} y2={5} />
+        {/*
+          Presentation lives in `globals.css`, not on the element.
+
+          There is one tick per site on every ruler and two rulers on every
+          card, so the ticks are the one quantity on this page that grows with
+          the square of the set: at 27 sites they were 1,458 elements and
+          241 KB of the document, most of it `stroke`, `stroke-width` and
+          `vector-effect` repeated verbatim 1,458 times. Inherited from a class
+          on the group, and with the position rounded to the two decimals a
+          100-unit viewBox can actually resolve, the same drawing costs about
+          a third of that.
+
+          The next lever, if the set ever outgrows this one: the tick pattern
+          is identical on every card — only the mark moves — so it could be
+          defined once in `defs` and referenced with `use`, which would take
+          1,458 elements to 54. It is not done here because CSS cannot reach
+          inside a `use` shadow tree, and the cross-card highlight (§6a) is
+          what those ticks are carrying `data-tick` for.
+        */}
+        <g className="ruler-ticks">
+          {points.map((point) => {
+            const at = rulerPosition(point.value, min, max).toFixed(2)
+            return <line key={point.slug} data-tick={point.slug} x1={at} y1={3} x2={at} y2={7} />
+          })}
+        </g>
+        <line className="ruler-mark" x1={x.toFixed(2)} y1={0} x2={x.toFixed(2)} y2={10} stroke={ink} />
       </svg>
       <span className="sr-only">{sentence}</span>
     </span>

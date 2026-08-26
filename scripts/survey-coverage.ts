@@ -19,6 +19,8 @@
  *   pnpm data:survey
  */
 
+import { readFileSync } from 'node:fs'
+import { existsSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import {
@@ -158,7 +160,61 @@ const CANDIDATES: readonly Candidate[] = [
 ]
 
 const FETCH_MARGIN = 1.4
-const PAUSE_MS = 3000
+/*
+ * Ten seconds between requests, and it is not a guess.
+ *
+ * The park check roughly doubled the number of requests a full survey makes,
+ * and Overpass started answering 429 and 504 — which is the service saying,
+ * correctly, that a volunteer-funded endpoint is not a database to sweep. The
+ * whole run is cached, so this costs a slower first pass and nothing at all
+ * afterwards. PRD §7 asks for courtesy here as a design constraint rather
+ * than a nicety.
+ */
+const PAUSE_MS = 10000
+
+/**
+ * The candidates `data:discover` found, merged in ahead of the hand-listed
+ * ones above.
+ *
+ * Two rounds of guessing neighbourhoods produced 49 candidates and 10 usable
+ * sites, and — worse than the yield — the misses said nothing, because a
+ * neighbourhood nobody thought of is not a neighbourhood that was measured
+ * and rejected. The search bins every mapped footway in a city into cells the
+ * size of a sampling disc and ranks them by length, so what arrives here is
+ * the best-mapped fabric OpenStreetMap knows about rather than the
+ * best-remembered.
+ *
+ * They keep their own type, `discovered`, because a density search finds a
+ * well-mapped cell and has no idea what kind of place it is. Guessing a
+ * morphology to fill the column would put an invented classification into a
+ * published table.
+ */
+function discovered(): readonly Candidate[] {
+  const path = join(process.cwd(), 'data', 'candidates.json')
+  if (!existsSync(path)) return []
+  const rows = JSON.parse(readFileSync(path, 'utf8')) as {
+    label: string
+    name: string
+    city: string
+    latDeg: number
+    lonDeg: number
+    pedestrianM: number
+    pathShare: number
+    park: boolean
+  }[]
+  return rows.map((row) => ({
+    label: row.label,
+    type: 'discovered',
+    latDeg: row.latDeg,
+    lonDeg: row.lonDeg,
+    /* The note records what the search knew when it proposed the cell — how
+       much footway put it on the list, how much of that is `path` rather than
+       gang, and whether a mapped park sits in the same cell. Both caveats
+       come from sites already in the set, and both are cheaper to read here
+       than to rediscover later. */
+    note: `${row.name}, ${row.city} — found by density search: ${(row.pedestrianM / 1000).toFixed(1)} km of mapped footway in the cell, ${(row.pathShare * 100).toFixed(0)}% of it tagged path${row.park ? ', park in cell' : ''}`,
+  }))
+}
 
 /**
  * Why a candidate that cleared the threshold is not in the set.
@@ -182,6 +238,40 @@ const PAUSE_MS = 3000
 const WITHHELD: Readonly<Record<string, string>> = {
   'bogor-suryakencana':
     'Around a third of the footway length inside this disc is inside the Kebun Raya. Garden paths are tagged like gang and counted like gang, so the figure measures the botanical garden rather than the fabric. Bogor is in the set at Empang, 1.4 km south, where the garden is 7% of the pedestrian length.',
+
+  /* Green space, measured rather than suspected. The park share beside each
+     row is the number these sentences are reading. */
+  'jakarta-gambir':
+    'The best-covered candidate ever surveyed, and 78% of its pedestrian length is inside Medan Merdeka. This measures a park, not a fabric.',
+  'bandung-simpang':
+    'A quarter of its pedestrian length is inside green space, which is enough to make the coverage figure a statement about parks rather than about gang.',
+  'bogor-panaragan':
+    'Nearly 30% of its pedestrian length is inside green space, and Bogor is already in the set at Empang, where the same figure is a tenth of that.',
+  'bandung-pelindung-hewan':
+    'Over a quarter of its pedestrian length is inside green space, and Bandung is already represented by Braga and Cihapit.',
+  'surabaya-jagir':
+    'More than half of its pedestrian length is inside green space. It clears the coverage threshold on a park.',
+
+  /* Classification, not coverage. */
+  'balikpapan-sepinggan-raya':
+    'Clears the threshold on 26% coverage with no park in it, and is held back only because its morphology cannot be established from the map. Serially named streets in a residential grid read as planned housing, but nothing in OpenStreetMap says whether it is gated, and the difference is the whole of what `perumahan` means in this set. A better answer than a guessed label is this sentence.',
+
+  /* Balance. Every one of these clears the threshold and would be a defensible
+     site; each is a second or third disc in a city the set already holds, and
+     adopting all of them would weight the comparison toward the cities that
+     happen to be best mapped — which is a property of OpenStreetMap, not of
+     Indonesian urban form. They stay here so that the choice is visible and
+     so that the next person to widen the set has a list to start from. */
+  'ubud-ubud': 'Ubud is already in the set. This centre is better covered and 1.7 km away.',
+  'ubud-sayan': 'Ubud is already in the set.',
+  'jakarta-menteng-atas': 'Jakarta already holds six discs, now including Kebayoran Baru.',
+  'yogyakarta-kampung-ketandan': 'Yogyakarta already holds three discs, now including Pathuk.',
+  'malang-mulyorejo': 'Malang is already in the set at Kayutangan.',
+  'bogor-kebon-pedes': 'Bogor is already in the set at Empang.',
+  'bogor-bantarjati': 'Bogor is already in the set at Empang.',
+  'bandung-cihapit-second': 'Placeholder — no candidate carries this label.',
+  'mataram-lingk-sukaraja-timur': 'Mataram is already in the set at Gapuk Utara.',
+  'denpasar-sumerta': 'Denpasar is already in the set at Sanur Kaja.',
 }
 
 /** Same rounding convention as the pipeline, for the same determinism reason. */
@@ -194,6 +284,21 @@ function round(value: number, places: number): number {
 interface Result {
   readonly candidate: Candidate
   readonly pedestrianShare: number
+  /**
+   * How much of the pedestrian length inside the disc is inside a mapped park,
+   * garden, wood or cemetery — or null where it was not asked.
+   *
+   * This is the Bogor check, made routine. Suryakencana came back the
+   * best-covered candidate in the survey and about a third of its footway was
+   * the Kebun Raya; coverage cannot tell a garden path from a gang, so
+   * without this the proxy quietly measures the wrong thing at exactly the
+   * centres it most recommends.
+   *
+   * Asked only where the answer can change a decision — a candidate below the
+   * threshold is not adopted whatever its parks look like, and an extra
+   * Overpass request for it would be spent on nothing.
+   */
+  readonly parkShare: number | null
   readonly pedestrianLengthM: number
   readonly walkLengthM: number
   readonly driveLengthM: number
@@ -211,6 +316,32 @@ interface Result {
  * radius, same mapping, same code, ODbL like everything else.
  */
 const SURVEY_PATH = join(process.cwd(), 'data', 'survey.json')
+
+/** Green space whose paths are mapped exactly like a gang and are not one. */
+function parkQuery(latDeg: number, lonDeg: number, radiusM: number): string {
+  return `[out:json][timeout:120];
+(
+  way(around:${Math.round(radiusM)},${latDeg},${lonDeg})["leisure"~"^(park|garden|recreation_ground)$"];
+  way(around:${Math.round(radiusM)},${latDeg},${lonDeg})["landuse"~"^(forest|grass|cemetery|recreation_ground)$"];
+  way(around:${Math.round(radiusM)},${latDeg},${lonDeg})["natural"="wood"];
+);
+out geom qt;`
+}
+
+/** Ray casting, on the segment midpoints the coverage figure is built from. */
+function inside(point: { latDeg: number; lonDeg: number }, ring: { lat: number; lon: number }[]): boolean {
+  let hit = false
+  for (let i = 0, j = ring.length - 1; i < ring.length; j = i, i += 1) {
+    const a = ring[i]
+    const b = ring[j]
+    if (a === undefined || b === undefined) continue
+    const crosses = a.lat > point.latDeg !== b.lat > point.latDeg
+    if (!crosses) continue
+    const at = ((b.lon - a.lon) * (point.latDeg - a.lat)) / (b.lat - a.lat) + a.lon
+    if (point.lonDeg < at) hit = !hit
+  }
+  return hit
+}
 
 /**
  * Which candidates became sites. Matched by centre rather than by name,
@@ -260,8 +391,12 @@ async function measure(candidate: Candidate): Promise<Result> {
   const drive = build('drive')
   const coverage = coverageOfWalkGraph(walk, SAMPLING_RADIUS_M)
 
+  const parkShare =
+    coverage.confidence.type === 'thin' ? null : await measureParkShare(candidate, extract)
+
   return {
     candidate,
+    parkShare,
     pedestrianShare: coverage.pedestrianShare,
     pedestrianLengthM: coverage.pedestrianLengthM,
     walkLengthM: coverage.walkLengthM,
@@ -271,13 +406,92 @@ async function measure(candidate: Candidate): Promise<Result> {
   }
 }
 
+/**
+ * The share of this disc's pedestrian length that lies inside green space.
+ *
+ * Measured from the same extract the coverage figure came from, against
+ * polygons fetched once and cached, so a re-run costs Overpass nothing. A
+ * multipolygon park mapped as a relation is missed — those are rare enough
+ * that the number stays useful, and a missed park makes this read low rather
+ * than high, which is the safe direction for a check.
+ */
+async function measureParkShare(
+  candidate: Candidate,
+  extract: ReturnType<typeof splitElements>,
+): Promise<number> {
+  const slug = `park-${candidate.label}`
+  if (!hasCachedExtract(slug)) {
+    const query = parkQuery(candidate.latDeg, candidate.lonDeg, SAMPLING_RADIUS_M)
+    const response = await fetchOverpass(query)
+    await writeCachedExtract({
+      slug,
+      query,
+      timestampOsmBase: response.osm3s?.timestamp_osm_base ?? 'unknown',
+      response,
+    })
+    await pause(PAUSE_MS)
+  }
+  const cached = await readCachedExtract(slug)
+  /*
+   * `landuse=grass` is fetched and then dropped, deliberately.
+   *
+   * It is the tag mappers use for a roadside verge as often as for a lawn, so
+   * counting it turned a footway running beside a planted median into a park
+   * path — Bantarjati came out at 30% green on nothing but verges. The query
+   * still asks for it so the decision lives here, in one readable place, and
+   * changing it back does not cost another sweep of Overpass.
+   */
+  const rings = cached.response.elements
+    .filter((element) => {
+      const tags = (element as unknown as { tags?: Record<string, string> }).tags ?? {}
+      return tags['landuse'] !== 'grass'
+    })
+    .map((element) => (element as unknown as { geometry?: { lat: number; lon: number }[] }).geometry)
+    .filter((geometry): geometry is { lat: number; lon: number }[] => geometry !== undefined)
+  if (rings.length === 0) return 0
+
+  const pedestrian = new Set(['footway', 'path', 'steps', 'pedestrian', 'corridor', 'track'])
+  const R = 6_371_000
+  const rad = (deg: number): number => (deg * Math.PI) / 180
+  let total = 0
+  let green = 0
+
+  for (const way of extract.ways) {
+    if (!pedestrian.has(way.tags['highway'] ?? '')) continue
+    for (let i = 1; i < way.nodes.length; i += 1) {
+      const from = extract.nodes.get(way.nodes[i - 1] ?? -1)
+      const to = extract.nodes.get(way.nodes[i] ?? -1)
+      if (from === undefined || to === undefined) continue
+      const mid = {
+        latDeg: (from.latDeg + to.latDeg) / 2,
+        lonDeg: (from.lonDeg + to.lonDeg) / 2,
+      }
+      const fromCentre =
+        Math.hypot(
+          rad(mid.lonDeg - candidate.lonDeg) * Math.cos(rad(candidate.latDeg)),
+          rad(mid.latDeg - candidate.latDeg),
+        ) * R
+      if (fromCentre > SAMPLING_RADIUS_M) continue
+      const length =
+        Math.hypot(
+          rad(to.lonDeg - from.lonDeg) * Math.cos(rad(mid.latDeg)),
+          rad(to.latDeg - from.latDeg),
+        ) * R
+      total += length
+      if (rings.some((ring) => inside(mid, ring))) green += length
+    }
+  }
+  return total === 0 ? 0 : green / total
+}
+
 async function main(): Promise<void> {
-  console.log(`Surveying ${CANDIDATES.length} candidate centres at r=${SAMPLING_RADIUS_M} m,`)
+  const all = [...CANDIDATES, ...discovered()]
+  console.log(`Surveying ${all.length} candidate centres at r=${SAMPLING_RADIUS_M} m,`)
   console.log(`tag mapping "${DEFAULT_TAG_MAPPING.id}" — the same sampling the pipeline uses.`)
   console.log('Selecting on data completeness only. Never on the metrics.\n')
 
   const results: Result[] = []
-  for (const candidate of CANDIDATES) {
+  for (const candidate of all) {
     process.stdout.write(`·  ${candidate.label.padEnd(32)}`)
     const result = await measure(candidate)
     results.push(result)
@@ -285,7 +499,10 @@ async function main(): Promise<void> {
       `cov ${(result.pedestrianShare * 100).toFixed(1).padStart(5)}%  ` +
         `gang ${(result.pedestrianLengthM / 1000).toFixed(1).padStart(5)} km  ` +
         `walk ${(result.walkLengthM / 1000).toFixed(1).padStart(5)} km  ` +
-        `${result.confidence}`,
+        `${result.confidence}` +
+        (result.parkShare === null
+          ? ''
+          : `  park ${(result.parkShare * 100).toFixed(0).padStart(3)}%`),
     )
   }
 
@@ -328,6 +545,7 @@ async function main(): Promise<void> {
       walkLengthM: round(result.walkLengthM, 2),
       driveLengthM: round(result.driveLengthM, 2),
       confidence: result.confidence,
+      parkShare: result.parkShare === null ? null : round(result.parkShare, 4),
       adoptedAs: adoptedAs(result.candidate),
       withheld: WITHHELD[result.candidate.label] ?? null,
       extractVersion: result.extractVersion,

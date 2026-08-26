@@ -296,5 +296,9 @@ export const SITE_TYPE_LABEL: Record<string, Bilingual> = {
   kolonial: { id: 'Petak kolonial', en: 'Colonial grid' },
   'kota-baru': { id: 'Kota baru', en: 'New town' },
   'kota-kecil': { id: 'Kota kecil', en: 'Small town' },
+  /* Not a morphology. A density search finds a well-mapped cell and does not
+     know what kind of place it is; inventing one to fill the column would put
+     a guess into a published table. */
+  discovered: { id: 'Dari pencarian kerapatan', en: 'From the density search' },
   ikn: { id: 'IKN', en: 'IKN' },
 }
