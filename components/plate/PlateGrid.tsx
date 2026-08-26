@@ -293,7 +293,25 @@ export function PlateGrid({
     `.plate:has([data-slug="${site.slug}"]:focus-within) [data-tick="${site.slug}"]{stroke:var(--ink);stroke-width:2.5}`,
   ])
 
-  const rules = [...orderRules, ...chipRules, ...highlightRules].join('') + densityRules
+  /*
+   * Which metric the plate is ordered by, said on the cards.
+   *
+   * The chip is at the top of the page and the cards are three screens below
+   * it, so a reader scrolling the grid had no way to remember what they were
+   * looking at an ordering of. The figure that produced the order takes a
+   * neutral band from the palette — `--rule-faint`, no hue, nothing that
+   * could be read as a grade (§3) — on the card that carries it.
+   *
+   * `name` is not a metric and marks nothing: the alphabet is not a finding.
+   */
+  const sortedMarkRules = all
+    .filter((option) => option.key !== NAME_KEY)
+    .flatMap((option) => [
+      `.plate:has(#sort-${option.key}:checked) [data-metric="${option.key}"]{background:var(--rule-faint);box-shadow:0 0 0 2px var(--rule-faint)}`,
+    ])
+
+  const rules =
+    [...orderRules, ...chipRules, ...highlightRules, ...sortedMarkRules].join('') + densityRules
 
   return (
     <div className="plate">

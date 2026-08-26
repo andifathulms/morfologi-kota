@@ -61,32 +61,41 @@ export interface RoseProps {
   /** Rendered under the rose. Required for a single series; §12. */
   readonly caption?: boolean
   /**
-   * How the caption is set.
+   * Set the caption as the card's headline instead of the 14 px mono line
+   * the figure has always carried, and pass it what a headline needs.
    *
-   * `plain` is the 14 px mono line the figure has always carried. `headline`
-   * sets the same numbers at the card's headline size and moves them beside
-   * the rose rather than under it, and adds ΔH where there are two series.
+   * Present means headline emphasis: H at headline size in its series' ink,
+   * φ at caption size beside it, ΔH under both, and the numbers set beside
+   * the rose rather than under it.
    *
-   * It is an emphasis, not a second component, and that is the point. The card
-   * needs one number to be the reason it exists (DESIGN.md §7, the headline
-   * metric role), and the honest place for it is the rose's own caption:
+   * It is an emphasis on the caption rather than a separate component, and
+   * that is the point. The card needs one number to be the reason it exists
+   * (DESIGN.md §7), and the honest place for it is the rose's own caption:
    * printing H twice — once as a headline, once in the caption — is what the
    * plate used to do, and a reader cannot tell whether two identical figures
    * are one measurement or two.
    */
-  readonly emphasis?: 'plain' | 'headline'
-  /**
-   * A figure drawn under a series' number in the headline caption — the scale
-   * that number is read against, per mode.
-   *
-   * It lives here rather than in the card because it belongs to the number:
-   * a distribution ruler set anywhere other than directly beneath the figure
-   * it positions is a second chart about a number rather than a property of
-   * it. Ignored unless the caption is set at headline emphasis.
-   */
-  readonly scale?: Partial<Record<RoseSeriesKind, React.ReactNode>>
-  /** One line under the caption, e.g. what the ruler's range is over. */
-  readonly scaleNote?: string
+  readonly headline?: {
+    /**
+     * A figure drawn under a series' number — the scale that number is read
+     * against, per mode. It lives with the number because it belongs to it:
+     * a distribution ruler set anywhere else is a second chart about a number
+     * rather than a property of it.
+     */
+    readonly scale?: Partial<Record<RoseSeriesKind, React.ReactNode>>
+    /** One line under the caption, e.g. what the ruler's range is over. */
+    readonly note?: string
+    /**
+     * The sort key each figure is the value of, marked on the element so the
+     * plate can show which metric it is ordered by on the cards themselves
+     * rather than only in the control.
+     */
+    readonly metricKeys?: {
+      readonly drive?: string
+      readonly walk?: string
+      readonly delta?: string
+    }
+  }
   /**
    * The one-paragraph statement of what the bars are. On by default; the plate
    * turns it off, because sixteen cards do not need sixteen copies of one
@@ -195,9 +204,7 @@ export function Rose({
   animate = true,
   caption = true,
   method = true,
-  emphasis = 'plain',
-  scale,
-  scaleNote,
+  headline,
 }: RoseProps) {
   // The smaller series is drawn in front, so neither hides the other
   // (DESIGN.md §4).
@@ -224,7 +231,7 @@ export function Rose({
   return (
     <figure
       className={
-        emphasis === 'headline' ? 'm-0 flex flex-wrap items-start gap-x-4 gap-y-2' : 'm-0'
+        headline === undefined ? 'm-0' : 'm-0 flex flex-wrap items-start gap-x-4 gap-y-2'
       }
     >
       <svg
@@ -305,7 +312,7 @@ export function Rose({
         )}
       </svg>
 
-      {caption && emphasis === 'headline' ? (
+      {caption && headline !== undefined ? (
         /*
           The headline caption (DESIGN.md §7).
 
@@ -324,7 +331,10 @@ export function Rose({
             const name = nameFor(s.kind, locale)
             return (
               <span key={s.kind} className="mt-2 block first:mt-0">
-                <span className="flex items-baseline gap-2">
+                <span
+                  data-metric={s.kind === 'walk' ? headline.metricKeys?.walk : headline.metricKeys?.drive}
+                  className="flex items-baseline gap-2"
+                >
                   <SeriesSwatch kind={s.kind} />
                   {name === undefined ? null : (
                     <span className="text-xs uppercase tracking-wide text-ink-subtle">{name}</span>
@@ -334,18 +344,21 @@ export function Rose({
                   </span>
                   <span className="text-xs text-ink-subtle">φ {fixed(s.orientationOrder, 2)}</span>
                 </span>
-                {scale?.[s.kind]}
+                {headline.scale?.[s.kind]}
               </span>
             )
           })}
           {delta === undefined ? null : (
-            <span className="mt-2 flex items-baseline gap-2 border-t border-rule pt-2">
+            <span
+              data-metric={headline.metricKeys?.delta}
+              className="mt-2 flex items-baseline gap-2 border-t border-rule pt-2"
+            >
               <span className="text-xs uppercase tracking-wide text-ink-subtle">ΔH</span>
               <span className="text-lg leading-none">{signed(delta, 3)}</span>
             </span>
           )}
           <span className="mt-1 block text-xs text-ink-subtle">
-            H · nat · 36 bin{scaleNote === undefined ? null : ` · ${scaleNote}`}
+            H · nat · 36 bin{headline.note === undefined ? null : ` · ${headline.note}`}
           </span>
         </figcaption>
       ) : caption ? (
@@ -354,7 +367,12 @@ export function Rose({
             const name = nameFor(s.kind, locale)
             return (
               <span key={s.kind} className="mr-4 inline-flex items-center gap-1">
-                {series.length > 1 ? <SeriesSwatch kind={s.kind} /> : null}
+                {/* On every rose, not only the overlaid one. A single-series
+                    rose named in `--drive` and nothing else is a name carried
+                    by hue alone, which is the thing §10 forbids — and the two
+                    hues are 1.4:1 to each other, so the pane headings do not
+                    separate them either. */}
+                {s.kind === 'reference' ? null : <SeriesSwatch kind={s.kind} />}
                 {name === undefined ? null : (
                   <>
                     <span style={{ color: inkFor(s.kind) }}>{name}</span>{' '}

@@ -142,6 +142,14 @@ A number alone is unreadable. `φ 0.308` is ordered or it is not, and the answer
 
 **Hovering a card lights that site's tick on every other card's ruler.** Every ruler carries a tick for every site, so this is the sweep across small multiples that a grid of separate figures cannot otherwise make: where does this place sit, on every other place's scale, at once. `:has()`, no script, 120 ms.
 
+### The plate says what it is sorted by
+
+The control is at the top of the page and the cards are three screens below it. The figure that produced the current order takes a neutral band — `--rule-faint`, no hue, nothing that could be read as a grade — on every card that carries it. A reader should never have to scroll back to the control to remember what they are looking at an ordering of.
+
+The name sort marks nothing. The alphabet is not a finding.
+
+**The coverage caveat is restated above the grid.** It is made properly in the opening, which a reader arriving by a shared sort link has not read, and nine of sixteen sites are flagged. It is set at the size of the argument it is, not as a parameter.
+
 ### The control is a control
 
 Sorting is the plate's main verb, so it is set as one. Three named groups — **the site**, **per mode**, **between modes** — because that is the only distinction that matters when choosing a sort: the third is the product's subject, the second is a figure for one network, and the first is not a measurement at all. Eleven chips of equal weight, wrapping into two rows, is a tag cloud.
@@ -255,7 +263,7 @@ And the method page carries the Boeing citation, the metric definitions, the tag
 ## 10. Accessibility
 
 - **Every rose has a table equivalent** — 36 bins with bearings and shares — always available, not a fallback. It is also what someone would paste into a message. On the plate that is sixteen cards times thirty-six bins, and it is most of why that page is the size it is. The cost is known and it is accepted: a table that is one click away is a fallback, which is the thing this line exists to forbid.
-- **Colour is never the only channel:** drive and walk are labelled on every card and in every axis, and the paired view is positional as well as chromatic.
+- **Colour is never the only channel:** drive and walk are labelled on every card and in every axis, and the paired view is positional as well as chromatic. **The swatch is drawn on every rose caption, not only the overlaid one** — a single-series rose named in `--drive` and nothing else is a name carried by hue alone, and the two hues are 1.4:1 to each other.
 - Metric columns are already text and read cleanly in order.
 - Sorting and mode toggles keyboard-operable; focus visible at 3px.
 - Type floor 16px; AA contrast on `--plate` for both accents at the sizes used.

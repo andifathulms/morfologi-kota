@@ -21,10 +21,13 @@ export function CoverageBadge({
   coverage,
   locale,
   verbose = false,
+  metric,
 }: {
   readonly coverage: Coverage
   readonly locale: Locale
   readonly verbose?: boolean
+  /** The sort key this line is the value of, where the plate has one. */
+  readonly metric?: string
 }) {
   const label =
     coverage.confidence.type === 'thin'
@@ -36,7 +39,7 @@ export function CoverageBadge({
 
   return (
     <div className={thin ? 'border-l-2 border-ink pl-2 font-mono text-xs' : 'font-mono text-xs'}>
-      <p className="tabular m-0">
+      <p data-metric={metric} className="tabular m-0">
         {thin ? <span aria-hidden="true">⚑ </span> : null}
         {d('coverage', locale)} {percent(coverage.pedestrianShare)} · {label}
       </p>

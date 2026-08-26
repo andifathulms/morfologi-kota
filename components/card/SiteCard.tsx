@@ -121,7 +121,7 @@ export function SiteCard({
       {/* Ahead of the drawing, not under the metric column. Nine of sixteen
           sites are flagged, and the flag bounds every number beneath it
           (PRD §4). A reader meets the qualifier before the thing qualified. */}
-      <CoverageBadge coverage={entry.coverage} locale={locale} />
+      <CoverageBadge coverage={entry.coverage} locale={locale} metric="coverage" />
 
       <NetworkDrawing
         geometry={geometry}
@@ -143,9 +143,14 @@ export function SiteCard({
         locale={locale}
         size={196}
         method={false}
-        emphasis="headline"
-        scale={scale}
-        scaleNote={scaleNote}
+        headline={{
+          scale,
+          note: scaleNote,
+          /* Which figure the plate is currently ordered by, marked on the
+             figure. A reader should never have to look back up at the control
+             to remember what they sorted by (DESIGN.md §6). */
+          metricKeys: { drive: 'entropyDrive', walk: 'entropyWalk', delta: 'entropyDelta' },
+        }}
         series={[
           {
             shares: entry.drive.rose.shares,

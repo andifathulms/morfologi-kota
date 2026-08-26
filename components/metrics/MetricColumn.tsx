@@ -18,6 +18,12 @@ export interface MetricRow {
   readonly label: string
   readonly value: string
   readonly hint?: string
+  /**
+   * The sort key this row is the value of, where the plate has one. It marks
+   * the row so the plate can show which metric the cards are ordered by, on
+   * the cards rather than only in the control (DESIGN.md §6).
+   */
+  readonly metric?: string
 }
 
 /**
@@ -45,13 +51,23 @@ export function metricRows(
       label: d('circuity', locale),
       value: fixed(metrics.sampledCircuity, 3),
       hint: `~${metrics.sampledPairCount}`,
+      metric: 'circuityDrive',
     },
     { label: d('averageDegree', locale), value: fixed(metrics.degrees.averageDegree, 2) },
-    { label: d('fourWay', locale), value: percent(metrics.degrees.proportions.fourWay) },
-    { label: d('deadEnd', locale), value: percent(metrics.degrees.proportions.deadEnd) },
+    {
+      label: d('fourWay', locale),
+      value: percent(metrics.degrees.proportions.fourWay),
+      metric: 'fourWayDrive',
+    },
+    {
+      label: d('deadEnd', locale),
+      value: percent(metrics.degrees.proportions.deadEnd),
+      metric: 'deadEndDrive',
+    },
     {
       label: d('intersectionDensity', locale),
       value: perKm2(metrics.intersectionDensityPerKm2),
+      metric: 'densityDrive',
     },
     { label: d('medianSegment', locale), value: metres(metrics.medianSegmentLengthM) },
     { label: d('totalLength', locale), value: kilometres(metrics.totalLengthM) },
@@ -82,6 +98,12 @@ export function MetricColumn({
    */
   readonly notes?: boolean
 }) {
+  /*
+   * `headlined` is only ever set by the plate card, which is also the only
+   * place a sort key means anything — the column on the pair shows the walking
+   * network too, and marking a walk row with a drive sort key would be a
+   * label that is simply false. So the marks ride along with it.
+   */
   const rows = metricRows(metrics, locale, headlined)
   const hue = mode === 'drive' ? 'var(--drive)' : 'var(--walk)'
 
@@ -95,8 +117,16 @@ export function MetricColumn({
       <dl className="tabular m-0 grid grid-cols-[1fr_auto] gap-x-4">
         {rows.map((row) => (
           <div key={row.label} className="contents">
-            <dt className="border-b border-rule-faint py-px text-ink-subtle">{row.label}</dt>
-            <dd className="m-0 border-b border-rule-faint py-px text-right">
+            <dt
+              data-metric={headlined ? row.metric : undefined}
+              className="border-b border-rule-faint py-px text-ink-subtle"
+            >
+              {row.label}
+            </dt>
+            <dd
+              data-metric={headlined ? row.metric : undefined}
+              className="m-0 border-b border-rule-faint py-px text-right"
+            >
               {row.value}
               {row.hint ? <span className="ml-1 text-ink-subtle">{row.hint}</span> : null}
             </dd>

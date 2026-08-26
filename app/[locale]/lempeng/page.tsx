@@ -500,6 +500,26 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
         <span className="font-mono text-xs">Boeing 2019 §3</span>
       </p>
 
+      {/*
+        The caveat, restated where the numbers are.
+
+        It is made properly at the top of the page, three screens above this
+        point, and a reader who arrived by a shared sort link or who scrolled
+        to the grid has not read it. Nine of sixteen sites are flagged; that
+        bounds every comparison in the grid below, so it is said again at the
+        size of the argument it is rather than as a parameter (PRD §4).
+      */}
+      {thin > 0 ? (
+        <p className="mb-6 mt-8 max-w-prose border-l-2 border-ink pl-4 font-serif text-md leading-relaxed">
+          {locale === 'id'
+            ? `${thin} dari ${manifest.sites.length} lokasi di bawah bertanda cakupan gang tipis. Pada lokasi-lokasi itu jaringan jalan kakinya hampir sama dengan jaringan kendaraannya karena gangnya belum terpetakan, jadi selisihnya bukan temuan tentang tempatnya. `
+            : `${thin} of the ${manifest.sites.length} sites below are flagged for thin footway coverage. At those sites the walking network is nearly the driving network because the gang are not mapped, so the gap there is not a finding about the place. `}
+          <Link href={`/${locale}/lempeng#peringatan`}>
+            {locale === 'id' ? 'Selengkapnya di atas.' : 'Stated in full above.'}
+          </Link>
+        </p>
+      ) : null}
+
       <PlateGrid
         sites={sites}
         options={options}
