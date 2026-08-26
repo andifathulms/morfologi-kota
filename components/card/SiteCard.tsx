@@ -198,7 +198,7 @@ export function SiteCard({
           sentence about the place, so it is body size. */}
       <p
         data-card="note"
-        className="m-0 max-w-prose font-serif text-base leading-snug text-ink-muted"
+        className="m-0 max-w-prose font-serif text-base leading-note text-ink-muted"
       >
         {t(entry.note, locale)}
       </p>

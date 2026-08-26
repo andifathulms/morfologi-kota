@@ -47,7 +47,7 @@ export function CoverageBadge({
           for every thin site, and two nested rules read as two levels of
           caveat where there is one. */}
       {thin && verbose ? (
-        <p className="mt-1 max-w-prose font-sans text-base leading-snug">
+        <p className="mt-1 max-w-prose font-sans text-base leading-note">
           {d('thinWarning', locale)}
         </p>
       ) : null}

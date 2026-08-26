@@ -64,9 +64,22 @@
   --walk: #a3431f; /*  5.7:1 */
   --overprint: #13140d; /* 16.9:1 — drive × walk, where both networks run */
 
-  /* Type — DESIGN.md §7. One scale, 1.25 ratio, floor 16px for body.
-     14px is captions, units and citations only, never running prose. */
-  --text-xs: 14px;
+  /*
+   * Type — DESIGN.md §7. One scale, 1.25 ratio, floor 16px for body.
+   *
+   * 15px is captions, units, citations and every metric — never running
+   * prose. It was 14, which made the densest text in the product also the
+   * smallest: a metric column is ten mono rows read down and compared across
+   * sixteen cards, and it was set two steps below prose nobody has to compare
+   * at all. The floor was protecting the wrong thing.
+   *
+   * 13px is the standing-label role and nothing else — uppercase, tracked,
+   * never a figure and never interactive. Uppercase with letter-spacing reads
+   * larger than its nominal size, and separating it from the metric size is
+   * what stops a section marker competing with the numbers under it.
+   */
+  --text-2xs: 13px;
+  --text-xs: 15px;
   --text-base: 16px;
   --text-md: 18px;
   --text-lg: 22px;
@@ -85,6 +98,15 @@
   --space-16: 64px;
   --space-24: 96px;
   --space-32: 128px;
+
+  /*
+   * Leading — DESIGN.md §7. One scale did two jobs: an eighteen-point serif
+   * ran at the same leading whether it was a nine-line argument at prose
+   * measure or a two-line note on a card. Long-form wants more, a caption
+   * wants less, and neither wants the other's.
+   */
+  --lead-prose: 1.62;
+  --lead-note: 1.45;
 
   --dur-fast: 120ms;
   --dur-state: 240ms;

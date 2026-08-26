@@ -127,7 +127,7 @@ export function RoseTable({ locale, series, label }: RoseTableProps) {
           </tfoot>
         </table>
       </div>
-      <p className="mt-2 max-w-prose font-sans text-base leading-snug text-ink-muted">
+      <p className="mt-2 max-w-prose font-sans text-base leading-note text-ink-muted">
         {d('entropyDerivation', locale)}
       </p>
     </details>

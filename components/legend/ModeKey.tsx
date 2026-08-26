@@ -91,7 +91,7 @@ export function ModeKey({ locale, className }: { readonly locale: Locale; readon
                 {row.term}
               </span>
             </dt>
-            <dd className="m-0 font-sans text-base leading-snug text-ink-muted">{row.gloss}</dd>
+            <dd className="m-0 font-sans text-base leading-note text-ink-muted">{row.gloss}</dd>
           </div>
         ))}
       </dl>

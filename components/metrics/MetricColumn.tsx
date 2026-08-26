@@ -144,7 +144,7 @@ export function MetricColumn({
         size beside the number and leaves the paragraph to this view.
       */}
       {notes ? (
-        <div className="mt-3 max-w-prose font-sans text-base leading-snug text-ink-muted">
+        <div className="mt-3 max-w-prose font-sans text-base leading-note text-ink-muted">
           <p className="m-0">{d('natNote', locale)}</p>
           <p className="m-0 mt-2">
             {d('circuitySampled', locale)}{' '}

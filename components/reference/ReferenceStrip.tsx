@@ -37,7 +37,7 @@ export function ReferenceStrip({
       <h2 id="skala" className="m-0 max-w-prose font-serif text-lg font-semibold">
         {d('referenceHeading', locale)}
       </h2>
-      <p className="mt-2 max-w-prose font-serif text-md leading-relaxed">
+      <p className="mt-2 max-w-prose font-serif text-md leading-prose">
         {d('referenceNote', locale)}
       </p>
 
@@ -76,7 +76,7 @@ export function ReferenceStrip({
             <p className="tabular m-0 mt-1 font-mono text-xs text-ink-subtle">
               {d('referenceExpected', locale)}: {t(network.expected, locale)}
             </p>
-            <figcaption className="mt-2 max-w-prose font-sans text-base leading-snug text-ink-muted">
+            <figcaption className="mt-2 max-w-prose font-sans text-base leading-note text-ink-muted">
               {t(network.note, locale)}
             </figcaption>
           </figure>

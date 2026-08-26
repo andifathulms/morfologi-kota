@@ -56,7 +56,7 @@ export function WorkingColumn({
           </div>
         ))}
       </dl>
-      <p className="mt-2 max-w-prose font-sans text-base leading-snug text-ink-muted">
+      <p className="mt-2 max-w-prose font-sans text-base leading-note text-ink-muted">
         {d('workingNote', locale)} {d('edgeCircuityNote', locale)}
       </p>
     </div>

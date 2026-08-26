@@ -170,11 +170,11 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
         <h2 className="m-0 font-serif text-lg font-semibold">
           {locale === 'id' ? 'Rujukan metode' : 'Method reference'}
         </h2>
-        <p className="mt-2 font-mono text-xs leading-relaxed">
+        <p className="mt-2 font-mono text-xs leading-prose">
           {manifest.method.citation}{' '}
           <a href={`https://doi.org/${manifest.method.doi}`}>DOI {manifest.method.doi}</a>
         </p>
-        <p className="mt-4 font-serif text-md leading-relaxed">
+        <p className="mt-4 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Boeing mengukur morfologi jaringan jalan seratus kota memakai OpenStreetMap: entropi arah jalan, panjang ruas tipikal, circuity rata-rata, derajat simpul rata-rata, serta proporsi simpang empat dan jalan buntu — ditambah indikator keteraturan φ. Yang dikerjakan di sini bukan sekadar menerapkan metode itu ke Indonesia, melainkan menghitung dua jaringan untuk tempat yang sama dan menampilkan selisihnya.'
             : 'Boeing measures the street network morphology of a hundred cities using OpenStreetMap: the entropy of street bearings, typical segment length, average circuity, average node degree, and the proportions of four-way intersections and dead-ends — plus the orientation-order indicator φ. What is done here is not simply applying that method to Indonesia; it is computing both networks for the same place and showing the gap.'}
@@ -199,7 +199,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
           <dt className="text-ink-subtle">{locale === 'id' ? 'Jumlah lokasi' : 'Sites'}</dt>
           <dd className="m-0">{manifest.sites.length}</dd>
         </dl>
-        <p className="mt-4 font-serif text-md leading-relaxed">
+        <p className="mt-4 font-serif text-md leading-prose">
           {t(DEFAULT_TAG_MAPPING.note, locale)}
         </p>
       </section>
@@ -222,7 +222,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
                   columns the column is the narrower bound; in one it is this,
                   and without it a definition ran the full width of the plate
                   the moment the page-wide cap came off. */}
-              <dd className="m-0 mt-1 max-w-prose font-serif text-md leading-relaxed">
+              <dd className="m-0 mt-1 max-w-prose font-serif text-md leading-prose">
                 {t(definition.body, locale)}
               </dd>
             </div>
@@ -234,7 +234,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
         <h2 className="m-0 font-serif text-lg font-semibold">
           {locale === 'id' ? 'Bagaimana angkanya diuji' : 'How the numbers are tested'}
         </h2>
-        <p className="mt-2 font-serif text-md leading-relaxed">
+        <p className="mt-2 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Tidak ada oracle data, tetapi jaringan dengan sifat yang sudah diketahui dapat dibangun. Petak sempurna harus memberi empat bin terisi dan entropi minimum; petak yang sama diputar 29° harus memberi entropi identik dengan bin bergeser; graf geometrik acak harus mendekati entropi maksimum; pohon murni harus memberi proporsi jalan buntu persis seperti konstruksinya. Setiap histogram wajib simetris 180° — kalau tidak, perhitungan arahnya salah. Circuity wajib ≥ 1 pada setiap pasangan sampel. Semua itu menjadi syarat build.'
             : 'There is no data oracle, but networks with known properties can be constructed. A perfect grid must give four populated bins and minimum entropy; the same grid rotated 29° must give identical entropy with shifted bins; a random geometric graph must approach maximum entropy; a pure tree must give its constructed dead-end proportion exactly. Every histogram must be 180°-symmetric — if it is not, the bearing computation is wrong. Circuity must be ≥ 1 on every sampled pair. All of it gates the build.'}
@@ -246,7 +246,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
           {locale === 'id' ? 'Batasan' : 'Limitations'}
         </h2>
         {limitations.map((limitation, index) => (
-          <p key={index} className="mt-4 font-serif text-md leading-relaxed">
+          <p key={index} className="mt-4 font-serif text-md leading-prose">
             {t(limitation, locale)}
           </p>
         ))}
@@ -266,12 +266,12 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
         <h2 id="pemilihan" className="m-0 font-serif text-lg font-semibold">
           {d('selectionHeading', locale)}
         </h2>
-        <p className="mt-2 max-w-prose font-serif text-md leading-relaxed">
+        <p className="mt-2 max-w-prose font-serif text-md leading-prose">
           {locale === 'id'
             ? `Kandidat diukur sebelum diadopsi, pada jari-jari yang sama (${survey.radiusM} m) dan pemetaan tag yang sama (“${survey.mappingId}”) dengan yang dipakai pipeline — survei yang menyampel berbeda tidak akan memprediksi apa pun. Pemilihan dilakukan atas dasar kelengkapan data saja, tidak pernah atas dasar metriknya: memilih lokasi menurut entropinya berarti memilih temuan sejak awal.`
             : `Candidates are measured before they are adopted, at the same radius (${survey.radiusM} m) and under the same tag mapping (“${survey.mappingId}”) the pipeline uses — a survey that sampled differently would predict nothing. Selection is on data completeness only, never on the metrics: picking sites by their entropy would be choosing the finding in advance.`}
         </p>
-        <p className="mt-4 max-w-prose border-l-2 border-ink-subtle pl-4 font-serif text-md leading-relaxed">
+        <p className="mt-4 max-w-prose border-l-2 border-ink-subtle pl-4 font-serif text-md leading-prose">
           {locale === 'id'
             ? `${cleared} dari ${survey.candidates.length} kandidat yang disurvei melewati ambang cakupan tipis (${percent(survey.thinThreshold, 0)}). Dari ${perumahanCandidates.length} kandidat perumahan kluster, tidak satu pun lolos — ${perumahanRange}. Itulah batas dari apa yang dapat dikatakan perbandingan kampung-versus-perumahan saat ini, dan itu pernyataan tentang OpenStreetMap, bukan tentang tempat-tempatnya: gangnya belum terpetakan, bukan tidak ada.`
             : `${cleared} of ${survey.candidates.length} surveyed candidates clear the thin-coverage threshold (${percent(survey.thinThreshold, 0)}). Of the ${perumahanCandidates.length} perumahan cluster candidates, not one does — ${perumahanRange}. That bounds what the kampung-versus-perumahan comparison can currently say, and it is a statement about OpenStreetMap rather than about the places: the gang are unmapped, not absent.`}
@@ -344,12 +344,12 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
             </tbody>
           </table>
         </div>
-        <p className="mt-4 max-w-prose font-serif text-md leading-relaxed">
+        <p className="mt-4 max-w-prose font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Kandidat di bawah ambang tidak dibuang diam-diam — ia diukur, dicatat, dan ditampilkan di sini. Menambahkan kluster perumahan yang terpetakan rapat, atau memetakannya, masih menjadi hal paling berguna yang bisa dilakukan siapa pun terhadap proyek ini.'
             : 'A candidate below the threshold is not quietly discarded — it is measured, recorded, and shown here. Adding a well-mapped perumahan cluster, or mapping one, remains the single most useful thing anyone could do to this project.'}
         </p>
-        <p className="mt-2 font-mono text-xs leading-relaxed">
+        <p className="mt-2 font-mono text-xs leading-prose">
           <a href={surveyDataPath()} download>
             {d('downloadSurvey', locale)}
           </a>
@@ -361,16 +361,16 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
           {locale === 'id' ? 'Data dan lisensi' : 'Data and licence'}
         </h2>
         <div className="max-w-prose">
-        <p className="mt-2 font-serif text-md leading-relaxed">
+        <p className="mt-2 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Geometri jalan berasal dari OpenStreetMap, © OpenStreetMap contributors, tersedia di bawah Open Database License (ODbL) 1.0. Geometri dan metrik yang dihasilkan di sini adalah basis data turunan, sehingga membawa ODbL dan ditawarkan dengan lisensi yang sama.'
             : 'Street geometry comes from OpenStreetMap, © OpenStreetMap contributors, available under the Open Database License (ODbL) 1.0. The geometry and metrics emitted here are a derived database, so they carry ODbL and are offered under the same terms.'}
         </p>
-        <p className="mt-2 font-mono text-xs leading-relaxed">
+        <p className="mt-2 font-mono text-xs leading-prose">
           <a href="https://www.openstreetmap.org/copyright">openstreetmap.org/copyright</a> ·{' '}
           <a href="https://opendatacommons.org/licenses/odbl/1-0/">ODbL 1.0</a>
         </p>
-        <p className="mt-4 font-serif text-md leading-relaxed">
+        <p className="mt-4 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Ekstrak diambil pada saat build, tidak pernah saat halaman dibuka. Setelah muat pertama, halaman ini tidak melakukan permintaan jaringan apa pun.'
             : 'Extracts are fetched at build time, never at page load. After the first load this page makes no network request at all.'}
@@ -379,7 +379,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
         <h3 className="mt-8 font-serif text-md font-semibold">
           {locale === 'id' ? 'Ambil datanya' : 'Take the data'}
         </h3>
-        <p className="mt-2 font-serif text-md leading-relaxed">
+        <p className="mt-2 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Share-alike berarti basis data turunan ini bukan hanya diatribusikan, melainkan ditawarkan. Berikut berkas yang sama persis dengan yang dipakai merender halaman-halaman ini.'
             : 'Share-alike means this derived database is not merely attributed but offered. These are the same files these pages were rendered from.'}
@@ -387,7 +387,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
         </div>
         {/* Seventeen files. A single column of them ran longer than every
             other section on the page combined. */}
-        <ul className="mt-2 list-none p-0 font-mono text-xs leading-relaxed sm:columns-2 xl:columns-3">
+        <ul className="mt-2 list-none p-0 font-mono text-xs leading-prose sm:columns-2 xl:columns-3">
           <li>
             <a href={manifestDataPath()} download>
               manifest.json

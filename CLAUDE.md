@@ -135,6 +135,8 @@ tests/
 - Indonesian first in UI copy; morphology terms in their standard English form where that is what a reader will meet elsewhere — *entropy*, *circuity*, *dead-end*.
 - Tabular figures on every metric.
 - Tailwind tokens exactly as in `DESIGN.md` — `plate`, `ink`, `rule`, `drive`, `walk`. Never raw hex in components.
+- Type: Newsreader (prose, variable `opsz`), Atkinson Hyperlegible (labels and controls, 400/700 only — `font-semibold` resolves to 700), IBM Plex Mono (every figure). `text-xs` is the 15 px metric size; `text-2xs` is the 13 px standing-label role and is never prose and never interactive. `leading-prose` for long-form, `leading-note` for captions.
+- Colour and type numbers are asserted, not remembered: `tests/unit/palette.test.ts` recomputes every declared contrast ratio from the hex beside it, and `tests/unit/type-scale.test.ts` holds the floor, the metric size and the label role.
 
 ## Testing rules
 

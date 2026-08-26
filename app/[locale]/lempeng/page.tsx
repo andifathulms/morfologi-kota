@@ -240,7 +240,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
             ? 'Lingkungan yang sama, dua kota berbeda'
             : 'The same neighbourhood, two different cities'}
         </h1>
-        <p className="mt-4 font-serif text-md leading-relaxed">
+        <p className="mt-4 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Entropi orientasi jaringan jalan menurut metode Boeing (2019), dihitung untuk dua jaringan yang berbeda di lokasi yang sama: jaringan yang dapat dikendarai, dan jaringan yang dapat dijalani kaki. Kampung terjalin rapat bagi pejalan kaki dan renggang bagi kendaraan; kluster berpagar kebalikannya. Metrik berbasis jaringan kendaraan tidak dapat melihat perbedaan itu.'
             : 'Street network orientation entropy after Boeing (2019), computed for two different networks in the same place: the one you can drive and the one you can walk. A kampung is densely connected on foot and barely by car; a gated cluster is the reverse. A driving-network metric cannot see the difference.'}
@@ -260,7 +260,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
             what figcaption is for; the section still takes its name from this
             text, so the region is announced either way.
           */}
-          <p id="contoh" className="m-0 font-mono text-xs uppercase tracking-wide text-ink-subtle">
+          <p id="contoh" className="m-0 font-mono text-2xs uppercase tracking-wide text-ink-subtle">
             {d('exampleHeading', locale)}
           </p>
           <figure className="m-0 mt-3">
@@ -299,7 +299,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
                 </div>
               ))}
             </div>
-            <figcaption className="mt-3 max-w-prose font-serif text-md leading-relaxed">
+            <figcaption className="mt-3 max-w-prose font-serif text-md leading-prose">
               {locale === 'id'
                 ? `${hero.row.site.name}, ${hero.row.site.city}. Lingkaran yang sama, jari-jari ${hero.bundle.radiusM} m, ekstrak yang sama — ${kilometres(hero.row.site.drive.totalLengthM)} jalan bila Anda mengemudi, ${kilometres(hero.row.site.walk.totalLengthM)} bila Anda berjalan kaki. Selisih itulah yang diukur di sini, untuk setiap lokasi, dengan cara yang sama.`
                 : `${hero.row.site.name}, ${hero.row.site.city}. The same disc, ${hero.bundle.radiusM} m radius, the same extract — ${kilometres(hero.row.site.drive.totalLengthM)} of street if you drive, ${kilometres(hero.row.site.walk.totalLengthM)} if you walk. That difference is what is measured here, for every site, the same way.`}{' '}
@@ -317,7 +317,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
               shapes on every card are for.
             */}
             <div className="mt-6 max-w-figure xl:max-w-none">
-              <p className="m-0 max-w-prose font-serif text-md leading-relaxed">
+              <p className="m-0 max-w-prose font-serif text-md leading-prose">
                 {d('heroBridge', locale)}
               </p>
               <div className="mt-4 flex flex-wrap items-start gap-6">
@@ -340,7 +340,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
                     },
                   ]}
                 />
-                <p className="tabular m-0 max-w-prose font-mono text-xs leading-relaxed">
+                <p className="tabular m-0 max-w-prose font-mono text-xs leading-prose">
                   {d('heroBridgeCompare', locale)}
                   <br />
                   {kilometres(hero.row.site.drive.totalLengthM)} →{' '}
@@ -371,12 +371,12 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
           <h2 id="peringatan" className="m-0 font-serif text-lg font-semibold">
             {d('caveatHeading', locale)}
           </h2>
-          <p className="mt-2 font-serif text-md leading-relaxed">
+          <p className="mt-2 font-serif text-md leading-prose">
             {locale === 'id'
               ? `Yang ditemukan lebih dulu adalah temuan tentang datanya: ${thin} dari ${manifest.sites.length} lokasi memiliki cakupan gang yang tipis di OpenStreetMap. Untuk lokasi-lokasi itu, jaringan pejalan kakinya hampir sama dengan jaringan kendaraannya — bukan karena gangnya tidak ada, melainkan karena belum terpetakan. Selisih kendara/jalan kaki di sana tidak dapat dibaca sebagai temuan tentang tempatnya.`
               : `The first finding is a finding about the data: ${thin} of ${manifest.sites.length} sites have thin gang coverage in OpenStreetMap. For those, the walking network is nearly the driving network — not because the gang are not there, but because they are not mapped. The drive/walk gap at those sites cannot be read as a finding about the place.`}
           </p>
-          <p className="mt-2 font-sans text-base leading-snug text-ink-muted">
+          <p className="mt-2 font-sans text-base leading-note text-ink-muted">
             {locale === 'id'
               ? 'Setiap kartu memakai jari-jari sampel yang sama, mencetak jari-jari itu, dan melaporkan seberapa banyak gang yang sudah terpetakan di OpenStreetMap. Lokasi dapat diurutkan, tetapi tidak dinilai.'
               : 'Every card uses the same sampling radius, prints it, and reports how much of its gang network is mapped in OpenStreetMap. Sites can be sorted; they are not rated.'}{' '}
@@ -397,12 +397,12 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
               ? `Selisihnya, pada ${readable.length} lokasi yang cakupannya memadai`
               : `The gap, at the ${readable.length} sites where coverage allows it`}
           </h2>
-          <p className="mt-2 max-w-prose font-serif text-md leading-relaxed">
+          <p className="mt-2 max-w-prose font-serif text-md leading-prose">
             {locale === 'id'
               ? `Di antara lokasi-lokasi ini, ${kampung.length} kampung memperoleh ${kilometres(range(kampung, (r) => r.extraLengthM).min)}–${kilometres(range(kampung, (r) => r.extraLengthM).max)} jaringan tambahan saat berjalan kaki, dan proporsi jalan buntunya turun ${percent(Math.abs(range(kampung, (r) => r.deadEndChange).max), 1)}–${percent(Math.abs(range(kampung, (r) => r.deadEndChange).min), 1)}. ${planned.length} lokasi terencana memperoleh ${kilometres(range(planned, (r) => r.extraLengthM).min)}–${kilometres(range(planned, (r) => r.extraLengthM).max)}, dengan proporsi jalan buntu bergerak ${signedPercent(range(planned, (r) => r.deadEndChange).min)} sampai ${signedPercent(range(planned, (r) => r.deadEndChange).max)}.`
               : `Among these, the ${kampung.length} kampung gain ${kilometres(range(kampung, (r) => r.extraLengthM).min)}–${kilometres(range(kampung, (r) => r.extraLengthM).max)} of network on foot, and their dead-end proportion falls by ${percent(Math.abs(range(kampung, (r) => r.deadEndChange).max), 1)}–${percent(Math.abs(range(kampung, (r) => r.deadEndChange).min), 1)}. The ${planned.length} planned sites gain ${kilometres(range(planned, (r) => r.extraLengthM).min)}–${kilometres(range(planned, (r) => r.extraLengthM).max)}, with their dead-end proportion moving ${signedPercent(range(planned, (r) => r.deadEndChange).min)} to ${signedPercent(range(planned, (r) => r.deadEndChange).max)}.`}
           </p>
-          <p className="mt-2 max-w-prose font-serif text-md leading-relaxed">
+          <p className="mt-2 max-w-prose font-serif text-md leading-prose">
             {locale === 'id'
               ? `Itu bunyi angkanya di ${readable.length} lokasi ini. Bukan pernyataan tentang bentuk kota Indonesia — untuk itu diperlukan cakupan gang yang jauh lebih luas daripada yang tersedia sekarang, terutama pada perumahan kluster, yang tidak satu pun kandidatnya lolos ambang.`
               : `That is what the numbers say at these ${readable.length} sites. It is not a statement about Indonesian urban form — that would need far wider gang coverage than currently exists, particularly for perumahan clusters, not one of which cleared the threshold.`}
@@ -489,13 +489,13 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
           the two things a reader must know before reading a mark: that both
           modes share one axis, and that the set is not a population
           (PRD §4, DESIGN.md §6a). */}
-      <p className="mt-4 max-w-prose font-sans text-base leading-snug text-ink-muted">
+      <p className="mt-4 max-w-prose font-sans text-base leading-note text-ink-muted">
         {d('rulerNote', locale)}
       </p>
 
       {/* Stated once for the whole plate rather than sixteen times on sixteen
           cards — but stated on the page where the roses are, not on /metode. */}
-      <p className="mb-6 mt-3 max-w-prose font-sans text-base leading-snug text-ink-muted">
+      <p className="mb-6 mt-3 max-w-prose font-sans text-base leading-note text-ink-muted">
         {d('roseMethod', locale)} {d('roseSymmetryNote', locale)}{' '}
         <span className="font-mono text-xs">Boeing 2019 §3</span>
       </p>
@@ -510,7 +510,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
         size of the argument it is rather than as a parameter (PRD §4).
       */}
       {thin > 0 ? (
-        <p className="mb-6 mt-8 max-w-prose border-l-2 border-ink pl-4 font-serif text-md leading-relaxed">
+        <p className="mb-6 mt-8 max-w-prose border-l-2 border-ink pl-4 font-serif text-md leading-prose">
           {locale === 'id'
             ? `${thin} dari ${manifest.sites.length} lokasi di bawah bertanda cakupan gang tipis. Pada lokasi-lokasi itu jaringan jalan kakinya hampir sama dengan jaringan kendaraannya karena gangnya belum terpetakan, jadi selisihnya bukan temuan tentang tempatnya. `
             : `${thin} of the ${manifest.sites.length} sites below are flagged for thin footway coverage. At those sites the walking network is nearly the driving network because the gang are not mapped, so the gap there is not a finding about the place. `}
@@ -536,12 +536,12 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
         {cards}
       </PlateGrid>
 
-      <p className="mt-8 max-w-prose font-mono text-xs leading-relaxed">
+      <p className="mt-8 max-w-prose font-mono text-xs leading-prose">
         <a href={manifestDataPath()} download>
           {d('downloadManifest', locale)}
         </a>
       </p>
-      <p className="tabular mt-2 max-w-prose font-mono text-xs leading-relaxed">
+      <p className="tabular mt-2 max-w-prose font-mono text-xs leading-prose">
         {manifest.attribution} {d('offered', locale)}
       </p>
     </div>

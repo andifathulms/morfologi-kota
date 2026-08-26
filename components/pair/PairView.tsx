@@ -97,7 +97,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
           {percent(bundle.walkOnly.shareOfWalk)}
         </dd>
       </dl>
-      <figcaption className="mt-2 max-w-prose font-sans text-base leading-snug text-ink-muted">
+      <figcaption className="mt-2 max-w-prose font-sans text-base leading-note text-ink-muted">
         <span className="font-mono text-xs">
           {d('figureAbbrev', locale)} 3 · r = {radiusM} m
         </span>{' '}
@@ -161,7 +161,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
                 responsive
                 label={`${bundle.site.name} — ${d('drive', locale)}`}
               />
-              <figcaption className="mt-2 max-w-prose font-sans text-base leading-snug text-ink-muted">
+              <figcaption className="mt-2 max-w-prose font-sans text-base leading-note text-ink-muted">
                 <span className="font-mono text-xs">
                   {d('figureAbbrev', locale)} 1 · r = {radiusM} m
                 </span>{' '}
@@ -198,7 +198,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
                 responsive
                 label={`${bundle.site.name} — ${d('walk', locale)}`}
               />
-              <figcaption className="mt-2 max-w-prose font-sans text-base leading-snug text-ink-muted">
+              <figcaption className="mt-2 max-w-prose font-sans text-base leading-note text-ink-muted">
                 <span className="font-mono text-xs">
                   {d('figureAbbrev', locale)} 2 · r = {radiusM} m
                 </span>{' '}

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from 'next'
-import { IBM_Plex_Mono, IBM_Plex_Sans, Source_Serif_4 } from 'next/font/google'
+import { Atkinson_Hyperlegible, IBM_Plex_Mono, Newsreader } from 'next/font/google'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import '../globals.css'
@@ -11,17 +11,36 @@ import { Mark } from '@/components/brand/Mark'
 /*
  * DESIGN.md §7. Self-hosted: next/font fetches at build time and serves the
  * files from the export, so no request leaves the browser at runtime.
+ *
+ * Newsreader is variable on `opsz` as well as weight, and the axis is
+ * requested rather than left off. Source Serif 4 has the same axis and was
+ * loaded as two static weights, so the 36 px heading was set with the
+ * letterfit of 16 px body text and the body with the letterfit of a heading —
+ * exactly backwards, and invisible until you know to look. `opsz` follows the
+ * font size automatically through `font-optical-sizing: auto`, which is the
+ * default wherever the axis exists.
  */
-const serif = Source_Serif_4({
+const serif = Newsreader({
   subsets: ['latin'],
-  weight: ['400', '600'],
+  axes: ['opsz'],
   variable: '--font-serif',
   display: 'swap',
 })
 
-const sans = IBM_Plex_Sans({
+/*
+ * Atkinson Hyperlegible, drawn by the Braille Institute for readers with low
+ * vision. It is here for one reason: this product is made of place names and
+ * three-decimal figures, and its letterforms are drawn so that the characters
+ * that normally collapse into each other stay apart — l against I against 1,
+ * 0 against O, 6 against 8, and the mirrored pairs b/d and p/q.
+ *
+ * Two weights, not three. There is no 600, so `font-semibold` on a sans
+ * element resolves to 700: the label voice is a shade heavier than it was,
+ * which is a real change and is the price of the face.
+ */
+const sans = Atkinson_Hyperlegible({
   subsets: ['latin'],
-  weight: ['400', '600'],
+  weight: ['400', '700'],
   variable: '--font-sans',
   display: 'swap',
 })
@@ -172,13 +191,17 @@ export default function LocaleLayout({
                   lang={other}
                   hrefLang={other}
                   data-print="hide"
+                  /* Not the 13 px label role: this one is a link. A standing
+                     label names a thing and a control is pressed, and the
+                     smallest type in the product is the wrong size for
+                     anything a reader has to hit. */
                   className="font-mono text-xs uppercase tracking-wide"
                 >
                   {other === 'en' ? 'English' : 'Bahasa Indonesia'}
                 </Link>
               </div>
             </div>
-            <p className="m-0 mt-3 max-w-prose font-sans text-base leading-snug text-ink-subtle">
+            <p className="m-0 mt-3 max-w-prose font-sans text-base leading-note text-ink-subtle">
               {d('tagline', locale)}
             </p>
           </header>
@@ -193,7 +216,7 @@ export default function LocaleLayout({
             stated wherever a number is, and they are stated again here.
           */}
           <footer
-            className="mt-16 border-t border-rule-strong py-6 font-mono text-xs leading-relaxed"
+            className="mt-16 border-t border-rule-strong py-6 font-mono text-xs leading-prose"
             aria-label={locale === 'id' ? 'Sumber data dan parameter' : 'Data source and parameters'}
           >
             <p>{manifest.attribution}</p>

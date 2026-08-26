@@ -209,20 +209,39 @@ A pair page is three figures, two metric columns and a difference drawing, and i
 ## 7. Type
 
 ```
-Source Serif 4    display, headings, prose — academic register
-IBM Plex Sans     labels, controls, axis text
-IBM Plex Mono     all metrics, bearings, coordinates, citations
+Newsreader              display, headings, prose — academic register
+Atkinson Hyperlegible   labels, controls, axis text
+IBM Plex Mono           all metrics, bearings, coordinates, citations
 ```
 
 Self-hosted via `next/font`.
 
+**Newsreader is variable on `opsz`, and the axis is requested.** Source Serif 4 has the same axis and was loaded as two static weights, which meant the 36 px heading was set with the letterfit of 16 px body text and the body with the letterfit of a heading — exactly backwards, and invisible until you know to look for it. Optical sizing now follows the size, automatically, everywhere the serif appears.
+
+**Atkinson Hyperlegible is a decision, not a taste.** It was drawn by the Braille Institute for readers with low vision, and its letterforms are drawn so that the characters that normally collapse into one another stay apart: `l` against `I` against `1`, `0` against `O`, `6` against `8`, `b/d`, `p/q`. This product is made of place names and three-decimal figures. That is the whole argument.
+
+Its cost is stated rather than discovered: **there is no 600.** The face ships 400 and 700, so `font-semibold` on a sans element resolves to 700 and the label voice is a shade heavier than it used to be.
+
 ```
-14  16  18  22  28  36  46          1.25 ratio
+13  15  16  18  22  28  36  46      1.25 ratio, with two roles below the floor
 ```
 
 Light ground, so no dark-mode weight correction. Body 400, headings 600.
 
-**Body floor is 16.** 14 is captions, units, citations and control labels — never running prose. A sentence a reader is expected to read is 16 or larger, including the ones that feel secondary: the standing description in the masthead and the thin-coverage warning are both arguments, not annotations.
+**Body floor is 16.** A sentence a reader is expected to read is 16 or larger, including the ones that feel secondary: the standing description in the masthead and the thin-coverage warning are both arguments, not annotations.
+
+**15 is the metric size** — captions, units, citations, and every figure in every metric column. It was 14, which made the densest text in the product also the smallest: a metric column is ten mono rows, read down and compared across sixteen cards, and it was set two steps below prose that nobody has to compare at all. The floor was protecting the wrong thing.
+
+**13 is the standing-label role and nothing else.** Uppercase, tracked, never a figure, and never interactive — a label names a thing, a control is pressed, and the smallest type in the product is the wrong size for anything a reader has to hit. Uppercase with letter-spacing reads larger than its nominal size, which is what lets a section marker sit under the numbers it introduces instead of competing with them.
+
+### Two leadings, because prose and captions are two jobs
+
+```
+--lead-prose  1.62   long-form serif at prose measure
+--lead-note   1.45   card notes, captions, secondary paragraphs
+```
+
+One value used to do both, so a nine-line argument and a two-line site note were set identically. Long-form at 68 characters wants the air; a note that ends before it needs it looks loose with the same figure.
 
 ### The label role
 

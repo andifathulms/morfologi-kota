@@ -98,7 +98,7 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
           <p className="m-0 font-sans text-xs text-ink-subtle">
             {site.city} · {t(SITE_TYPE_LABEL[site.type] ?? { id: site.type, en: site.type }, locale)}
           </p>
-          <p className="mt-4 max-w-prose font-serif text-lg leading-relaxed">
+          <p className="mt-4 max-w-prose font-serif text-lg leading-prose">
             {t(site.note, locale)}
           </p>
         </header>
@@ -116,7 +116,7 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
           <p className="m-0 mt-1">
             {d('tagMapping', locale)} “{bundle.mappingId}”
           </p>
-          <p className="m-0 mt-1 font-sans text-base leading-snug text-ink-subtle">
+          <p className="m-0 mt-1 font-sans text-base leading-note text-ink-subtle">
             {t(DEFAULT_TAG_MAPPING.note, locale)}
           </p>
           <div className="mt-3">
@@ -130,14 +130,14 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
           <p className="m-0 mt-3">
             {d('extractVersion', locale)} {bundle.extractVersion}
           </p>
-          <p className="m-0 mt-1 font-sans text-base leading-snug text-ink-subtle">
+          <p className="m-0 mt-1 font-sans text-base leading-note text-ink-subtle">
             {d('extractVersionNote', locale)}
           </p>
         </aside>
       </div>
 
       {thin ? (
-        <p className="mb-6 mt-8 max-w-prose border-l-2 border-ink-subtle pl-4 font-serif text-md leading-relaxed">
+        <p className="mb-6 mt-8 max-w-prose border-l-2 border-ink-subtle pl-4 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Bacalah kedua kolom di bawah ini sebagai dua pembacaan dari data yang sama, bukan sebagai selisih yang sudah dapat disimpulkan. Gang di lokasi ini belum terpetakan cukup rapat untuk itu.'
             : 'Read the two columns below as two readings of the same data rather than as a gap that can yet be concluded from. The gang here are not mapped densely enough for that.'}
@@ -152,7 +152,7 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
             {locale === 'id' ? 'Catatan' : 'Note'}
           </h2>
           {editorial.map((paragraph, index) => (
-            <p key={index} className="mt-4 font-serif text-md leading-relaxed">
+            <p key={index} className="mt-4 font-serif text-md leading-prose">
               {t(paragraph, locale)}
             </p>
           ))}
@@ -161,12 +161,12 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
 
       {/* ODbL share-alike: the derived database is not only attributed, it is
           offered. The link is to the same bundle this page was rendered from. */}
-      <p className="mt-12 max-w-prose font-mono text-xs leading-relaxed">
+      <p className="mt-12 max-w-prose font-mono text-xs leading-prose">
         <a href={siteDataPath(site.slug)} download>
           {d('downloadSite', locale)}
         </a>
       </p>
-      <p className="tabular mt-2 max-w-prose font-mono text-xs leading-relaxed">
+      <p className="tabular mt-2 max-w-prose font-mono text-xs leading-prose">
         {bundle.attribution} · {manifest.method.citation}
       </p>
     </article>

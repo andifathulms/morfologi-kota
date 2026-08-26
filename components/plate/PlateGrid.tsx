@@ -154,7 +154,7 @@ function ChipGroup({
 }) {
   return (
     <fieldset className="m-0 border-0 p-0">
-      <legend className="p-0 font-mono text-xs uppercase tracking-wide text-ink-subtle">
+      <legend className="p-0 font-mono text-2xs uppercase tracking-wide text-ink-subtle">
         {legend}
       </legend>
       {/* Inside the fieldset, before the chips: `~` needs them to precede the
@@ -328,7 +328,7 @@ export function PlateGrid({
       <fieldset className="plate-controls m-0 mb-6 border-0 p-0">
         <legend className="p-0 font-sans text-base font-semibold">{sortLabel}</legend>
         {note !== undefined ? (
-          <p className="m-0 mb-4 mt-1 max-w-prose font-sans text-base leading-snug text-ink-subtle">
+          <p className="m-0 mb-4 mt-1 max-w-prose font-sans text-base leading-note text-ink-subtle">
             {note}
           </p>
         ) : null}
@@ -369,7 +369,7 @@ export function PlateGrid({
           />
         </div>
 
-        <p className="m-0 mt-3 max-w-prose font-sans text-base leading-snug text-ink-subtle">
+        <p className="m-0 mt-3 max-w-prose font-sans text-base leading-note text-ink-subtle">
           {d('controlNote', locale)}
         </p>
       </fieldset>

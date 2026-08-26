@@ -337,7 +337,7 @@ export function Rose({
                 >
                   <SeriesSwatch kind={s.kind} />
                   {name === undefined ? null : (
-                    <span className="text-xs uppercase tracking-wide text-ink-subtle">{name}</span>
+                    <span className="text-2xs uppercase tracking-wide text-ink-subtle">{name}</span>
                   )}
                   <span className="text-lg leading-none" style={{ color: inkFor(s.kind) }}>
                     {fixed(s.orientationEntropy, 3)}
@@ -353,7 +353,7 @@ export function Rose({
               data-metric={headline.metricKeys?.delta}
               className="mt-2 flex items-baseline gap-2 border-t border-rule pt-2"
             >
-              <span className="text-xs uppercase tracking-wide text-ink-subtle">ΔH</span>
+              <span className="text-2xs uppercase tracking-wide text-ink-subtle">ΔH</span>
               <span className="text-lg leading-none">{signed(delta, 3)}</span>
             </span>
           )}
@@ -393,7 +393,7 @@ export function Rose({
         tooltip — a tooltip is invisible on touch and unsearchable.
       */}
       {caption && method ? (
-        <figcaption className="mt-2 max-w-prose font-sans text-base leading-snug text-ink-muted">
+        <figcaption className="mt-2 max-w-prose font-sans text-base leading-note text-ink-muted">
           {d('roseMethod', locale)} {d('roseSymmetryNote', locale)}{' '}
           <span className="font-mono text-xs">Boeing 2019 §3</span>
         </figcaption>

@@ -45,8 +45,10 @@ const config: Config = {
       px: '1px',
       full: '100%',
     },
-    // DESIGN.md §7 — 1.25 ratio, floor 16px (14 is captions/citations only).
+    // DESIGN.md §7 — 1.25 ratio, floor 16px (15 is captions/metrics/citations
+    // only; 2xs is the standing-label role and nothing else).
     fontSize: {
+      '2xs': ['var(--text-2xs)', '1.4'],
       xs: ['var(--text-xs)', '1.45'],
       base: ['var(--text-base)', '1.55'],
       md: ['var(--text-md)', '1.5'],
@@ -55,7 +57,21 @@ const config: Config = {
       '2xl': ['var(--text-2xl)', '1.15'],
       '3xl': ['var(--text-3xl)', '1.1'],
     },
+    /*
+     * `semibold` is 600, and the sans has no 600. Atkinson Hyperlegible ships
+     * 400 and 700, so a semibold label resolves to 700 — deliberate, stated,
+     * and the reason the label voice is a shade heavier than it was.
+     */
     fontWeight: { normal: '400', semibold: '600' },
+    /* DESIGN.md §7 — two leadings, because prose and captions are two jobs. */
+    lineHeight: {
+      none: '1',
+      prose: 'var(--lead-prose)',
+      note: 'var(--lead-note)',
+      tight: '1.15',
+      snug: '1.375',
+      relaxed: '1.625',
+    },
     borderRadius: { none: '0', DEFAULT: '2px', sm: '2px' }, // §1 — radius 2px only
     // §1 — hairline 0.5px is the edge in the house layer, so it is the default
     // width rather than something a component has to remember to ask for.

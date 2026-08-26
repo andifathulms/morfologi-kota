@@ -121,12 +121,12 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
         <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">
           {locale === 'id' ? 'Asumsi' : 'Assumptions'}
         </h1>
-        <p className="mt-4 font-serif text-md leading-relaxed">
+        <p className="mt-4 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Nilai tag mana yang dihitung sebagai dapat dikendarai dan mana yang dapat dijalani kaki adalah pilihan pemodelan, bukan fakta. Pilihan itu mengubah setiap angka dalam produk ini, jadi ia ditampilkan sebagai kendali — bukan disembunyikan sebagai konstanta.'
             : 'Which tag values count as drivable and which as walkable is a modelling choice, not a fact. It changes every number in this product, so it is exposed as a control rather than buried as a constant.'}
         </p>
-        <p className="mt-4 font-serif text-md leading-relaxed">
+        <p className="mt-4 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Ketiga pemetaan di bawah ini dihitung penuh oleh pipeline saat build. Beralih di antaranya menampilkan angka yang sudah dihitung, bukan menghitung ulang di peramban — halaman ini tidak melakukan permintaan jaringan apa pun.'
             : 'All three mappings below are computed in full by the pipeline at build time. Switching between them shows numbers that already exist rather than recomputing in the browser — this page makes no network request at all.'}
@@ -137,7 +137,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
         <h2 className="m-0 font-serif text-lg font-semibold">
           {locale === 'id' ? 'Apa yang bertahan, apa yang tidak' : 'What survives, and what does not'}
         </h2>
-        <p className="mt-2 font-serif text-md leading-relaxed">
+        <p className="mt-2 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Kesimpulan dari tabel-tabel di bawah, dihitung bukan dikira-kira. '
             : 'The conclusion from the tables below, computed rather than guessed. '}
@@ -157,7 +157,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
               : `Sensitive: ${sensitive.map(label).join(', ')} — those only mean anything stated together with their mapping, and must not be compared against figures from a study that used a different one.`
             : null}
         </p>
-        <p className="mt-4 font-serif text-md leading-relaxed">
+        <p className="mt-4 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Polanya masuk akal. Ukuran yang menjawab “ke arah mana jalan membentang” bertahan, karena menambah atau membuang satu kelas jalan jarang mengubah arah keseluruhan. Ukuran yang menjawab “berapa banyak jalan yang ada” tidak bertahan, karena itu persis yang diubah oleh keputusan pemetaan. φ jatuh di antara keduanya: ia dihitung dari entropi, tetapi kuadrat dalam rumusnya melipatgandakan gerakan kecil.'
             : 'The pattern makes sense. Measures that answer “which way do the streets run” survive, because adding or removing a class rarely changes the overall directions. Measures that answer “how much street is there” do not, because that is exactly what the mapping decision changes. φ falls between the two: it is derived from entropy, but the square in its formula amplifies a small movement.'}
@@ -213,7 +213,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
 
           {TAG_MAPPINGS.map((mapping) => (
             <div key={mapping.id} data-mapping={mapping.id} className="mt-6 hidden">
-              <p className="m-0 max-w-prose font-serif text-md leading-relaxed">
+              <p className="m-0 max-w-prose font-serif text-md leading-prose">
                 {t(mapping.note, locale)}
               </p>
 
@@ -229,7 +229,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                   <h3 className="m-0 font-serif text-md font-semibold" style={{ color: 'var(--drive)' }}>
                     {d('drive', locale)} — highway · {t(mapping.label, locale)}
                   </h3>
-                  <p className="m-0 font-mono text-xs leading-relaxed">
+                  <p className="m-0 font-mono text-xs leading-prose">
                     {mapping.drivable.join(' · ')}
                   </p>
                 </div>
@@ -237,7 +237,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                   <h3 className="m-0 font-serif text-md font-semibold" style={{ color: 'var(--walk)' }}>
                     {d('walk', locale)} — highway · {t(mapping.label, locale)}
                   </h3>
-                  <p className="m-0 font-mono text-xs leading-relaxed">
+                  <p className="m-0 font-mono text-xs leading-prose">
                     {mapping.walkable.join(' · ')}
                   </p>
                 </div>
@@ -249,7 +249,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                 )
                 if (summary.length === 0) {
                   return (
-                    <p className="mt-8 max-w-prose font-serif text-md leading-relaxed">
+                    <p className="mt-8 max-w-prose font-serif text-md leading-prose">
                       {locale === 'id'
                         ? 'Ini pemetaan baku — dasar pembanding bagi kedua pemetaan lainnya. Setiap angka yang tampil di kartu dan di halaman pasangan dihitung dengan pemetaan ini.'
                         : 'This is the default mapping — the baseline the other two are compared against. Every number shown on a card and on a pair page is computed with it.'}
@@ -269,13 +269,13 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
                         ? `Metrik mana yang bertahan — ${t(mapping.label, locale)}`
                         : `Which metrics survive — ${t(mapping.label, locale)}`}
                     </h3>
-                    <p className="mt-2 max-w-prose font-serif text-md leading-relaxed">
+                    <p className="mt-2 max-w-prose font-serif text-md leading-prose">
                       {locale === 'id'
                         ? `Perubahan relatif rata-rata terhadap pemetaan baku, di seluruh ${manifest.sites.length} lokasi. Di bawah ${percent(ROBUST_THRESHOLD, 0)} disebut tahan: angkanya dapat dibandingkan antar-lokasi tanpa perlu tahu pemetaannya. Di atas ${percent(SENSITIVE_THRESHOLD, 0)} disebut peka: angkanya hanya berarti bila disebutkan bersama pemetaan yang menghasilkannya.`
                         : `Mean relative change against the default mapping, across all ${manifest.sites.length} sites. Below ${percent(ROBUST_THRESHOLD, 0)} is called robust: the number can be compared across sites without knowing the mapping. Above ${percent(SENSITIVE_THRESHOLD, 0)} is called sensitive: it only means anything stated together with the mapping that produced it.`}
                     </p>
                     {untouched.length > 0 ? (
-                      <p className="mt-2 max-w-prose font-mono text-xs leading-relaxed">
+                      <p className="mt-2 max-w-prose font-mono text-xs leading-prose">
                         {locale === 'id'
                           ? `Jaringan ${untouched.map((mode) => d(mode === 'drive' ? 'drive' : 'walk', locale).toLowerCase()).join(' dan ')} tidak tersentuh sama sekali oleh pemetaan ini — nol perubahan di setiap lokasi, yang memang seharusnya.`
                           : `The ${untouched.map((mode) => d(mode === 'drive' ? 'drive' : 'walk', locale).toLowerCase()).join(' and ')} network is untouched by this mapping — zero change at every site, which is what it should be.`}
@@ -474,7 +474,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
         <h2 className="m-0 font-serif text-lg font-semibold">
           {d('mappingDrawingHeading', locale)}
         </h2>
-        <p className="mt-2 max-w-prose font-serif text-md leading-relaxed">
+        <p className="mt-2 max-w-prose font-serif text-md leading-prose">
           {d('mappingDrawingNote', locale)}
         </p>
 
@@ -557,7 +557,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
         <h2 className="m-0 font-serif text-lg font-semibold">
           {locale === 'id' ? 'Cakupan gang per lokasi' : 'Footway coverage per site'}
         </h2>
-        <p className="mt-2 max-w-prose font-serif text-md leading-relaxed">
+        <p className="mt-2 max-w-prose font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Temuan utama bergantung pada gang yang sudah terpetakan. Kalau gang sebuah kampung tidak ada di OpenStreetMap, jaringan pejalan kakinya akan menciut mendekati jaringan kendaraannya dan selisihnya hilang — bukan karena tidak ada, melainkan karena belum ada yang memetakannya. Ini ukuran tentang datanya, bukan tentang tempatnya.'
             : 'The headline finding depends on gang being mapped. If a kampung’s alleys are absent from OpenStreetMap its walking network collapses toward its driving network and the gap disappears — not because it is not there, but because nobody mapped it. This is a measure of the data, not of the place.'}
