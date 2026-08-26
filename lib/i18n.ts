@@ -128,6 +128,24 @@ const dictionary = {
     id: 'Tiap metrik dimulai dari yang terbesar dan nama dimulai dari A; “Dibalik” membalik urutan itu. Kerapatan mengubah seberapa banyak bagian kartu yang digambar, bukan apa yang dikatakannya: tabel rose tetap tersedia pada ketiga pilihan.',
     en: 'Each metric starts largest-first and the name starts at A; “Reversed” turns that around. Density changes how much of each card is drawn, not what it says: the rose table stays available in all three.',
   },
+  /*
+   * Figure numbering, on the pair only.
+   *
+   * The plate is re-sortable, so a number printed on a card would name a
+   * position that the reader's next click changes — the cards are deliberately
+   * unnumbered for that reason. A pair page is three fixed figures in a fixed
+   * order, which is exactly where a figure number means something and where a
+   * reader wanting to point at one has nothing else to point with.
+   */
+  figureAbbrev: { id: 'Gbr.', en: 'Fig.' },
+  figureDriveCaption: {
+    id: 'Jaringan yang dapat dikendarai di dalam cakram sampel. Tinta seragam, tanpa hierarki kelas jalan, tanpa peta dasar: bentuknya adalah subjeknya.',
+    en: 'The drivable network inside the sampling disc. Uniform ink, no road-class hierarchy, no basemap: the shape is the subject.',
+  },
+  figureWalkCaption: {
+    id: 'Jaringan yang dapat dijalani kaki pada pusat, cakram, dan ekstrak yang sama. Setiap perbedaan dengan gambar di sebelahnya adalah pemetaan tag, bukan tempat yang berbeda.',
+    en: 'The walkable network at the same centre, the same disc, the same extract. Every difference from the drawing beside it is the tag mapping, not a different place.',
+  },
   rulerNote: {
     id: 'Di bawah tiap angka H ada penggaris sebaran: satu garis halus untuk tiap lokasi pada rentang yang teramati, dan tanda tebal untuk lokasi kartu itu. Kedua moda memakai sumbu yang sama, jadi jarak mendatar antara kedua tanda itulah ΔH. Penggaris ini menunjukkan posisi, bukan nilai: tidak ada ujung yang lebih baik, dan enam belas lokasi ini dipilih menurut kelengkapan data — bukan sampel bentuk kota Indonesia. Arahkan kursor ke satu kartu untuk menyalakan garis lokasi itu pada seluruh penggaris.',
     en: 'Under each H is a distribution ruler: one faint tick per site across the observed range, and a heavy mark for this card’s site. Both modes share one axis, so the horizontal distance between the two marks is ΔH. The ruler shows position, not worth: neither end is better, and these sixteen sites were chosen on data completeness — they are not a sample of Indonesian urban form. Hover a card to light that site’s tick on every ruler.',

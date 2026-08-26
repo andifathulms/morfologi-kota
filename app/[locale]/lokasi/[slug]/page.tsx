@@ -5,6 +5,7 @@ import { SITES } from '@/data/sites'
 import { loadBundle, loadManifest } from '@/lib/data'
 import { alternatesFor, openGraphUrl } from '@/lib/metadata'
 import { PairView } from '@/components/pair/PairView'
+import { RunningHead } from '@/components/pair/RunningHead'
 import { CoverageBadge } from '@/components/metrics/CoverageBadge'
 import { SITE_TYPE_LABEL, LOCALES, d, isLocale, t, type Locale } from '@/lib/i18n'
 import { editorialFor } from '@/lib/editorial'
@@ -59,46 +60,84 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
 
   return (
     <article>
-      <p className="m-0 font-sans text-xs">
+      <RunningHead
+        name={site.name}
+        city={site.city}
+        type={t(SITE_TYPE_LABEL[site.type] ?? { id: site.type, en: site.type }, locale)}
+        radiusM={bundle.radiusM}
+        coverage={bundle.coverage}
+        locale={locale}
+      />
+
+      <p className="m-0 mt-4 font-sans text-xs">
         <Link href={`/${locale}/lempeng`}>{d('backToPlate', locale)}</Link>
       </p>
 
-      <header className="mt-4 max-w-prose">
-        <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">{site.name}</h1>
-        {/* The caption tier. The same datum is set at 14 on all sixteen plate
-            cards, and the same datum should not be set two ways — it names the
-            place and its type, which is a caption rather than a sentence
-            (DESIGN.md §7). */}
-        <p className="m-0 font-sans text-xs text-ink-subtle">
-          {site.city} · {t(SITE_TYPE_LABEL[site.type] ?? { id: site.type, en: site.type }, locale)}
-        </p>
-        <p className="mt-4 font-serif text-md leading-relaxed">{t(site.note, locale)}</p>
-      </header>
+      {/*
+        The opening, set as a spread (DESIGN.md §6b).
 
-      {/* DESIGN.md §9 — the legend contract: radius, mode and tag set, coverage. */}
-      <div className="tabular my-6 border-y border-rule-strong py-3 font-mono text-xs">
-        <p className="m-0">
-          {d('radius', locale)} {bundle.radiusM} m · 36 bin · {d('tagMapping', locale)} “
-          {bundle.mappingId}” · {t(DEFAULT_TAG_MAPPING.note, locale)}
-        </p>
-        <div className="mt-1">
-          <CoverageBadge coverage={bundle.coverage} locale={locale} verbose />
-        </div>
-        {/*
-          This site's own extract, not the set's. The manifest joins every
-          timestamp with slashes, which describes the comparison set and tells
-          a reader reproducing one number nothing at all.
-        */}
-        <p className="m-0 mt-1">
-          {d('extractVersion', locale)} {bundle.extractVersion}
-        </p>
-        <p className="m-0 mt-1 max-w-prose font-sans text-base leading-snug text-ink-subtle">
-          {d('extractVersionNote', locale)}
-        </p>
+        The argument holds the measure and the parameters go to the margin,
+        which is where a journal puts them: they qualify everything below and
+        they are not read as prose. As a full-width band between the note and
+        the figures they were a wall of monospace that a reader had to cross
+        to reach the drawings, and the sentence that matters inside it — the
+        coverage caveat — was the fourth line of it.
+
+        No initial capital on the opening paragraph. The site notes are one
+        sentence, and a three-line drop cap on a two-line paragraph is a
+        broken figure rather than an editorial one; the opening takes its
+        weight from size and measure instead.
+      */}
+      <div className="mt-6 lg:grid lg:grid-cols-[minmax(0,68ch)_minmax(0,18rem)] lg:items-start lg:gap-x-12">
+        <header>
+          <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">{site.name}</h1>
+          {/* The caption tier. The same datum is set at 14 on all sixteen plate
+              cards, and the same datum should not be set two ways — it names the
+              place and its type, which is a caption rather than a sentence
+              (DESIGN.md §7). */}
+          <p className="m-0 font-sans text-xs text-ink-subtle">
+            {site.city} · {t(SITE_TYPE_LABEL[site.type] ?? { id: site.type, en: site.type }, locale)}
+          </p>
+          <p className="mt-4 max-w-prose font-serif text-lg leading-relaxed">
+            {t(site.note, locale)}
+          </p>
+        </header>
+
+        {/* DESIGN.md §9 — the legend contract: radius, mode and tag set,
+            coverage. In the margin from `lg`, and above the figures at every
+            width, because it is what they are conditional on. */}
+        <aside
+          aria-label={locale === 'id' ? 'Parameter pengukuran' : 'Measurement parameters'}
+          className="tabular mt-6 border-y border-rule-strong py-3 font-mono text-xs lg:mt-1 lg:border-y-0 lg:border-l lg:border-rule lg:py-0 lg:pl-4"
+        >
+          <p className="m-0">
+            {d('radius', locale)} {bundle.radiusM} m · 36 bin
+          </p>
+          <p className="m-0 mt-1">
+            {d('tagMapping', locale)} “{bundle.mappingId}”
+          </p>
+          <p className="m-0 mt-1 font-sans text-base leading-snug text-ink-subtle">
+            {t(DEFAULT_TAG_MAPPING.note, locale)}
+          </p>
+          <div className="mt-3">
+            <CoverageBadge coverage={bundle.coverage} locale={locale} verbose />
+          </div>
+          {/*
+            This site's own extract, not the set's. The manifest joins every
+            timestamp with slashes, which describes the comparison set and tells
+            a reader reproducing one number nothing at all.
+          */}
+          <p className="m-0 mt-3">
+            {d('extractVersion', locale)} {bundle.extractVersion}
+          </p>
+          <p className="m-0 mt-1 font-sans text-base leading-snug text-ink-subtle">
+            {d('extractVersionNote', locale)}
+          </p>
+        </aside>
       </div>
 
       {thin ? (
-        <p className="mb-6 max-w-prose border-l-2 border-ink-subtle pl-4 font-serif text-md leading-relaxed">
+        <p className="mb-6 mt-8 max-w-prose border-l-2 border-ink-subtle pl-4 font-serif text-md leading-relaxed">
           {locale === 'id'
             ? 'Bacalah kedua kolom di bawah ini sebagai dua pembacaan dari data yang sama, bukan sebagai selisih yang sudah dapat disimpulkan. Gang di lokasi ini belum terpetakan cukup rapat untuk itu.'
             : 'Read the two columns below as two readings of the same data rather than as a gap that can yet be concluded from. The gang here are not mapped densely enough for that.'}

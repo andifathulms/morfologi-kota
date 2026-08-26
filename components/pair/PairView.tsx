@@ -98,7 +98,10 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
         </dd>
       </dl>
       <figcaption className="mt-2 max-w-prose font-sans text-base leading-snug text-ink-muted">
-        {d('differenceCaption', locale)}
+        <span className="font-mono text-xs">
+          {d('figureAbbrev', locale)} 3 · r = {radiusM} m
+        </span>{' '}
+        — {d('differenceCaption', locale)}
       </figcaption>
     </figure>
   )
@@ -146,14 +149,30 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
             <h2 className="m-0 font-serif text-lg font-semibold" style={{ color: 'var(--drive)' }}>
               {d('drive', locale)}
             </h2>
-            <NetworkDrawing
-              geometry={drive.geometry}
-              radiusM={radiusM}
-              size={420}
-              responsive
-              label={`${bundle.site.name} — ${d('drive', locale)}`}
-            />
-            <Rose locale={locale} size={220} series={[driveRose]} />
+            {/* A numbered figure, because this page's figures are fixed and a
+                reader who wants to point at one has nothing else to point
+                with (DESIGN.md §6b). The plate's cards stay unnumbered: they
+                re-sort, and a number that moves names nothing. */}
+            <figure className="m-0">
+              <NetworkDrawing
+                geometry={drive.geometry}
+                radiusM={radiusM}
+                size={420}
+                responsive
+                label={`${bundle.site.name} — ${d('drive', locale)}`}
+              />
+              <figcaption className="mt-2 max-w-prose font-sans text-base leading-snug text-ink-muted">
+                <span className="font-mono text-xs">
+                  {d('figureAbbrev', locale)} 1 · r = {radiusM} m
+                </span>{' '}
+                — {d('figureDriveCaption', locale)}
+              </figcaption>
+            </figure>
+            {/* The method paragraph is stated once on this page, under the
+                overlaid rose in the middle column. It used to print under all
+                three roses — the same eighty words, three times, on a page
+                whose subject is the difference between two of them. */}
+            <Rose locale={locale} size={220} method={false} series={[driveRose]} />
             <div className="mt-4">
               <MetricColumn metrics={drive.metrics} mode="drive" locale={locale} notes />
             </div>
@@ -171,14 +190,22 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
             <h2 className="m-0 font-serif text-lg font-semibold" style={{ color: 'var(--walk)' }}>
               {d('walk', locale)}
             </h2>
-            <NetworkDrawing
-              geometry={walk.geometry}
-              radiusM={radiusM}
-              size={420}
-              responsive
-              label={`${bundle.site.name} — ${d('walk', locale)}`}
-            />
-            <Rose locale={locale} size={220} series={[walkRose]} />
+            <figure className="m-0">
+              <NetworkDrawing
+                geometry={walk.geometry}
+                radiusM={radiusM}
+                size={420}
+                responsive
+                label={`${bundle.site.name} — ${d('walk', locale)}`}
+              />
+              <figcaption className="mt-2 max-w-prose font-sans text-base leading-snug text-ink-muted">
+                <span className="font-mono text-xs">
+                  {d('figureAbbrev', locale)} 2 · r = {radiusM} m
+                </span>{' '}
+                — {d('figureWalkCaption', locale)}
+              </figcaption>
+            </figure>
+            <Rose locale={locale} size={220} method={false} series={[walkRose]} />
             <div className="mt-4">
               <MetricColumn metrics={walk.metrics} mode="walk" locale={locale} notes />
             </div>

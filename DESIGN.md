@@ -172,6 +172,20 @@ Lembar kontak  the drawings alone, six to a row
 
 Desktop: four cards per row on the plate, two columns plus deltas in the pair. Mobile: one card per row; the pair becomes a swipe between two panes with the delta column pinned beneath, since side-by-side is unreadable at that width.
 
+### 6b. The pair reads as a spread
+
+A pair page is three figures, two metric columns and a difference drawing, and it is taller than any screen it will be read on. It is set as a journal spread, because that is the form that solves exactly this.
+
+**The running head is the legend contract made continuous.** Site, city, type, radius, bin count and coverage state, sticky at the top of the article. Past the second disc a reader has otherwise lost the two things every figure below is conditional on. It is the one-line form; the full band stays in the margin rail, where there is room to say it properly.
+
+**Parameters go to the margin, the argument holds the measure.** Radius, tag mapping, coverage sentence and extract version sit in a ruled rail to the right from `lg`, which is where a journal puts a footnote. As a full-width band they were a wall of monospace a reader had to cross to reach the drawings, with the sentence that matters — the coverage caveat — fourth in it.
+
+**Figures are numbered here and nowhere else.** The pair's three figures are fixed and in a fixed order, so a number means something and gives a reader something to point at. The plate's cards are deliberately unnumbered: they re-sort, and a number that moves names nothing.
+
+**The method paragraph is stated once per page.** It printed under all three roses — the same eighty words, three times, on a page whose subject is the difference between two of them.
+
+**No initial capital on the opening paragraph.** The site notes are one sentence; a three-line drop cap on a two-line paragraph is a broken figure rather than an editorial one. The opening takes its weight from size and measure instead.
+
 **Every card carries its radius and coverage confidence.** Not in a tooltip — printed on the card.
 
 ## 7. Type
