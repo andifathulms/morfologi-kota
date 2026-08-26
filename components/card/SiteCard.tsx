@@ -5,6 +5,7 @@ import { Rose } from '@/components/rose/Rose'
 import { MetricColumn } from '@/components/metrics/MetricColumn'
 import { CoverageBadge } from '@/components/metrics/CoverageBadge'
 import { RoseTable } from '@/components/table/RoseTable'
+import { DistributionRuler, type DistributionPoint } from '@/components/metrics/DistributionRuler'
 import { SITE_TYPE_LABEL, d, t, type Locale } from '@/lib/i18n'
 import type { Mode } from '@/lib/tags'
 
@@ -39,13 +40,66 @@ export function SiteCard({
   geometry,
   locale,
   mode = 'drive',
+  entropyScale,
 }: {
   readonly entry: ManifestEntry
   readonly geometry: readonly (readonly (readonly [number, number])[])[]
   readonly locale: Locale
   readonly mode?: Mode
+  /**
+   * The set this card's H is read against (DESIGN.md §6a). Optional: a card
+   * outside the plate has no set to be positioned in, and draws none.
+   */
+  readonly entropyScale?: {
+    readonly drive: readonly DistributionPoint[]
+    readonly walk: readonly DistributionPoint[]
+    readonly min: number
+    readonly max: number
+  }
 }) {
   const metrics = mode === 'drive' ? entry.drive : entry.walk
+
+  /*
+   * One axis for both rulers, so the distance between the two marks is ΔH.
+   * Independently scaled rulers would put the two figures on two different
+   * axes, and the gap — the whole subject — is the one thing the pair of
+   * rulers would then be unable to show.
+   */
+  const scale =
+    entropyScale === undefined
+      ? undefined
+      : {
+          drive: (
+            <DistributionRuler
+              points={entropyScale.drive}
+              min={entropyScale.min}
+              max={entropyScale.max}
+              value={entry.drive.orientationEntropy}
+              ink="var(--drive)"
+              label={`H — ${d('drive', locale)}`}
+              places={3}
+              locale={locale}
+            />
+          ),
+          walk: (
+            <DistributionRuler
+              points={entropyScale.walk}
+              min={entropyScale.min}
+              max={entropyScale.max}
+              value={entry.walk.orientationEntropy}
+              ink="var(--walk)"
+              label={`H — ${d('walk', locale)}`}
+              places={3}
+              locale={locale}
+            />
+          ),
+        }
+  const scaleNote =
+    entropyScale === undefined
+      ? undefined
+      : locale === 'id'
+        ? `sebaran ${entropyScale.drive.length} lokasi`
+        : `spread of ${entropyScale.drive.length} sites`
 
   return (
     <article className="flex h-full flex-col gap-3 border-t-2 border-ink pt-3">
@@ -90,6 +144,8 @@ export function SiteCard({
         size={196}
         method={false}
         emphasis="headline"
+        scale={scale}
+        scaleNote={scaleNote}
         series={[
           {
             shares: entry.drive.rose.shares,

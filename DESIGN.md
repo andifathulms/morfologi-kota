@@ -127,6 +127,21 @@ note · rose table · radius
 
 **The card is bounded by a rule across its top, not a box on four sides.** A box at every edge makes sixteen documents; a top rule makes one plate of sixteen figures. Small multiples work when the eye can sweep a row of roses or run down a column of the same number, and a border interrupts exactly that sweep. Rows are spaced further apart than columns so the rule reads as the start of a card rather than the underside of the one above.
 
+### 6a. The distribution ruler
+
+A number alone is unreadable. `φ 0.308` is ordered or it is not, and the answer is in the other fifteen sites — which on this plate are two screens away. Under each headline figure sits the set, drawn: a hairline axis across the observed range, one faint tick per site, and this site's mark where it falls.
+
+**Both modes share one axis.** The range is the extremes of every site in *either* mode, so the horizontal distance between the drive mark and the walk mark is ΔH. Two independently scaled rulers would put the two figures on two different axes, and the gap — the entire subject of the product — would be the one thing the figure could not show.
+
+**It is a distribution, not a league table**, and the guards are not decoration:
+
+- The axis is the observed range of these sites. Nothing marks either end as preferable, because nothing about the measurement makes either end preferable.
+- No ramp, no gradient, no diverging scale. The mark takes its series' ink; the ticks are `--rule-strong`. §3 stands.
+- The text equivalent says *sorted by*, never *ranked*: "position 4 of 16 when the set is sorted by this metric, smallest first". §4 permits sorting and this is a sort, stated as one.
+- The set is not a population. Sixteen sites chosen on data completeness are not a sample of Indonesian urban form, and the plate says so above the grid.
+
+**Hovering a card lights that site's tick on every other card's ruler.** Every ruler carries a tick for every site, so this is the sweep across small multiples that a grid of separate figures cannot otherwise make: where does this place sit, on every other place's scale, at once. `:has()`, no script, 120 ms.
+
 ### The control is a control
 
 Sorting is the plate's main verb, so it is set as one. Three named groups — **the site**, **per mode**, **between modes** — because that is the only distinction that matters when choosing a sort: the third is the product's subject, the second is a figure for one network, and the first is not a measurement at all. Eleven chips of equal weight, wrapping into two rows, is a tag cloud.
@@ -236,6 +251,7 @@ And the method page carries the Boeing citation, the metric definitions, the tag
 - No colour on the network drawings.
 - No road-class weight hierarchy.
 - No score ramp, no diverging scale, no green-to-red.
+- No ruler whose axis has a preferred end, and no ruler labelled as a rank.
 - No colour coding by site type.
 - No rose without its entropy and φ.
 - No card without its radius and coverage confidence.

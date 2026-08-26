@@ -276,7 +276,24 @@ export function PlateGrid({
     `@media (min-width:1280px){.plate:has(#density-kontak:checked) .plate-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}`,
   ].join('')
 
-  const rules = [...orderRules, ...chipRules].join('') + densityRules
+  /*
+   * The sweep across small multiples, finally working.
+   *
+   * Every ruler draws a tick for every site, so a site has a tick on sixteen
+   * cards. Hovering or focusing one card lights that site's tick on all of
+   * them, which is the comparison across the set that a grid of separate
+   * figures cannot otherwise make: where does this place sit, on every other
+   * place's scale, at once.
+   *
+   * Still no script. `:has()` asks the DOM, and the highlight is a 120 ms
+   * state change like every other hover in the product (DESIGN.md §8).
+   */
+  const highlightRules = sites.flatMap((site) => [
+    `.plate:has([data-slug="${site.slug}"]:hover) [data-tick="${site.slug}"],`,
+    `.plate:has([data-slug="${site.slug}"]:focus-within) [data-tick="${site.slug}"]{stroke:var(--ink);stroke-width:2.5}`,
+  ])
+
+  const rules = [...orderRules, ...chipRules, ...highlightRules].join('') + densityRules
 
   return (
     <div className="plate">

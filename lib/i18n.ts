@@ -128,6 +128,10 @@ const dictionary = {
     id: 'Tiap metrik dimulai dari yang terbesar dan nama dimulai dari A; “Dibalik” membalik urutan itu. Kerapatan mengubah seberapa banyak bagian kartu yang digambar, bukan apa yang dikatakannya: tabel rose tetap tersedia pada ketiga pilihan.',
     en: 'Each metric starts largest-first and the name starts at A; “Reversed” turns that around. Density changes how much of each card is drawn, not what it says: the rose table stays available in all three.',
   },
+  rulerNote: {
+    id: 'Di bawah tiap angka H ada penggaris sebaran: satu garis halus untuk tiap lokasi pada rentang yang teramati, dan tanda tebal untuk lokasi kartu itu. Kedua moda memakai sumbu yang sama, jadi jarak mendatar antara kedua tanda itulah ΔH. Penggaris ini menunjukkan posisi, bukan nilai: tidak ada ujung yang lebih baik, dan enam belas lokasi ini dipilih menurut kelengkapan data — bukan sampel bentuk kota Indonesia. Arahkan kursor ke satu kartu untuk menyalakan garis lokasi itu pada seluruh penggaris.',
+    en: 'Under each H is a distribution ruler: one faint tick per site across the observed range, and a heavy mark for this card’s site. Both modes share one axis, so the horizontal distance between the two marks is ΔH. The ruler shows position, not worth: neither end is better, and these sixteen sites were chosen on data completeness — they are not a sample of Indonesian urban form. Hover a card to light that site’s tick on every ruler.',
+  },
   sortNotRanking: {
     id: 'Mengurutkan ulang memunculkan pola pada keseluruhan set. Ini bukan peringkat: tidak ada posisi yang lebih baik daripada posisi lain. Alamat di bilah URL mengikuti pilihan Anda, jadi urutan yang layak ditunjukkan dapat dikirim sebagai tautan.',
     en: 'Re-sorting makes a pattern across the set visible. It is not a ranking: no position in the order is better than another. The address bar follows your choice, so a sort worth showing someone can be sent as a link.',

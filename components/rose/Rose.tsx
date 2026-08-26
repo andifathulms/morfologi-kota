@@ -76,6 +76,18 @@ export interface RoseProps {
    */
   readonly emphasis?: 'plain' | 'headline'
   /**
+   * A figure drawn under a series' number in the headline caption — the scale
+   * that number is read against, per mode.
+   *
+   * It lives here rather than in the card because it belongs to the number:
+   * a distribution ruler set anywhere other than directly beneath the figure
+   * it positions is a second chart about a number rather than a property of
+   * it. Ignored unless the caption is set at headline emphasis.
+   */
+  readonly scale?: Partial<Record<RoseSeriesKind, React.ReactNode>>
+  /** One line under the caption, e.g. what the ruler's range is over. */
+  readonly scaleNote?: string
+  /**
    * The one-paragraph statement of what the bars are. On by default; the plate
    * turns it off, because sixteen cards do not need sixteen copies of one
    * paragraph — the plate states it once, next to its rose key.
@@ -184,6 +196,8 @@ export function Rose({
   caption = true,
   method = true,
   emphasis = 'plain',
+  scale,
+  scaleNote,
 }: RoseProps) {
   // The smaller series is drawn in front, so neither hides the other
   // (DESIGN.md §4).
@@ -309,15 +323,18 @@ export function Rose({
           {series.map((s) => {
             const name = nameFor(s.kind, locale)
             return (
-              <span key={s.kind} className="mt-1 flex items-baseline gap-2 first:mt-0">
-                <SeriesSwatch kind={s.kind} />
-                {name === undefined ? null : (
-                  <span className="text-xs uppercase tracking-wide text-ink-subtle">{name}</span>
-                )}
-                <span className="text-lg leading-none" style={{ color: inkFor(s.kind) }}>
-                  {fixed(s.orientationEntropy, 3)}
+              <span key={s.kind} className="mt-2 block first:mt-0">
+                <span className="flex items-baseline gap-2">
+                  <SeriesSwatch kind={s.kind} />
+                  {name === undefined ? null : (
+                    <span className="text-xs uppercase tracking-wide text-ink-subtle">{name}</span>
+                  )}
+                  <span className="text-lg leading-none" style={{ color: inkFor(s.kind) }}>
+                    {fixed(s.orientationEntropy, 3)}
+                  </span>
+                  <span className="text-xs text-ink-subtle">φ {fixed(s.orientationOrder, 2)}</span>
                 </span>
-                <span className="text-xs text-ink-subtle">φ {fixed(s.orientationOrder, 2)}</span>
+                {scale?.[s.kind]}
               </span>
             )
           })}
@@ -327,7 +344,9 @@ export function Rose({
               <span className="text-lg leading-none">{signed(delta, 3)}</span>
             </span>
           )}
-          <span className="mt-1 block text-xs text-ink-subtle">H · nat · 36 bin</span>
+          <span className="mt-1 block text-xs text-ink-subtle">
+            H · nat · 36 bin{scaleNote === undefined ? null : ` · ${scaleNote}`}
+          </span>
         </figcaption>
       ) : caption ? (
         <figcaption className="tabular mt-1 font-mono text-xs">

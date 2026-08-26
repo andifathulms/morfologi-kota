@@ -116,12 +116,38 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
     { key: 'coverage', label: d('coverage', locale), descending: true, group: 'gap' },
   ]
 
+  /*
+   * The scale every card's H is read against (DESIGN.md §6a).
+   *
+   * One axis for both modes and for every card: the extremes of the set in
+   * either mode. Computed here rather than in the card, because a card cannot
+   * see the set it belongs to and a ruler drawn against sixteen different
+   * ranges would position nothing.
+   */
+  const entropyValues = manifest.sites.flatMap((entry) => [
+    entry.drive.orientationEntropy,
+    entry.walk.orientationEntropy,
+  ])
+  const entropyScale = {
+    drive: manifest.sites.map((entry) => ({
+      slug: entry.slug,
+      value: entry.drive.orientationEntropy,
+    })),
+    walk: manifest.sites.map((entry) => ({
+      slug: entry.slug,
+      value: entry.walk.orientationEntropy,
+    })),
+    min: Math.min(...entropyValues),
+    max: Math.max(...entropyValues),
+  }
+
   const cards = manifest.sites.map((entry) => (
     <SiteCard
       key={entry.slug}
       entry={entry}
       geometry={loadBundle(entry.slug).drive.plateGeometry}
       locale={locale}
+      entropyScale={entropyScale}
     />
   ))
 
@@ -458,6 +484,14 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
       </h2>
 
       <ModeKey locale={locale} className="mt-4 max-w-prose" />
+
+      {/* The ruler explained once, next to the roses it annotates, and with
+          the two things a reader must know before reading a mark: that both
+          modes share one axis, and that the set is not a population
+          (PRD §4, DESIGN.md §6a). */}
+      <p className="mt-4 max-w-prose font-sans text-base leading-snug text-ink-muted">
+        {d('rulerNote', locale)}
+      </p>
 
       {/* Stated once for the whole plate rather than sixteen times on sixteen
           cards — but stated on the page where the roses are, not on /metode. */}
