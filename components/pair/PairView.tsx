@@ -145,7 +145,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
           aria-label={d('pairPanes', locale)}
           className="pair-panes flex snap-x snap-mandatory gap-8 overflow-x-auto border-b border-rule-strong pb-4 md:contents"
         >
-          <section className="min-w-pane shrink-0 snap-center md:col-start-1 md:row-start-1 md:min-w-0">
+          <section className="w-pane min-w-pane shrink-0 snap-center md:col-start-1 md:row-start-1 md:w-auto md:min-w-0">
             <h2 className="m-0 font-serif text-lg font-semibold" style={{ color: 'var(--drive)' }}>
               {d('drive', locale)}
             </h2>
@@ -186,7 +186,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
             </div>
           </section>
 
-          <section className="min-w-pane shrink-0 snap-center md:col-start-3 md:row-start-1 md:min-w-0">
+          <section className="w-pane min-w-pane shrink-0 snap-center md:col-start-3 md:row-start-1 md:w-auto md:min-w-0">
             <h2 className="m-0 font-serif text-lg font-semibold" style={{ color: 'var(--walk)' }}>
               {d('walk', locale)}
             </h2>

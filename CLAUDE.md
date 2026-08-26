@@ -158,14 +158,21 @@ The site cites Boeing 2019 for the method, states the sampling radius and tag ma
 
 ## Current state
 
-**M0–M6 shipped.** Measures, pipeline, plate, pair, assumptions and method are all in place; 12 sites at r = 800 m, both modes, 3 tag mappings, 201 tests green.
+**M0–M6 shipped, plus a design pass across the plate and the pair.** Measures, pipeline, plate, pair, assumptions and method are all in place; 16 sites at r = 800 m, both modes, 3 tag mappings, 340 tests green.
+
+The design pass is five commits and it is documented in DESIGN.md rather than here — §6 (the card ranked, the control, density), §6a (the distribution ruler), §6b (the pair as a spread), §7 (the headline metric role). Four things are worth knowing before changing any of it:
+
+- **The card's headline is the rose's caption**, not a block beside it. §12 already requires every rose to carry its H and φ, so a separate headline printed both twice at two sizes. The metric column drops those two rows on the plate for the same reason, and only there.
+- **The distribution ruler is the one thing in the product that could be misread as a ranking**, and every guard on it is deliberate: observed range with no preferred end, no ramp, ties sharing a position, and a text equivalent that says *sorted by*. `tests/unit/distribution-ruler.test.ts` holds the line. Read PRD §4 before touching it.
+- **Density modes may not drop the rose table or the coverage line.** Contact mode drops the per-card radius and states it once in the sheet legend; that is the only exception and DESIGN.md §6 argues it.
+- **Sorting, ordering, density, the cross-card tick highlight and the sorted-metric band are all CSS.** No client component was added and none should be: the cards are server components and a thousand SVG paths per site must never cross the hydration boundary.
 
 Two things worth knowing before picking up the next task:
 
 - **`data:fetch` uses Overpass, not the Geofabrik PBF.** Twelve discs of a kilometre are a few megabytes against most of a gigabyte, and reading PBF would mean a protobuf dependency for data used once. Build-time only, cached under a git-ignored `data/cache/`, requests sequential and spaced. The invariant that neither service is touched at runtime is unchanged.
 - **Nine of the twelve sites come back flagged for thin footway coverage.** That is the risk the PRD names, measured rather than assumed. The plate and every affected pair say so in prose before a reader can draw a conclusion from the gap. Do not quietly drop the flag to make the headline comparison look stronger.
 
-**The plate is a big document, and that is a decision rather than an oversight.** It exports at about 2.1 MB of HTML, 347 KB gzipped, and roughly 59% of that is the RSC flight payload the App Router inlines — a serialised second copy of every SVG path and every rose-table row. The payload is structural: it is not caused by a stray client component, and the product has exactly one of those (`NavLink`, which sets `aria-current`). What is left to trim is content, and the largest item is the sixteen collapsed rose tables. Those stay. DESIGN.md §10 requires a table equivalent that is available rather than reachable, and moving it behind a link to the pair page would make it the fallback that line forbids. If you measure this page and it looks alarming, this is the reasoning you are looking for.
+**The plate is a big document, and that is a decision rather than an oversight.** It exports at about 2.4 MB of HTML, 393 KB gzipped, and roughly 59% of that is the RSC flight payload the App Router inlines — a serialised second copy of every SVG path and every rose-table row. The payload is structural: it is not caused by a stray client component, and the product has exactly one of those (`NavLink`, which sets `aria-current`). The design pass added roughly 300 KB of it: the ordering rules are generated for both directions, because CSS cannot derive a reversed position from a forward one, and each of the sixteen cards now draws two rulers of sixteen ticks. Both were priced against a client component and both are cheaper. What is left to trim is content, and the largest item is the sixteen collapsed rose tables. Those stay. DESIGN.md §10 requires a table equivalent that is available rather than reachable, and moving it behind a link to the pair page would make it the fallback that line forbids. If you measure this page and it looks alarming, this is the reasoning you are looking for.
 
 Adding a site is `data/sites/index.ts`, then `pnpm data:fetch && pnpm data:build && pnpm data:validate`. `public/data/` is generated from `data/out/` by `scripts/publish-data.mjs` on `dev` and `build` — it is how the ODbL offer is made good, so don't drop it.
 

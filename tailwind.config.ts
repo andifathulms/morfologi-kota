@@ -85,8 +85,13 @@ const config: Config = {
        * name says so.
        */
       maxWidth: { plate: '1440px', prose: '68ch', figure: '42rem', table: '52rem' },
-      /* The width a pane occupies in the pair view's narrow-screen swipe. */
+      /* The width a pane occupies in the pair view's narrow-screen swipe.
+         It is a width as well as a minimum: a pane that only has a floor
+         grows to whatever its widest child asks for, and a figure caption at
+         prose measure asks for about 600 px — so the swipe became a scroll
+         through captions rather than a swipe between two networks. */
       minWidth: { pane: '85vw' },
+      width: { pane: '85vw' },
     },
   },
   plugins: [],
