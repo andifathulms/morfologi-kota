@@ -5,6 +5,21 @@
   "goodThreshold": 0.35,
   "candidates": [
     {
+      "label": "bogor-suryakencana",
+      "type": "kampung",
+      "latDeg": -6.595,
+      "lonDeg": 106.796,
+      "note": "Bogor, the Suryakencana pecinan",
+      "pedestrianShare": 0.409308,
+      "pedestrianLengthM": 17860.73,
+      "walkLengthM": 43636.45,
+      "driveLengthM": 22177.08,
+      "confidence": "good",
+      "adoptedAs": null,
+      "withheld": "Around a third of the footway length inside this disc is inside the Kebun Raya. Garden paths are tagged like gang and counted like gang, so the figure measures the botanical garden rather than the fabric. Bogor is in the set at Empang, 1.4 km south, where the garden is 7% of the pedestrian length.",
+      "extractVersion": "2026-08-26T04:21:25Z"
+    },
+    {
       "label": "kampung-braga-bandung",
       "type": "kampung",
       "latDeg": -6.9175,
@@ -16,6 +31,7 @@
       "driveLengthM": 35809.82,
       "confidence": "good",
       "adoptedAs": "kampung-braga",
+      "withheld": null,
       "extractVersion": "2026-08-20T02:18:06Z"
     },
     {
@@ -30,6 +46,7 @@
       "driveLengthM": 15735.08,
       "confidence": "moderate",
       "adoptedAs": "pantai-indah-kapuk",
+      "withheld": null,
       "extractVersion": "2026-08-20T02:19:04Z"
     },
     {
@@ -44,7 +61,38 @@
       "driveLengthM": 34914.21,
       "confidence": "moderate",
       "adoptedAs": "kotagede",
+      "withheld": null,
       "extractVersion": "2026-08-20T02:17:06Z"
+    },
+    {
+      "label": "bukittinggi-jam-gadang",
+      "type": "kampung",
+      "latDeg": -0.3055,
+      "lonDeg": 100.3691,
+      "note": "Bukittinggi, the highland market town around the Jam Gadang",
+      "pedestrianShare": 0.212261,
+      "pedestrianLengthM": 7388.5,
+      "walkLengthM": 34808.59,
+      "driveLengthM": 26815.48,
+      "confidence": "moderate",
+      "adoptedAs": "pasar-atas",
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:18:19Z"
+    },
+    {
+      "label": "bogor-empang",
+      "type": "kampung",
+      "latDeg": -6.608,
+      "lonDeg": 106.796,
+      "note": "Bogor, the Empang kampung south of the pecinan",
+      "pedestrianShare": 0.19661,
+      "pedestrianLengthM": 8767.31,
+      "walkLengthM": 44592.45,
+      "driveLengthM": 26470.02,
+      "confidence": "moderate",
+      "adoptedAs": "empang",
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:23:31Z"
     },
     {
       "label": "kampung-malang-kayutangan",
@@ -58,6 +106,7 @@
       "driveLengthM": 30224.32,
       "confidence": "moderate",
       "adoptedAs": "kayutangan",
+      "withheld": null,
       "extractVersion": "2026-08-20T02:18:06Z"
     },
     {
@@ -71,8 +120,24 @@
       "walkLengthM": 27409.6,
       "driveLengthM": 17169.18,
       "confidence": "moderate",
-      "adoptedAs": null,
+      "adoptedAs": "ubud",
+      "withheld": null,
       "extractVersion": "2026-08-20T02:18:06Z"
+    },
+    {
+      "label": "bogor-bantarjati",
+      "type": "kampung",
+      "latDeg": -6.579,
+      "lonDeg": 106.8,
+      "note": "Bogor, Bantarjati — dense kampung north of the garden",
+      "pedestrianShare": 0.152246,
+      "pedestrianLengthM": 6111.07,
+      "walkLengthM": 40139.4,
+      "driveLengthM": 29753.19,
+      "confidence": "moderate",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:23:31Z"
     },
     {
       "label": "kampung-kali-code-utara",
@@ -86,7 +151,38 @@
       "driveLengthM": 36240.61,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:17:06Z"
+    },
+    {
+      "label": "mataram-ampenan",
+      "type": "kolonial",
+      "latDeg": -8.573,
+      "lonDeg": 116.072,
+      "note": "Ampenan, Lombok — the old port town, remapped after 2018",
+      "pedestrianShare": 0.144907,
+      "pedestrianLengthM": 3967.63,
+      "walkLengthM": 27380.62,
+      "driveLengthM": 23340.02,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:20:18Z"
+    },
+    {
+      "label": "pontianak-beting",
+      "type": "kampung",
+      "latDeg": -0.0235,
+      "lonDeg": 109.352,
+      "note": "Pontianak, Kampung Beting on the Kapuas",
+      "pedestrianShare": 0.095917,
+      "pedestrianLengthM": 3235.08,
+      "walkLengthM": 33727.83,
+      "driveLengthM": 26960.26,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:20:18Z"
     },
     {
       "label": "kampung-legian",
@@ -100,7 +196,38 @@
       "driveLengthM": 23101.96,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:18:06Z"
+    },
+    {
+      "label": "sanur-denpasar",
+      "type": "kampung",
+      "latDeg": -8.69,
+      "lonDeg": 115.26,
+      "note": "Sanur, where the beach path and the gang were mapped for walkers",
+      "pedestrianShare": 0.088281,
+      "pedestrianLengthM": 3257.79,
+      "walkLengthM": 36902.4,
+      "driveLengthM": 30332.99,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:20:18Z"
+    },
+    {
+      "label": "medan-kesawan",
+      "type": "kolonial",
+      "latDeg": 3.5855,
+      "lonDeg": 98.68,
+      "note": "Medan, the Kesawan shophouse street and its blocks",
+      "pedestrianShare": 0.085564,
+      "pedestrianLengthM": 3943.05,
+      "walkLengthM": 46083.16,
+      "driveLengthM": 41238.47,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:18:19Z"
     },
     {
       "label": "kampung-cicadas-bandung",
@@ -114,7 +241,23 @@
       "driveLengthM": 26476.15,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:18:06Z"
+    },
+    {
+      "label": "kota-baru-batam-nagoya",
+      "type": "kota-baru",
+      "latDeg": 1.1466,
+      "lonDeg": 104.009,
+      "note": "Batam, Nagoya — the unplanned centre of a planned island",
+      "pedestrianShare": 0.073208,
+      "pedestrianLengthM": 4487.82,
+      "walkLengthM": 61302.01,
+      "driveLengthM": 56032.34,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:21:25Z"
     },
     {
       "label": "kampung-pakualaman",
@@ -128,6 +271,7 @@
       "driveLengthM": 32241.69,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:17:06Z"
     },
     {
@@ -142,6 +286,7 @@
       "driveLengthM": 31685.92,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:18:06Z"
     },
     {
@@ -156,6 +301,7 @@
       "driveLengthM": 48556.9,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:18:06Z"
     },
     {
@@ -170,7 +316,23 @@
       "driveLengthM": 37364.18,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:17:06Z"
+    },
+    {
+      "label": "banjarmasin-kuin",
+      "type": "kampung",
+      "latDeg": -3.305,
+      "lonDeg": 114.579,
+      "note": "Banjarmasin, Kuin — a settlement whose streets are partly canals",
+      "pedestrianShare": 0.063902,
+      "pedestrianLengthM": 3153.45,
+      "walkLengthM": 49348.34,
+      "driveLengthM": 45305.72,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:19:18Z"
     },
     {
       "label": "kampung-ketandan-solo",
@@ -184,7 +346,68 @@
       "driveLengthM": 45973.82,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:18:06Z"
+    },
+    {
+      "label": "manado-pasar-45",
+      "type": "kolonial",
+      "latDeg": 1.488,
+      "lonDeg": 124.844,
+      "note": "Manado, the Pasar 45 quarter",
+      "pedestrianShare": 0.049807,
+      "pedestrianLengthM": 2192.39,
+      "walkLengthM": 44017.34,
+      "driveLengthM": 40301.45,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:20:18Z"
+    },
+    {
+      "label": "ambon-kota",
+      "type": "kolonial",
+      "latDeg": -3.6954,
+      "lonDeg": 128.1814,
+      "note": "Ambon, the town centre between the bay and the hills",
+      "pedestrianShare": 0.047616,
+      "pedestrianLengthM": 1653.45,
+      "walkLengthM": 34724.66,
+      "driveLengthM": 31402.12,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:20:18Z"
+    },
+    {
+      "label": "ternate-kota",
+      "type": "kampung",
+      "latDeg": 0.79,
+      "lonDeg": 127.38,
+      "note": "Ternate, the town between the fort and the volcano",
+      "pedestrianShare": 0.045221,
+      "pedestrianLengthM": 1922.49,
+      "walkLengthM": 42512.84,
+      "driveLengthM": 40366.32,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:23:31Z"
+    },
+    {
+      "label": "solo-baluwarti",
+      "type": "kampung",
+      "latDeg": -7.575,
+      "lonDeg": 110.828,
+      "note": "Surakarta, Baluwarti — the kampung inside the kraton walls",
+      "pedestrianShare": 0.044116,
+      "pedestrianLengthM": 2476.61,
+      "walkLengthM": 56139.05,
+      "driveLengthM": 48373.94,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:21:25Z"
     },
     {
       "label": "perumahan-summarecon-bekasi",
@@ -198,7 +421,113 @@
       "driveLengthM": 47486.92,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:19:04Z"
+    },
+    {
+      "label": "perumahan-bintaro-sektor-9",
+      "type": "perumahan",
+      "latDeg": -6.276,
+      "lonDeg": 106.705,
+      "note": "Bintaro Jaya sektor 9",
+      "pedestrianShare": 0.042878,
+      "pedestrianLengthM": 1414.9,
+      "walkLengthM": 32998.43,
+      "driveLengthM": 30748.7,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:21:25Z"
+    },
+    {
+      "label": "surabaya-tunjungan",
+      "type": "kolonial",
+      "latDeg": -7.262,
+      "lonDeg": 112.739,
+      "note": "Surabaya, Tunjungan — the commercial spine",
+      "pedestrianShare": 0.040539,
+      "pedestrianLengthM": 1756.9,
+      "walkLengthM": 43338.73,
+      "driveLengthM": 30755.33,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:20:18Z"
+    },
+    {
+      "label": "aceh-peunayong",
+      "type": "kolonial",
+      "latDeg": 5.559,
+      "lonDeg": 95.321,
+      "note": "Banda Aceh, the Peunayong shophouse quarter — rebuilt and remapped after 2004",
+      "pedestrianShare": 0.038826,
+      "pedestrianLengthM": 1868.99,
+      "walkLengthM": 48137.4,
+      "driveLengthM": 46180.96,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:18:19Z"
+    },
+    {
+      "label": "cirebon-kanoman",
+      "type": "kampung",
+      "latDeg": -6.706,
+      "lonDeg": 108.572,
+      "note": "Cirebon, the kampung around the Kanoman kraton and market",
+      "pedestrianShare": 0.03808,
+      "pedestrianLengthM": 555.6,
+      "walkLengthM": 14590.2,
+      "driveLengthM": 11272.62,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:21:25Z"
+    },
+    {
+      "label": "kota-baru-batam-centre",
+      "type": "kota-baru",
+      "latDeg": 1.12,
+      "lonDeg": 104.049,
+      "note": "Batam Centre, the administrative core laid out from nothing",
+      "pedestrianShare": 0.033561,
+      "pedestrianLengthM": 1478.34,
+      "walkLengthM": 44049.88,
+      "driveLengthM": 42571.54,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:21:25Z"
+    },
+    {
+      "label": "kupang-kota-lama",
+      "type": "kolonial",
+      "latDeg": -10.165,
+      "lonDeg": 123.582,
+      "note": "Kupang, the old town by the bay",
+      "pedestrianShare": 0.033518,
+      "pedestrianLengthM": 1035.46,
+      "walkLengthM": 30892.98,
+      "driveLengthM": 29114.09,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:20:18Z"
+    },
+    {
+      "label": "padang-kota-tua",
+      "type": "kolonial",
+      "latDeg": -0.954,
+      "lonDeg": 100.361,
+      "note": "Padang, the old town on the Batang Arau",
+      "pedestrianShare": 0.031273,
+      "pedestrianLengthM": 1364.53,
+      "walkLengthM": 43632.65,
+      "driveLengthM": 40936.89,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:18:19Z"
     },
     {
       "label": "kampung-pulo",
@@ -212,6 +541,7 @@
       "driveLengthM": 35548.71,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:18:06Z"
     },
     {
@@ -226,6 +556,7 @@
       "driveLengthM": 39157.31,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:18:06Z"
     },
     {
@@ -240,7 +571,23 @@
       "driveLengthM": 25532.8,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:19:04Z"
+    },
+    {
+      "label": "perumahan-lippo-karawaci",
+      "type": "perumahan",
+      "latDeg": -6.2245,
+      "lonDeg": 106.611,
+      "note": "Lippo Karawaci, Tangerang",
+      "pedestrianShare": 0.020785,
+      "pedestrianLengthM": 877.15,
+      "walkLengthM": 42200.03,
+      "driveLengthM": 48068.91,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:21:25Z"
     },
     {
       "label": "kampung-lawang-seketeng",
@@ -254,7 +601,23 @@
       "driveLengthM": 35196.97,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:18:06Z"
+    },
+    {
+      "label": "palembang-7-ulu",
+      "type": "kampung",
+      "latDeg": -2.996,
+      "lonDeg": 104.762,
+      "note": "Palembang, the Musi south bank at 7 Ulu",
+      "pedestrianShare": 0.017581,
+      "pedestrianLengthM": 674.46,
+      "walkLengthM": 38363.63,
+      "driveLengthM": 30112.56,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:19:18Z"
     },
     {
       "label": "kampung-ampel-surabaya",
@@ -268,6 +631,7 @@
       "driveLengthM": 39043.62,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:18:06Z"
     },
     {
@@ -282,6 +646,7 @@
       "driveLengthM": 29818.58,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:19:04Z"
     },
     {
@@ -296,6 +661,7 @@
       "driveLengthM": 48887.25,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:19:04Z"
     },
     {
@@ -310,7 +676,68 @@
       "driveLengthM": 46132.8,
       "confidence": "thin",
       "adoptedAs": null,
+      "withheld": null,
       "extractVersion": "2026-08-20T02:19:04Z"
+    },
+    {
+      "label": "perumahan-kota-wisata",
+      "type": "perumahan",
+      "latDeg": -6.373,
+      "lonDeg": 106.933,
+      "note": "Kota Wisata, Cibubur",
+      "pedestrianShare": 0.009082,
+      "pedestrianLengthM": 216.7,
+      "walkLengthM": 23860.65,
+      "driveLengthM": 21479.01,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:21:25Z"
+    },
+    {
+      "label": "cakranegara-mataram",
+      "type": "kolonial",
+      "latDeg": -8.583,
+      "lonDeg": 116.12,
+      "note": "Cakranegara, Lombok — a pre-colonial planned grid, laid out on a Balinese ward plan",
+      "pedestrianShare": 0.008548,
+      "pedestrianLengthM": 414.51,
+      "walkLengthM": 48490.28,
+      "driveLengthM": 47229.88,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:23:31Z"
+    },
+    {
+      "label": "balikpapan-klandasan",
+      "type": "kota-baru",
+      "latDeg": -1.2665,
+      "lonDeg": 116.829,
+      "note": "Balikpapan, Klandasan — the oil town grid, and IKN’s nearest city",
+      "pedestrianShare": 0.001154,
+      "pedestrianLengthM": 35.13,
+      "walkLengthM": 30436.39,
+      "driveLengthM": 29807.7,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:20:18Z"
+    },
+    {
+      "label": "jayapura-kota",
+      "type": "kolonial",
+      "latDeg": -2.5333,
+      "lonDeg": 140.7181,
+      "note": "Jayapura, the centre on its shelf of flat ground",
+      "pedestrianShare": 0,
+      "pedestrianLengthM": 0,
+      "walkLengthM": 26128.55,
+      "driveLengthM": 26128.55,
+      "confidence": "thin",
+      "adoptedAs": null,
+      "withheld": null,
+      "extractVersion": "2026-08-26T04:20:18Z"
     }
   ],
   "attribution": "Data jalan © OpenStreetMap contributors, ODbL 1.0. Basis data turunan ini ditawarkan dengan lisensi yang sama.",

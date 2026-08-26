@@ -175,6 +175,18 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
   const planned = readable.filter(
     (row) => row.site.type === 'perumahan' || row.site.type === 'kota-baru',
   )
+  /*
+   * The set outgrew two groups.
+   *
+   * The paragraph below used to name kampung and planned sites and stop, which
+   * was a complete account of the readable set when the readable set was
+   * kampung and planned sites. It is not any more: the small towns are two of
+   * the ten sites whose coverage allows the comparison at all, and a summary
+   * that counts ten and describes eight leaves a reader to wonder which two
+   * were left out and why.
+   */
+  const smallTown = readable.filter((row) => row.site.type === 'kota-kecil')
+  const colonial = readable.filter((row) => row.site.type === 'kolonial')
   const range = (rows: typeof readable, pick: (row: (typeof readable)[number]) => number) => ({
     min: Math.min(...rows.map(pick)),
     max: Math.max(...rows.map(pick)),
@@ -402,6 +414,13 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
               ? `Di antara lokasi-lokasi ini, ${kampung.length} kampung memperoleh ${kilometres(range(kampung, (r) => r.extraLengthM).min)}–${kilometres(range(kampung, (r) => r.extraLengthM).max)} jaringan tambahan saat berjalan kaki, dan proporsi jalan buntunya turun ${percent(Math.abs(range(kampung, (r) => r.deadEndChange).max), 1)}–${percent(Math.abs(range(kampung, (r) => r.deadEndChange).min), 1)}. ${planned.length} lokasi terencana memperoleh ${kilometres(range(planned, (r) => r.extraLengthM).min)}–${kilometres(range(planned, (r) => r.extraLengthM).max)}, dengan proporsi jalan buntu bergerak ${signedPercent(range(planned, (r) => r.deadEndChange).min)} sampai ${signedPercent(range(planned, (r) => r.deadEndChange).max)}.`
               : `Among these, the ${kampung.length} kampung gain ${kilometres(range(kampung, (r) => r.extraLengthM).min)}–${kilometres(range(kampung, (r) => r.extraLengthM).max)} of network on foot, and their dead-end proportion falls by ${percent(Math.abs(range(kampung, (r) => r.deadEndChange).max), 1)}–${percent(Math.abs(range(kampung, (r) => r.deadEndChange).min), 1)}. The ${planned.length} planned sites gain ${kilometres(range(planned, (r) => r.extraLengthM).min)}–${kilometres(range(planned, (r) => r.extraLengthM).max)}, with their dead-end proportion moving ${signedPercent(range(planned, (r) => r.deadEndChange).min)} to ${signedPercent(range(planned, (r) => r.deadEndChange).max)}.`}
           </p>
+          {smallTown.length > 0 || colonial.length > 0 ? (
+            <p className="mt-2 max-w-prose font-serif text-md leading-prose">
+              {locale === 'id'
+                ? `Sisanya — ${smallTown.length} kota kecil dan ${colonial.length} petak kolonial — tidak masuk dua kelompok di atas, dan angkanya berdiri sendiri. Yang perlu dicatat: pada kota kecil, sebagian jaringan pejalan kakinya bertanda path, yaitu jalan setapak sawah dan tangga umum, bukan gang di antara rumah. Cakupan gang tidak dapat membedakan keduanya, dan kartu masing-masing lokasi menyebutkannya.`
+                : `The rest — ${smallTown.length} small town${smallTown.length === 1 ? '' : 's'} and ${colonial.length} colonial grid${colonial.length === 1 ? '' : 's'} — belong to neither group above and their figures stand on their own. One thing to know about the small towns: part of their walking network is tagged path — rice-field tracks and public stairs — rather than gang between houses. Footway coverage cannot tell the two apart, and each site's card says so.`}
+            </p>
+          ) : null}
           <p className="mt-2 max-w-prose font-serif text-md leading-prose">
             {locale === 'id'
               ? `Itu bunyi angkanya di ${readable.length} lokasi ini. Bukan pernyataan tentang bentuk kota Indonesia — untuk itu diperlukan cakupan gang yang jauh lebih luas daripada yang tersedia sekarang, terutama pada perumahan kluster, yang tidak satu pun kandidatnya lolos ambang.`

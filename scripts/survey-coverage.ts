@@ -55,6 +55,23 @@ interface Candidate {
  * Denpasar and the Ciliwung kampung in Jakarta, which were surveyed in detail
  * for flood-risk work. Whether that actually produced footway coverage is what
  * this script is for.
+ *
+ * The second round widens the list on two axes that have nothing to do with
+ * what the metrics will say, because neither may:
+ *
+ * **Geography.** The comparison set was Java plus Makassar plus a greenfield
+ * capital. Sumatra, Bali, the Kalimantan river cities, Nusa Tenggara, Maluku
+ * and Papua were absent entirely — so a page about Indonesian urban form was
+ * measuring one island and calling it the country. Every region below is
+ * represented by its oldest urban fabric, which is where the form is.
+ *
+ * **Where mapping actually happened.** Two kinds of place tend to have their
+ * footways drawn: somewhere people walk for a living or a holiday, and
+ * somewhere that has been through a humanitarian mapping activation. Banda
+ * Aceh after 2004, Padang after 2009, Palu and Lombok after 2018 were mapped
+ * in detail by people who needed to know where a stretcher could go. That is
+ * a hypothesis about the data, not about the cities, and the survey is how it
+ * gets tested rather than assumed.
  */
 const CANDIDATES: readonly Candidate[] = [
   { label: 'kampung-kali-code-utara', type: 'kampung', latDeg: -7.7805, lonDeg: 110.3695, note: 'Kali Code, north of the bridge' },
@@ -79,10 +96,93 @@ const CANDIDATES: readonly Candidate[] = [
   { label: 'perumahan-sentul-city', type: 'perumahan', latDeg: -6.5605, lonDeg: 106.8425, note: 'Sentul City' },
   { label: 'kota-baru-pantai-indah-kapuk', type: 'kota-baru', latDeg: -6.1035, lonDeg: 106.7395, note: 'Pantai Indah Kapuk' },
   { label: 'kolonial-kota-lama-surabaya', type: 'kolonial', latDeg: -7.2335, lonDeg: 112.7345, note: 'Surabaya, the old European quarter' },
+
+  /* Sumatra — absent from the set entirely. */
+  { label: 'aceh-peunayong', type: 'kolonial', latDeg: 5.5590, lonDeg: 95.3210, note: 'Banda Aceh, the Peunayong shophouse quarter — rebuilt and remapped after 2004' },
+  { label: 'medan-kesawan', type: 'kolonial', latDeg: 3.5855, lonDeg: 98.6800, note: 'Medan, the Kesawan shophouse street and its blocks' },
+  { label: 'padang-kota-tua', type: 'kolonial', latDeg: -0.9540, lonDeg: 100.3610, note: 'Padang, the old town on the Batang Arau' },
+  { label: 'bukittinggi-jam-gadang', type: 'kampung', latDeg: -0.3055, lonDeg: 100.3691, note: 'Bukittinggi, the highland market town around the Jam Gadang' },
+  { label: 'palembang-7-ulu', type: 'kampung', latDeg: -2.9960, lonDeg: 104.7620, note: 'Palembang, the Musi south bank at 7 Ulu' },
+
+  /* Kalimantan — a set with IKN in it and no Kalimantan city in it. */
+  { label: 'banjarmasin-kuin', type: 'kampung', latDeg: -3.3050, lonDeg: 114.5790, note: 'Banjarmasin, Kuin — a settlement whose streets are partly canals' },
+  { label: 'pontianak-beting', type: 'kampung', latDeg: -0.0235, lonDeg: 109.3520, note: 'Pontianak, Kampung Beting on the Kapuas' },
+  { label: 'balikpapan-klandasan', type: 'kota-baru', latDeg: -1.2665, lonDeg: 116.8290, note: 'Balikpapan, Klandasan — the oil town grid, and IKN’s nearest city' },
+
+  /* Sulawesi beyond Makassar. */
+  { label: 'manado-pasar-45', type: 'kolonial', latDeg: 1.4880, lonDeg: 124.8440, note: 'Manado, the Pasar 45 quarter' },
+
+  /* Bali and Nusa Tenggara. */
+  { label: 'sanur-denpasar', type: 'kampung', latDeg: -8.6900, lonDeg: 115.2600, note: 'Sanur, where the beach path and the gang were mapped for walkers' },
+  { label: 'mataram-ampenan', type: 'kolonial', latDeg: -8.5730, lonDeg: 116.0720, note: 'Ampenan, Lombok — the old port town, remapped after 2018' },
+  { label: 'kupang-kota-lama', type: 'kolonial', latDeg: -10.1650, lonDeg: 123.5820, note: 'Kupang, the old town by the bay' },
+
+  /* Maluku and Papua. */
+  { label: 'ambon-kota', type: 'kolonial', latDeg: -3.6954, lonDeg: 128.1814, note: 'Ambon, the town centre between the bay and the hills' },
+  { label: 'jayapura-kota', type: 'kolonial', latDeg: -2.5333, lonDeg: 140.7181, note: 'Jayapura, the centre on its shelf of flat ground' },
+
+  /* Java, where the set has gaps rather than absences. */
+  { label: 'surabaya-tunjungan', type: 'kolonial', latDeg: -7.2620, lonDeg: 112.7390, note: 'Surabaya, Tunjungan — the commercial spine' },
+  { label: 'cirebon-kanoman', type: 'kampung', latDeg: -6.7060, lonDeg: 108.5720, note: 'Cirebon, the kampung around the Kanoman kraton and market' },
+  { label: 'solo-baluwarti', type: 'kampung', latDeg: -7.5750, lonDeg: 110.8280, note: 'Surakarta, Baluwarti — the kampung inside the kraton walls' },
+  { label: 'bogor-suryakencana', type: 'kampung', latDeg: -6.5950, lonDeg: 106.7960, note: 'Bogor, the Suryakencana pecinan' },
+
+  /*
+   * Planned housing, again. Every gated perumahan surveyed in the first round
+   * came back thin, which bounds what the kampung-versus-perumahan comparison
+   * can say — so it is worth asking a second set whether that is a property of
+   * gated housing or of the four that were asked.
+   */
+  { label: 'perumahan-lippo-karawaci', type: 'perumahan', latDeg: -6.2245, lonDeg: 106.6110, note: 'Lippo Karawaci, Tangerang' },
+  { label: 'perumahan-bintaro-sektor-9', type: 'perumahan', latDeg: -6.2760, lonDeg: 106.7050, note: 'Bintaro Jaya sektor 9' },
+  { label: 'perumahan-kota-wisata', type: 'perumahan', latDeg: -6.3730, lonDeg: 106.9330, note: 'Kota Wisata, Cibubur' },
+  { label: 'kota-baru-batam-nagoya', type: 'kota-baru', latDeg: 1.1466, lonDeg: 104.0090, note: 'Batam, Nagoya — the unplanned centre of a planned island' },
+  { label: 'kota-baru-batam-centre', type: 'kota-baru', latDeg: 1.1200, lonDeg: 104.0490, note: 'Batam Centre, the administrative core laid out from nothing' },
+
+  /*
+   * Second centres, asked because the first one answered the wrong question.
+   *
+   * Suryakencana came back the best-covered candidate in the whole survey and
+   * a third of its footway length is inside the Kebun Raya. A botanical
+   * garden's paths are `highway=footway` like any gang, so coverage — which
+   * exists to say whether the *alleys* are mapped — reads high for a reason
+   * that has nothing to do with the fabric. These two centres put the garden
+   * outside the disc and ask Bogor again.
+   */
+  { label: 'bogor-empang', type: 'kampung', latDeg: -6.6080, lonDeg: 106.7960, note: 'Bogor, the Empang kampung south of the pecinan' },
+  { label: 'bogor-bantarjati', type: 'kampung', latDeg: -6.5790, lonDeg: 106.8000, note: 'Bogor, Bantarjati — dense kampung north of the garden' },
+
+  /* Two more shapes worth asking about while the survey is running. */
+  { label: 'cakranegara-mataram', type: 'kolonial', latDeg: -8.5830, lonDeg: 116.1200, note: 'Cakranegara, Lombok — a pre-colonial planned grid, laid out on a Balinese ward plan' },
+  { label: 'ternate-kota', type: 'kampung', latDeg: 0.7900, lonDeg: 127.3800, note: 'Ternate, the town between the fort and the volcano' },
 ]
 
 const FETCH_MARGIN = 1.4
 const PAUSE_MS = 3000
+
+/**
+ * Why a candidate that cleared the threshold is not in the set.
+ *
+ * There is one, and it is the best-covered candidate in the whole survey.
+ * Suryakencana measures 40.9% because roughly a third of the footway length
+ * inside its disc is the Kebun Raya — a botanical garden whose paths are
+ * `highway=footway` exactly like a gang, and which coverage therefore counts
+ * exactly like a gang.
+ *
+ * That is a limit of the proxy rather than a fact about Bogor. Coverage exists
+ * to answer one question — are the alleys mapped — and a large park inside the
+ * disc answers a different one loudly. So the centre was moved 1.4 km south to
+ * Empang, where the garden is 7% of the pedestrian length instead of a third,
+ * and Bogor is in the set on a figure that means what it says.
+ *
+ * The rejected centre stays in the survey with this sentence attached. A
+ * published survey whose best-covered row reads "not adopted" and gives no
+ * reason invites the obvious inference, and the inference would be wrong.
+ */
+const WITHHELD: Readonly<Record<string, string>> = {
+  'bogor-suryakencana':
+    'Around a third of the footway length inside this disc is inside the Kebun Raya. Garden paths are tagged like gang and counted like gang, so the figure measures the botanical garden rather than the fabric. Bogor is in the set at Empang, 1.4 km south, where the garden is 7% of the pedestrian length.',
+}
 
 /** Same rounding convention as the pipeline, for the same determinism reason. */
 function round(value: number, places: number): number {
@@ -229,6 +329,7 @@ async function main(): Promise<void> {
       driveLengthM: round(result.driveLengthM, 2),
       confidence: result.confidence,
       adoptedAs: adoptedAs(result.candidate),
+      withheld: WITHHELD[result.candidate.label] ?? null,
       extractVersion: result.extractVersion,
     })),
     attribution: ODBL_ATTRIBUTION,

@@ -338,6 +338,19 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
                         {d('surveyAdopted', locale)}
                       </Link>
                     )}
+                    {/*
+                      The third case. A row below the threshold explains itself
+                      — the number in it is the reason. A row that measures well
+                      and still says "—" does not, and the best-covered
+                      candidate in this survey is one: without the sentence, a
+                      reader is entitled to assume the set was picked to suit
+                      its finding.
+                    */}
+                    {candidate.withheld === null ? null : (
+                      <span lang="en" className="mt-1 block max-w-prose text-ink-subtle">
+                        {candidate.withheld}
+                      </span>
+                    )}
                   </td>
                 </tr>
               ))}

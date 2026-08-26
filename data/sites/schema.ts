@@ -19,8 +19,21 @@ export const SAMPLING_RADIUS_M = 800
 /**
  * Site type is a label, never a colour and never a category the metrics are
  * allowed to assume (DESIGN.md §3 — no colour coding by site type).
+ *
+ * `kota-kecil` is the sixth and it was added rather than fudged. The set grew
+ * beyond the metropolitan corridor it started in, and a Minang market town on
+ * a ravine and a Balinese village strip are neither a kampung *kota*, nor a
+ * colonial grid, nor planned housing. Calling either of them `kampung` would
+ * have been a claim about their fabric made by a dropdown.
  */
-export const siteTypeSchema = z.enum(['kampung', 'perumahan', 'kolonial', 'kota-baru', 'ikn'])
+export const siteTypeSchema = z.enum([
+  'kampung',
+  'perumahan',
+  'kolonial',
+  'kota-baru',
+  'kota-kecil',
+  'ikn',
+])
 export type SiteType = z.infer<typeof siteTypeSchema>
 
 export const siteSchema = z.object({
@@ -360,6 +373,17 @@ export const surveyCandidateSchema = z.object({
   confidence: z.enum(['thin', 'moderate', 'good']),
   /** Whether this candidate is in the comparison set, and under which slug. */
   adoptedAs: z.string().nullable(),
+  /**
+   * Why a candidate that cleared the threshold is not in the set.
+   *
+   * Null for every candidate that was adopted and for every candidate the
+   * threshold excluded — those need no explanation, because the number in the
+   * row is the explanation. It is the third case that needs one: a candidate
+   * measured as well covered and still withheld. Without a stated reason, the
+   * best-covered row in a published survey sits beside the word "—" and a
+   * reader is entitled to assume the set was picked to suit its finding.
+   */
+  withheld: z.string().min(8).nullable(),
   /** The candidate's own extract timestamp. */
   extractVersion: z.string().min(1),
 })

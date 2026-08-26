@@ -193,6 +193,42 @@ const sites: Site[] = [
     },
   },
   {
+    slug: 'empang',
+    name: 'Empang',
+    city: 'Bogor',
+    type: 'kampung',
+    centreLatDeg: -6.608,
+    centreLonDeg: 106.796,
+    note: {
+      id: 'Kampung padat di selatan koridor pecinan Suryakencana, dijalin gang sempit di antara blok-blok kecil.',
+      en: 'A dense kampung south of the Suryakencana pecinan corridor, threaded with narrow gang between small blocks.',
+    },
+  },
+  {
+    slug: 'pasar-atas',
+    name: 'Pasar Atas',
+    city: 'Bukittinggi',
+    type: 'kota-kecil',
+    centreLatDeg: -0.3055,
+    centreLonDeg: 100.3691,
+    note: {
+      id: 'Kota pasar di dataran tinggi Minangkabau, terbelah ngarai: sebagian jaringan pejalan kakinya adalah tangga umum, bukan gang datar.',
+      en: 'A Minangkabau highland market town cut by a ravine: part of its walking network is public stairs rather than level gang.',
+    },
+  },
+  {
+    slug: 'ubud',
+    name: 'Ubud',
+    city: 'Gianyar',
+    type: 'kota-kecil',
+    centreLatDeg: -8.5065,
+    centreLonDeg: 115.2625,
+    note: {
+      id: 'Desa yang memanjang di antara dua sungai. Jaringan jalan kakinya sebagian besar bertanda path — jalan setapak sawah dan punggung bukit — bukan gang di antara rumah, jadi selisih kendara/jalan kaki di sini adalah bentang alam sebanyak permukimannya.',
+      en: 'A village strung between two rivers. Most of its walking network is tagged path — rice-field and ridge tracks — rather than gang between houses, so the drive/walk gap here is as much its landscape as its settlement.',
+    },
+  },
+  {
     slug: 'ikn-inti',
     name: 'IKN — Kawasan Inti',
     city: 'Penajam Paser Utara',

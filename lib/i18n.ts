@@ -295,5 +295,6 @@ export const SITE_TYPE_LABEL: Record<string, Bilingual> = {
   perumahan: { id: 'Perumahan kluster', en: 'Perumahan cluster' },
   kolonial: { id: 'Petak kolonial', en: 'Colonial grid' },
   'kota-baru': { id: 'Kota baru', en: 'New town' },
+  'kota-kecil': { id: 'Kota kecil', en: 'Small town' },
   ikn: { id: 'IKN', en: 'IKN' },
 }
