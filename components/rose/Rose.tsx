@@ -1,7 +1,7 @@
 import { binRangeDeg } from '@/lib/morphology'
 import type { Mode } from '@/lib/tags'
 import { d, type Locale } from '@/lib/i18n'
-import { fixed, percent } from '@/lib/format'
+import { fixed, percent, signed } from '@/lib/format'
 
 /**
  * The rose — 36 bins, per Boeing 2019.
@@ -60,6 +60,21 @@ export interface RoseProps {
   readonly animate?: boolean
   /** Rendered under the rose. Required for a single series; §12. */
   readonly caption?: boolean
+  /**
+   * How the caption is set.
+   *
+   * `plain` is the 14 px mono line the figure has always carried. `headline`
+   * sets the same numbers at the card's headline size and moves them beside
+   * the rose rather than under it, and adds ΔH where there are two series.
+   *
+   * It is an emphasis, not a second component, and that is the point. The card
+   * needs one number to be the reason it exists (DESIGN.md §7, the headline
+   * metric role), and the honest place for it is the rose's own caption:
+   * printing H twice — once as a headline, once in the caption — is what the
+   * plate used to do, and a reader cannot tell whether two identical figures
+   * are one measurement or two.
+   */
+  readonly emphasis?: 'plain' | 'headline'
   /**
    * The one-paragraph statement of what the bars are. On by default; the plate
    * turns it off, because sixteen cards do not need sixteen copies of one
@@ -136,6 +151,31 @@ function overlaid(kind: RoseSeriesKind): { fillOpacity: number; strokeWidth: num
   return kind === 'walk' ? { fillOpacity: 0.14, strokeWidth: 2 } : { fillOpacity: 0.6, strokeWidth: 0.5 }
 }
 
+/**
+ * The non-chromatic cue, repeated in the caption.
+ *
+ * The same distinction the wedges draw — drive solid, walk outlined — so a
+ * reader who does not separate blue from brick still knows which line of
+ * numbers belongs to which network (DESIGN.md §3, §10).
+ */
+function SeriesSwatch({ kind, size = 10 }: { readonly kind: RoseSeriesKind; readonly size?: number }) {
+  const walk = kind === 'walk'
+  return (
+    <svg width={size} height={size} viewBox="0 0 10 10" aria-hidden="true" className="shrink-0">
+      <rect
+        x={walk ? 1 : 0.5}
+        y={walk ? 1 : 0.5}
+        width={walk ? 8 : 9}
+        height={walk ? 8 : 9}
+        fill={inkFor(kind)}
+        fillOpacity={overlaid(kind).fillOpacity}
+        stroke={inkFor(kind)}
+        strokeWidth={walk ? 2 : 0.5}
+      />
+    </svg>
+  )
+}
+
 export function Rose({
   series,
   locale,
@@ -143,6 +183,7 @@ export function Rose({
   animate = true,
   caption = true,
   method = true,
+  emphasis = 'plain',
 }: RoseProps) {
   // The smaller series is drawn in front, so neither hides the other
   // (DESIGN.md §4).
@@ -151,8 +192,27 @@ export function Rose({
   )
   const peak = Math.max(...series.flatMap((s) => [...s.shares]), 1e-9)
 
+  /*
+   * The gap, where there is one to state.
+   *
+   * Only for a drive/walk pair — two series of the same mode do not occur, and
+   * a reference fixture has nothing to be compared with. Walk minus drive, in
+   * that order, so the sign means what the product means by it: positive is
+   * the walking network being the more varied of the two.
+   */
+  const driveSeries = series.find((s) => s.kind === 'drive')
+  const walkSeries = series.find((s) => s.kind === 'walk')
+  const delta =
+    series.length === 2 && driveSeries !== undefined && walkSeries !== undefined
+      ? walkSeries.orientationEntropy - driveSeries.orientationEntropy
+      : undefined
+
   return (
-    <figure className="m-0">
+    <figure
+      className={
+        emphasis === 'headline' ? 'm-0 flex flex-wrap items-start gap-x-4 gap-y-2' : 'm-0'
+      }
+    >
       <svg
         viewBox={`${-VIEW} ${-VIEW} ${VIEW * 2} ${VIEW * 2}`}
         width={size}
@@ -231,26 +291,51 @@ export function Rose({
         )}
       </svg>
 
-      {caption ? (
+      {caption && emphasis === 'headline' ? (
+        /*
+          The headline caption (DESIGN.md §7).
+
+          Same numbers, same requirement, set so that one of them is plainly
+          the reason the card exists. H takes the headline size and its
+          series' ink; φ stays at caption size beside it, because it is the
+          second reading of the same rose rather than a second finding.
+
+          ΔH is printed once, under both, where there are two modes. It is the
+          product's subject and it was computed nowhere on the plate — a
+          reader who wanted the gap had to subtract two figures set in the
+          same weight as median segment length.
+        */
+        <figcaption className="tabular font-mono">
+          {series.map((s) => {
+            const name = nameFor(s.kind, locale)
+            return (
+              <span key={s.kind} className="mt-1 flex items-baseline gap-2 first:mt-0">
+                <SeriesSwatch kind={s.kind} />
+                {name === undefined ? null : (
+                  <span className="text-xs uppercase tracking-wide text-ink-subtle">{name}</span>
+                )}
+                <span className="text-lg leading-none" style={{ color: inkFor(s.kind) }}>
+                  {fixed(s.orientationEntropy, 3)}
+                </span>
+                <span className="text-xs text-ink-subtle">φ {fixed(s.orientationOrder, 2)}</span>
+              </span>
+            )
+          })}
+          {delta === undefined ? null : (
+            <span className="mt-2 flex items-baseline gap-2 border-t border-rule pt-2">
+              <span className="text-xs uppercase tracking-wide text-ink-subtle">ΔH</span>
+              <span className="text-lg leading-none">{signed(delta, 3)}</span>
+            </span>
+          )}
+          <span className="mt-1 block text-xs text-ink-subtle">H · nat · 36 bin</span>
+        </figcaption>
+      ) : caption ? (
         <figcaption className="tabular mt-1 font-mono text-xs">
           {series.map((s) => {
             const name = nameFor(s.kind, locale)
             return (
               <span key={s.kind} className="mr-4 inline-flex items-center gap-1">
-                {series.length > 1 ? (
-                  <svg width={10} height={10} viewBox="0 0 10 10" aria-hidden="true">
-                    <rect
-                      x={s.kind === 'walk' ? 1 : 0.5}
-                      y={s.kind === 'walk' ? 1 : 0.5}
-                      width={s.kind === 'walk' ? 8 : 9}
-                      height={s.kind === 'walk' ? 8 : 9}
-                      fill={inkFor(s.kind)}
-                      fillOpacity={overlaid(s.kind).fillOpacity}
-                      stroke={inkFor(s.kind)}
-                      strokeWidth={s.kind === 'walk' ? 2 : 0.5}
-                    />
-                  </svg>
-                ) : null}
+                {series.length > 1 ? <SeriesSwatch kind={s.kind} /> : null}
                 {name === undefined ? null : (
                   <>
                     <span style={{ color: inkFor(s.kind) }}>{name}</span>{' '}

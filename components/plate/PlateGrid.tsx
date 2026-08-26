@@ -156,7 +156,14 @@ export function PlateGrid({
         defaultKey={NAME_KEY}
       />
 
-      <div className="plate-grid grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+      {/*
+        Rows are further apart than columns, and deliberately so. The cards
+        lost their boxes when the plate was set (DESIGN.md §6): what separates
+        one from the next is now the rule across its top, and a rule needs
+        white space above it to read as the start of something rather than as
+        the underside of the card before it.
+      */}
+      <div className="plate-grid grid grid-cols-1 gap-x-6 gap-y-12 md:grid-cols-2 xl:grid-cols-4">
         {children.map((child, index) => {
           const site = sites[index]
           return (

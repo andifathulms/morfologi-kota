@@ -16,6 +16,23 @@ import type { Mode } from '@/lib/tags'
  * rather than tucked into a tooltip (DESIGN.md §6, §9). The card shows the
  * driving network by default and links to the pair, which is where the product
  * actually is.
+ *
+ * Ranked, not just present (DESIGN.md §6).
+ *
+ * Everything on this card was here before and all of it still is. What changed
+ * is the order of arrival and the weight each element carries, because as set
+ * the card gave a reader no way to tell the evidence from the apparatus: ten
+ * mono rows made a block roughly twice the visual mass of the drawing they
+ * describe, H appeared twice at the same size as median segment length, and
+ * the coverage flag — the qualifier on the whole comparison — arrived after
+ * all of it, by which point a reader has already drawn their conclusion from
+ * the gap.
+ *
+ * So: the caveat before the figure, the figure before the numbers, one number
+ * set as the headline, and the rest in the recessive column they always were.
+ * The card is bounded by a rule at the top rather than a box on four sides —
+ * a box makes sixteen documents, and a top rule makes one plate of sixteen
+ * figures, which is what small multiples are for.
  */
 export function SiteCard({
   entry,
@@ -31,7 +48,7 @@ export function SiteCard({
   const metrics = mode === 'drive' ? entry.drive : entry.walk
 
   return (
-    <article className="flex flex-col gap-3 border border-rule-strong p-4">
+    <article className="flex h-full flex-col gap-3 border-t-2 border-ink pt-3">
       <header>
         {/* An h3: the card sits inside the plate, which has its own h2. As an
             h2 the sixteen cards were siblings of the introduction's sections,
@@ -47,6 +64,11 @@ export function SiteCard({
         </p>
       </header>
 
+      {/* Ahead of the drawing, not under the metric column. Nine of sixteen
+          sites are flagged, and the flag bounds every number beneath it
+          (PRD §4). A reader meets the qualifier before the thing qualified. */}
+      <CoverageBadge coverage={entry.coverage} locale={locale} />
+
       <NetworkDrawing
         geometry={geometry}
         radiusM={entry.radiusM}
@@ -55,29 +77,32 @@ export function SiteCard({
         label={`${entry.name} — ${d(mode === 'drive' ? 'drive' : 'walk', locale)}`}
       />
 
-      <div className="flex flex-wrap items-start gap-4">
-        <Rose
-          locale={locale}
-          size={160}
-          method={false}
-          series={[
-            {
-              shares: entry.drive.rose.shares,
-              kind: 'drive',
-              orientationEntropy: entry.drive.orientationEntropy,
-              orientationOrder: entry.drive.orientationOrder,
-            },
-            {
-              shares: entry.walk.rose.shares,
-              kind: 'walk',
-              orientationEntropy: entry.walk.orientationEntropy,
-              orientationOrder: entry.walk.orientationOrder,
-            },
-          ]}
-        />
-      </div>
+      {/* The rose and its numbers, at headline weight — the rose's caption is
+          the card's headline, so H is stated once rather than twice
+          (DESIGN.md §7, and Invariants §12: a rose without its numbers is a
+          shape, not a measurement). */}
+      <Rose
+        locale={locale}
+        size={196}
+        method={false}
+        emphasis="headline"
+        series={[
+          {
+            shares: entry.drive.rose.shares,
+            kind: 'drive',
+            orientationEntropy: entry.drive.orientationEntropy,
+            orientationOrder: entry.drive.orientationOrder,
+          },
+          {
+            shares: entry.walk.rose.shares,
+            kind: 'walk',
+            orientationEntropy: entry.walk.orientationEntropy,
+            orientationOrder: entry.walk.orientationOrder,
+          },
+        ]}
+      />
 
-      <MetricColumn metrics={metrics} mode={mode} locale={locale} />
+      <MetricColumn metrics={metrics} mode={mode} locale={locale} headlined />
 
       {/* DESIGN.md §10 — every rose has a table equivalent, always available.
           Collapsed so it does not crowd the plate, present so it is never a
@@ -107,12 +132,12 @@ export function SiteCard({
         {t(entry.note, locale)}
       </p>
 
-      {/* DESIGN.md §9 — the legend contract, on every card. */}
-      <footer className="tabular border-t border-rule-strong pt-2 font-mono text-xs">
+      {/* DESIGN.md §9 — the legend contract, on every card. The coverage half
+          of it is stated at the top, where it can still change a reading. */}
+      <footer className="tabular mt-auto border-t border-rule pt-2 font-mono text-xs">
         <p className="m-0">
           {d('radius', locale)} {entry.radiusM} m · 36 bin
         </p>
-        <CoverageBadge coverage={entry.coverage} locale={locale} />
         {/* Named with the site. Sixteen cards each carried the same link text,
             which reads fine inside a card and is useless in the links list
             many readers navigate by. WCAG 2.4.9. */}

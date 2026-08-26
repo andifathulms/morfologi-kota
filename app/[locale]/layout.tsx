@@ -135,42 +135,52 @@ export default function LocaleLayout({
             The masthead carries the standing one-line description, not just
             the name. A reader landing on any page — the plate, a pair, the
             assumptions — should be told in one sentence what this measures
-            before they meet a metric. It was written and unused until now.
+            before they meet a metric.
+
+            Three roles, and now three positions. Identity, description and
+            navigation used to share one baseline and one flex row, which put
+            a sentence of running prose between the wordmark and the section
+            links and left the language switch floating at the far right of a
+            row it had nothing to do with. Nothing here is new copy: the
+            wordmark and the utility row take the first line, and the sentence
+            takes the second, on its own measure, where it reads as the
+            standing description it is rather than as a caption to the name.
           */}
-          <header className="flex flex-wrap items-end justify-between gap-4 border-b border-rule-strong py-6">
-            <div className="flex flex-wrap items-end gap-x-8 gap-y-3">
+          <header className="border-b-2 border-ink py-6">
+            <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3">
               <div className="flex items-start gap-3">
                 <Mark size={34} className="mt-1 shrink-0" />
-                <div>
                 <Link
                   href={`/${locale}/lempeng`}
                   className="font-serif text-xl font-semibold leading-tight no-underline"
                 >
                   {d('siteTitle', locale)}
                 </Link>
-                <p className="m-0 mt-1 max-w-prose font-sans text-base leading-snug text-ink-subtle">
-                  {d('tagline', locale)}
-                </p>
-                </div>
               </div>
-              <nav
-                aria-label={locale === 'id' ? 'Bagian utama' : 'Sections'}
-                className="flex items-baseline gap-6 font-sans text-base"
-              >
-                <NavLink href={`/${locale}/lempeng`}>{d('navPlate', locale)}</NavLink>
-                <NavLink href={`/${locale}/asumsi`}>{d('navAssumptions', locale)}</NavLink>
-                <NavLink href={`/${locale}/metode`}>{d('navMethod', locale)}</NavLink>
-              </nav>
+              {/* One utility row: where you can go, and in which language. */}
+              <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+                <nav
+                  aria-label={locale === 'id' ? 'Bagian utama' : 'Sections'}
+                  className="flex items-baseline gap-6 font-sans text-base"
+                >
+                  <NavLink href={`/${locale}/lempeng`}>{d('navPlate', locale)}</NavLink>
+                  <NavLink href={`/${locale}/asumsi`}>{d('navAssumptions', locale)}</NavLink>
+                  <NavLink href={`/${locale}/metode`}>{d('navMethod', locale)}</NavLink>
+                </nav>
+                <Link
+                  href={`/${other}/lempeng`}
+                  lang={other}
+                  hrefLang={other}
+                  data-print="hide"
+                  className="font-mono text-xs uppercase tracking-wide"
+                >
+                  {other === 'en' ? 'English' : 'Bahasa Indonesia'}
+                </Link>
+              </div>
             </div>
-            <Link
-              href={`/${other}/lempeng`}
-              lang={other}
-              hrefLang={other}
-              data-print="hide"
-              className="font-mono text-xs uppercase tracking-wide"
-            >
-              {other === 'en' ? 'English' : 'Bahasa Indonesia'}
-            </Link>
+            <p className="m-0 mt-3 max-w-prose font-sans text-base leading-snug text-ink-subtle">
+              {d('tagline', locale)}
+            </p>
           </header>
 
           <main id="utama" className="py-8">

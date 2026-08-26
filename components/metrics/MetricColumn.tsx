@@ -20,8 +20,21 @@ export interface MetricRow {
   readonly hint?: string
 }
 
-export function metricRows(metrics: ModeMetrics, locale: Locale): readonly MetricRow[] {
-  return [
+/**
+ * `headlined` drops the two figures a card has already printed at headline
+ * size (DESIGN.md §7). H and φ are the rose's caption there, and repeating
+ * them here in the same weight as median segment length is what made a reader
+ * unable to tell whether two identical figures were one measurement or two.
+ *
+ * Everywhere the headline is not used — the pair, the assumptions page — the
+ * column is unchanged and carries all ten rows.
+ */
+export function metricRows(
+  metrics: ModeMetrics,
+  locale: Locale,
+  headlined = false,
+): readonly MetricRow[] {
+  const rows: readonly MetricRow[] = [
     { label: d('entropy', locale), value: fixed(metrics.orientationEntropy, 3), hint: 'nat' },
     { label: 'H / H max', value: fixed(metrics.normalisedEntropy, 3) },
     { label: d('phi', locale), value: fixed(metrics.orientationOrder, 3) },
@@ -43,6 +56,9 @@ export function metricRows(metrics: ModeMetrics, locale: Locale): readonly Metri
     { label: d('medianSegment', locale), value: metres(metrics.medianSegmentLengthM) },
     { label: d('totalLength', locale), value: kilometres(metrics.totalLengthM) },
   ]
+  if (!headlined) return rows
+  const headlineLabels = new Set([d('entropy', locale), d('phi', locale)])
+  return rows.filter((row) => !headlineLabels.has(row.label))
 }
 
 export function MetricColumn({
@@ -50,12 +66,15 @@ export function MetricColumn({
   mode,
   locale,
   heading,
+  headlined = false,
   notes = false,
 }: {
   readonly metrics: ModeMetrics
   readonly mode: Mode
   readonly locale: Locale
   readonly heading?: boolean
+  /** The card states H and φ at headline size, so the column does not. */
+  readonly headlined?: boolean
   /**
    * Print the paragraph explaining H's unit and circuity's sampling under the
    * column. On where there is room — the pair — and off on the plate, where
@@ -63,7 +82,7 @@ export function MetricColumn({
    */
   readonly notes?: boolean
 }) {
-  const rows = metricRows(metrics, locale)
+  const rows = metricRows(metrics, locale, headlined)
   const hue = mode === 'drive' ? 'var(--drive)' : 'var(--walk)'
 
   return (

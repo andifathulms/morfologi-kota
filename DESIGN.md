@@ -110,6 +110,23 @@ Nothing else earns this. A drawing may not distinguish by road class, by site ty
 
 **The plate** is a grid of site cards: network drawing, rose, metric column. All sites visible at once, sortable by any metric — patterns across the set appear by re-sorting, which is what small multiples are for.
 
+### The card is ranked, not merely complete
+
+Every element the card has ever carried is still on it. What is fixed is that it now has an order of arrival and a hierarchy of weight, because a card where the appendix outweighs the evidence makes the reader do the editing:
+
+```
+site name · city and type
+coverage confidence          ← the caveat, before the thing it qualifies
+network drawing              ← the evidence, at the full width of the card
+rose + its numbers           ← H at headline size, φ beside it, ΔH under both
+metric column                ← the apparatus, at caption size
+note · rose table · radius
+```
+
+**Coverage is stated before the drawing, not under the metric column.** Nine of sixteen sites are flagged and the flag bounds every number beneath it. Arriving after ten rows of metrics, it reaches the reader after they have already drawn a conclusion from the gap. A thin site takes the ink rule the asides use for a caveat — typographic, never chromatic; §3 still holds and nothing here is an error.
+
+**The card is bounded by a rule across its top, not a box on four sides.** A box at every edge makes sixteen documents; a top rule makes one plate of sixteen figures. Small multiples work when the eye can sweep a row of roses or run down a column of the same number, and a border interrupts exactly that sweep. Rows are spaced further apart than columns so the rule reads as the start of a card rather than the underside of the one above.
+
 **The pair** opens a site into two columns, drive on the left and walk on the right, each with its own network, rose and metrics, and a delta column between them. **Never stacked vertically** — the comparison must be side by side to read as a comparison.
 
 Desktop: four cards per row on the plate, two columns plus deltas in the pair. Mobile: one card per row; the pair becomes a swipe between two panes with the delta column pinned beneath, since side-by-side is unreadable at that width.
@@ -143,6 +160,14 @@ It is the only place uppercase or letter-spacing appears. Headings are never upp
 **A label is never a heading.** If it introduces one figure rather than a section, it is a `<p>` in this role and the figure is titled by its `<figcaption>`. The plate briefly had three visual treatments for `h2` — 14px mono, 16px sans and 22px serif — which tells a sighted reader three different things about one structural rank.
 
 **One treatment per heading level.** `h1` 36 serif, `h2` 22 serif, `h3` 18 serif or 16 sans where it sits inside a card, `h4` 16 sans. A heading that wants to look smaller than its level is a label; a heading that wants to look bigger is at the wrong level.
+
+### The headline metric role
+
+`font-mono · 22 · tabular` is the **headline metric** — the one figure on a card that is the reason the card exists. On the plate that is H, per mode, with ΔH under both; everything else in the metric column stays at 14.
+
+**It is set in the rose's own caption, not beside it.** §4 already requires every rose to carry its entropy and φ, so a separate headline block prints H twice at two different sizes, and a reader cannot tell whether two identical figures are one measurement or two. The emphasis is a property of the caption, which is why the rose takes it as a prop rather than the card assembling its own.
+
+**φ does not take the headline size.** It is the second reading of the same rose rather than a second finding, so it sits at caption size beside H.
 
 **Tabular figures on every metric, without exception.** The metric columns are read down and compared across cards; proportional figures would break the alignment that makes that possible.
 
@@ -188,6 +213,8 @@ And the method page carries the Boeing citation, the metric definitions, the tag
 - No colour coding by site type.
 - No rose without its entropy and φ.
 - No card without its radius and coverage confidence.
+- No coverage flag printed below the numbers it qualifies.
+- No headline figure that repeats a number the same card already prints.
 - No vertical stacking of the drive/walk pair on desktop.
 - No basemap, labels, or landmarks under the networks.
 - No dark mode.

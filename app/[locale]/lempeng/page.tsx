@@ -158,8 +158,17 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
        * column, so the two discs would come out smaller than they are now —
        * a layout that fills the width by shrinking the thing worth looking at.
        * Below that the page stacks in the same order it always did.
+       *
+       * The rows are declared, and that is the whole of the fix for the void
+       * that used to sit in the middle of the argument column. The worked
+       * example is taller than the claim and the caveat put together, and with
+       * two implicit rows the browser has to put that surplus somewhere: it
+       * divided it between them, so a reader met the opening paragraph, about
+       * a hundred and twenty pixels of nothing, and then the parameter line.
+       * `auto 1fr` gives the surplus to the second row, which is aligned to
+       * its top, so the slack lands under the argument instead of inside it.
        */}
-      <div className="xl:grid xl:grid-cols-[minmax(0,32rem)_minmax(0,1fr)] xl:items-start xl:gap-x-12">
+      <div className="xl:grid xl:grid-cols-[minmax(0,32rem)_minmax(0,1fr)] xl:grid-rows-[auto_1fr] xl:items-start xl:gap-x-12">
       <section className="mb-12 max-w-prose xl:col-start-1 xl:row-start-1 xl:mb-8">
         <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">
           {locale === 'id'
