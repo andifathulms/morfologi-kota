@@ -87,6 +87,46 @@ const CITIES: readonly City[] = [
   { key: 'ambon', name: 'Ambon', latDeg: -3.6954, lonDeg: 128.1814 },
   { key: 'jayapura', name: 'Jayapura', latDeg: -2.5333, lonDeg: 140.7181 },
   { key: 'kupang', name: 'Kupang', latDeg: -10.1772, lonDeg: 123.607 },
+
+  /*
+   * The second sweep: thirty cities the search had never looked at.
+   *
+   * Provincial capitals first, because a province with no disc in the set is
+   * a hole in a page that claims to be about Indonesian urban form — then the
+   * mid-sized Java cities, which are where most Indonesians actually live and
+   * which the set had skipped entirely in favour of the metropolitan corridor
+   * and a handful of famous kampung.
+   */
+  { key: 'bekasi', name: 'Bekasi', latDeg: -6.2383, lonDeg: 106.9756 },
+  { key: 'depok', name: 'Depok', latDeg: -6.4025, lonDeg: 106.7942 },
+  { key: 'tangerang', name: 'Tangerang', latDeg: -6.1783, lonDeg: 106.6319 },
+  { key: 'serang', name: 'Serang', latDeg: -6.115, lonDeg: 106.1503 },
+  { key: 'tasikmalaya', name: 'Tasikmalaya', latDeg: -7.3274, lonDeg: 108.2207 },
+  { key: 'purwokerto', name: 'Purwokerto', latDeg: -7.4249, lonDeg: 109.2397 },
+  { key: 'tegal', name: 'Tegal', latDeg: -6.8694, lonDeg: 109.1402 },
+  { key: 'pekalongan', name: 'Pekalongan', latDeg: -6.8886, lonDeg: 109.6753 },
+  { key: 'magelang', name: 'Magelang', latDeg: -7.4706, lonDeg: 110.2178 },
+  { key: 'salatiga', name: 'Salatiga', latDeg: -7.3305, lonDeg: 110.5084 },
+  { key: 'kudus', name: 'Kudus', latDeg: -6.8048, lonDeg: 110.8405 },
+  { key: 'kediri', name: 'Kediri', latDeg: -7.848, lonDeg: 112.0178 },
+  { key: 'madiun', name: 'Madiun', latDeg: -7.6298, lonDeg: 111.5239 },
+  { key: 'jember', name: 'Jember', latDeg: -8.1689, lonDeg: 113.7022 },
+  { key: 'banyuwangi', name: 'Banyuwangi', latDeg: -8.2192, lonDeg: 114.3691 },
+  { key: 'bandar-lampung', name: 'Bandar Lampung', latDeg: -5.4292, lonDeg: 105.261 },
+  { key: 'pekanbaru', name: 'Pekanbaru', latDeg: 0.5071, lonDeg: 101.4478 },
+  { key: 'jambi', name: 'Jambi', latDeg: -1.6101, lonDeg: 103.6131 },
+  { key: 'bengkulu', name: 'Bengkulu', latDeg: -3.7928, lonDeg: 102.2608 },
+  { key: 'tanjungpinang', name: 'Tanjungpinang', latDeg: 0.9186, lonDeg: 104.4585 },
+  { key: 'palangkaraya', name: 'Palangka Raya', latDeg: -2.21, lonDeg: 113.92 },
+  { key: 'singkawang', name: 'Singkawang', latDeg: 0.906, lonDeg: 108.985 },
+  { key: 'palu', name: 'Palu', latDeg: -0.8917, lonDeg: 119.8707 },
+  { key: 'kendari', name: 'Kendari', latDeg: -3.945, lonDeg: 122.499 },
+  { key: 'gorontalo', name: 'Gorontalo', latDeg: 0.5435, lonDeg: 123.0568 },
+  { key: 'parepare', name: 'Parepare', latDeg: -4.0135, lonDeg: 119.6255 },
+  { key: 'ternate', name: 'Ternate', latDeg: 0.79, lonDeg: 127.38 },
+  { key: 'sorong', name: 'Sorong', latDeg: -0.8762, lonDeg: 131.2558 },
+  { key: 'singaraja', name: 'Singaraja', latDeg: -8.112, lonDeg: 115.0882 },
+  { key: 'ende', name: 'Ende', latDeg: -8.8432, lonDeg: 121.6626 },
 ]
 
 /** Half the side of the search box, in degrees of latitude — about 11 km. */

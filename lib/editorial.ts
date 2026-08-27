@@ -44,6 +44,28 @@ export const EDITORIAL: Readonly<Record<string, readonly Bilingual[]>> = {
       en: 'What bounds the reading is what its walking network is made of. Most of it is tagged path — rice-field and ridge tracks rather than gang between houses. Footway coverage counts both the same, so the drive/walk gap here is partly landscape rather than settlement alone. Its comparison with an urban kampung has to be read with that in mind.',
     },
   ],
+
+  /*
+   * Palangka Raya is in the set for the same reason IKN is: it is a planned
+   * capital, and the two can be put beside each other. The note says what the
+   * figures are and stops there — why a 1957 plan and a 2022 plan sit at
+   * opposite ends of the same measure is a question this product raises and
+   * does not answer.
+   */
+  palangka: [
+    {
+      id: 'Inti Palangka Raya dirancang dari nol pada 1957 dan sempat dicalonkan sebagai ibu kota. Entropi orientasinya adalah yang terendah dalam kumpulan ini: jalannya berjalan pada sedikit arah, jauh lebih sedikit daripada kampung mana pun di sini.',
+      en: 'The core of Palangka Raya was laid out from nothing in 1957 and was once proposed as the capital. Its orientation entropy is the lowest in this set: its streets run along a small number of bearings, far fewer than any kampung here.',
+    },
+    {
+      id: 'IKN, rencana ibu kota berikutnya, berada di ujung yang berlawanan dari ukuran yang sama. Dua ibu kota terencana, berjarak enam puluh tahun, dan keduanya adalah keputusan yang diambil di atas kertas. Alat ini menunjukkan bahwa keduanya berbeda; ia tidak mengatakan mengapa, dan tidak mengatakan mana yang lebih baik.',
+      en: 'IKN, the next planned capital, sits at the opposite end of the same measure. Two planned capitals, sixty years apart, both decisions taken on paper. This tool shows that they differ; it does not say why, and it does not say which is better.',
+    },
+    {
+      id: 'Satu batas pembacaan: sekitar seperlima jaringan pejalan kakinya berada di dalam ruang hijau terpetakan. Angkanya lolos ambang tanpa itu, tetapi cakupan gang tidak dapat membedakan jalan taman dari gang, dan di sini sebagiannya memang jalan taman.',
+      en: 'One bound on the reading: about a fifth of its pedestrian network lies inside mapped green space. The figure clears the threshold without it, but footway coverage cannot tell a park path from a gang, and here some of it is a park path.',
+    },
+  ],
 }
 
 export function editorialFor(slug: string): readonly Bilingual[] {

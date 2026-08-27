@@ -272,6 +272,16 @@ const WITHHELD: Readonly<Record<string, string>> = {
   'bandung-cihapit-second': 'Placeholder — no candidate carries this label.',
   'mataram-lingk-sukaraja-timur': 'Mataram is already in the set at Gapuk Utara.',
   'denpasar-sumerta': 'Denpasar is already in the set at Sanur Kaja.',
+
+  /* Second sweep. */
+  'depok-pondok-cina':
+    'A third of its pedestrian length is inside green space, and Depok is in the set at Cipayung.',
+  'bengkulu-kandang-limun':
+    'Over a quarter of its pedestrian length is inside green space, and Bengkulu is in the set at Penurunan.',
+  'pekanbaru-pekanbaru':
+    'Clears at 23.4% with no park, and is held back because most of that length is `path` and `track` carrying names like Tanjakan Harga Diri and Rute Pesantren — trails rather than gang. Coverage counts them the same; this set should not.',
+  'bandung-garuda': 'Bandung already holds Braga and Cihapit.',
+  'yogyakarta-tamantirto': 'Yogyakarta already holds Code, Kotagede and Pathuk.',
 }
 
 /** Same rounding convention as the pipeline, for the same determinism reason. */

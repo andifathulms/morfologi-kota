@@ -32,7 +32,7 @@ that a score would inflame and a measurement can only illuminate.
 
 ## The first finding is a finding about the data
 
-Nine of the twenty-seven sites have thin *gang* coverage in OpenStreetMap. Their
+Nine of the thirty-three sites have thin *gang* coverage in OpenStreetMap. Their
 walking network is nearly their driving network — not because the alleys are
 absent, but because nobody has mapped them. **The drive/walk gap at those sites
 is not a statement about the place**, and every one of them is flagged in the

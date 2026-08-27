@@ -137,9 +137,24 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
    * five when the file says six is the kind of thing nobody notices.
    */
   const cleared = survey.candidates.filter((candidate) => candidate.confidence !== 'thin').length
+  /*
+   * Gated housing, counted from both directions.
+   *
+   * The candidates typed `perumahan` are the ones that were *sought* as gated
+   * housing; the sites typed `perumahan` are the ones that turned out to be.
+   * They are not the same set, because the density search finds a well-mapped
+   * cell and does not know what kind of place it is — Cipayung arrived as a
+   * `discovered` candidate and is in the set as gated housing, on the evidence
+   * of seventy-six mapped gates.
+   *
+   * This page said "not one clears" for as long as that was true. It is a
+   * sentence about the data, so it is computed from the data.
+   */
   const perumahanCandidates = survey.candidates.filter(
     (candidate) => candidate.type === 'perumahan',
   )
+  const gatedSites = manifest.sites.filter((site) => site.type === 'perumahan')
+  const gatedReadable = gatedSites.filter((site) => site.coverage.confidence.type !== 'thin')
   const perumahanShares = perumahanCandidates.map((candidate) => candidate.pedestrianShare)
   const perumahanRange =
     perumahanShares.length === 0
@@ -273,8 +288,8 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
         </p>
         <p className="mt-4 max-w-prose border-l-2 border-ink-subtle pl-4 font-serif text-md leading-prose">
           {locale === 'id'
-            ? `${cleared} dari ${survey.candidates.length} kandidat yang disurvei melewati ambang cakupan tipis (${percent(survey.thinThreshold, 0)}). Dari ${perumahanCandidates.length} kandidat perumahan kluster, tidak satu pun lolos — ${perumahanRange}. Itulah batas dari apa yang dapat dikatakan perbandingan kampung-versus-perumahan saat ini, dan itu pernyataan tentang OpenStreetMap, bukan tentang tempat-tempatnya: gangnya belum terpetakan, bukan tidak ada.`
-            : `${cleared} of ${survey.candidates.length} surveyed candidates clear the thin-coverage threshold (${percent(survey.thinThreshold, 0)}). Of the ${perumahanCandidates.length} perumahan cluster candidates, not one does — ${perumahanRange}. That bounds what the kampung-versus-perumahan comparison can currently say, and it is a statement about OpenStreetMap rather than about the places: the gang are unmapped, not absent.`}
+            ? `${cleared} dari ${survey.candidates.length} kandidat yang disurvei melewati ambang cakupan tipis (${percent(survey.thinThreshold, 0)}). Dari ${perumahanCandidates.length} kandidat yang dicari sebagai perumahan kluster, tidak satu pun lolos — ${perumahanRange}. ${gatedReadable.length === 0 ? 'Itulah batas dari apa yang dapat dikatakan perbandingan kampung-versus-perumahan saat ini.' : `Yang akhirnya masuk kumpulan ini justru datang dari pencarian kerapatan, bukan dari daftar tebakan: ${gatedReadable.length} dari ${gatedSites.length} lokasi berpagar kini cakupannya memadai. Perbandingan kampung-versus-perumahan berdiri di atas jumlah sekecil itu.`} Dan itu pernyataan tentang OpenStreetMap, bukan tentang tempat-tempatnya: gangnya belum terpetakan, bukan tidak ada.`
+            : `${cleared} of ${survey.candidates.length} surveyed candidates clear the thin-coverage threshold (${percent(survey.thinThreshold, 0)}). Of the ${perumahanCandidates.length} candidates sought as gated perumahan, not one does — ${perumahanRange}. ${gatedReadable.length === 0 ? 'That bounds what the kampung-versus-perumahan comparison can currently say.' : `The one that did reach the set came from the density search rather than from a list of guesses: ${gatedReadable.length} of the ${gatedSites.length} gated sites now have adequate coverage. The kampung-versus-perumahan comparison rests on a number that small.`} And it is a statement about OpenStreetMap rather than about the places: the gang are unmapped, not absent.`}
         </p>
         <div className="mt-4 overflow-x-auto">
           <table className="tabular w-full max-w-table border-collapse font-mono text-xs">

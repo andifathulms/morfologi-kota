@@ -185,6 +185,17 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
    * that counts ten and describes eight leaves a reader to wonder which two
    * were left out and why.
    */
+  /*
+   * Counted, never written down.
+   *
+   * The closing sentence used to state as fact that no perumahan candidate had
+   * ever cleared the threshold. It was true when it was written and false the
+   * moment Cipayung was adopted — and it stayed on the page directly above a
+   * table whose first row contradicted it. A claim about the data belongs in
+   * an expression that reads the data.
+   */
+  const gatedTotal = manifest.sites.filter((site) => site.type === 'perumahan').length
+  const gatedReadable = readable.filter((row) => row.site.type === 'perumahan')
   const smallTown = readable.filter((row) => row.site.type === 'kota-kecil')
   const colonial = readable.filter((row) => row.site.type === 'kolonial')
   const range = (rows: typeof readable, pick: (row: (typeof readable)[number]) => number) => ({
@@ -423,8 +434,8 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
           ) : null}
           <p className="mt-2 max-w-prose font-serif text-md leading-prose">
             {locale === 'id'
-              ? `Itu bunyi angkanya di ${readable.length} lokasi ini. Bukan pernyataan tentang bentuk kota Indonesia — untuk itu diperlukan cakupan gang yang jauh lebih luas daripada yang tersedia sekarang, terutama pada perumahan kluster, yang tidak satu pun kandidatnya lolos ambang.`
-              : `That is what the numbers say at these ${readable.length} sites. It is not a statement about Indonesian urban form — that would need far wider gang coverage than currently exists, particularly for perumahan clusters, not one of which cleared the threshold.`}
+              ? `Itu bunyi angkanya di ${readable.length} lokasi ini. Bukan pernyataan tentang bentuk kota Indonesia — untuk itu diperlukan cakupan gang yang jauh lebih luas daripada yang tersedia sekarang. ${gatedReadable.length === 0 ? 'Perumahan kluster masih menjadi lubang terbesar: tidak satu pun kandidatnya lolos ambang.' : `Perumahan kluster masih menjadi bagian paling tipis: ${gatedReadable.length} dari ${gatedTotal} lokasi berpagar dalam kumpulan ini yang cakupannya memadai.`}`
+              : `That is what the numbers say at these ${readable.length} sites. It is not a statement about Indonesian urban form — that would need far wider gang coverage than currently exists. ${gatedReadable.length === 0 ? 'Gated perumahan remains the largest hole: not one candidate cleared the threshold.' : `Gated perumahan remains the thinnest part of it: ${gatedReadable.length} of the ${gatedTotal} gated sites in this set have adequate coverage.`}`}
           </p>
           <div className="mt-4 overflow-x-auto">
             {/*

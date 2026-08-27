@@ -22,24 +22,24 @@
     "park": true
   },
   {
-    "label": "jakarta-blok-m",
-    "name": "Blok M",
-    "city": "Jakarta",
-    "latDeg": -6.2414,
-    "lonDeg": 106.7998,
-    "pedestrianM": 8124,
-    "streetWays": 256,
-    "pathShare": 0,
-    "park": true
+    "label": "depok-medina-town-house",
+    "name": "Medina Town House",
+    "city": "Depok",
+    "latDeg": -6.4067,
+    "lonDeg": 106.8056,
+    "pedestrianM": 9495,
+    "streetWays": 111,
+    "pathShare": 1,
+    "park": false
   },
   {
-    "label": "bandung-cihapit",
-    "name": "Cihapit",
-    "city": "Bandung",
-    "latDeg": -6.9035,
-    "lonDeg": 107.6211,
-    "pedestrianM": 7329,
-    "streetWays": 273,
+    "label": "palangkaraya-palangka",
+    "name": "Palangka",
+    "city": "Palangka Raya",
+    "latDeg": -2.2085,
+    "lonDeg": 113.9159,
+    "pedestrianM": 6694,
+    "streetWays": 150,
     "pathShare": 0,
     "park": true
   },
@@ -77,6 +77,17 @@
     "park": true
   },
   {
+    "label": "depok-pondok-cina",
+    "name": "Pondok Cina",
+    "city": "Depok",
+    "latDeg": -6.3629,
+    "lonDeg": 106.8285,
+    "pedestrianM": 6438,
+    "streetWays": 120,
+    "pathShare": 0.191,
+    "park": true
+  },
+  {
     "label": "jakarta-menteng-atas",
     "name": "Menteng Atas",
     "city": "Jakarta",
@@ -85,17 +96,6 @@
     "pedestrianM": 5926,
     "streetWays": 227,
     "pathShare": 0.271,
-    "park": false
-  },
-  {
-    "label": "denpasar-sanur-kaja",
-    "name": "Sanur Kaja",
-    "city": "Denpasar",
-    "latDeg": -8.678,
-    "lonDeg": 115.2627,
-    "pedestrianM": 5899,
-    "streetWays": 75,
-    "pathShare": 0,
     "park": false
   },
   {
@@ -110,17 +110,6 @@
     "park": true
   },
   {
-    "label": "banjarmasin-gadang",
-    "name": "Gadang",
-    "city": "Banjarmasin",
-    "latDeg": -3.3173,
-    "lonDeg": 114.5912,
-    "pedestrianM": 5150,
-    "streetWays": 152,
-    "pathShare": 0.245,
-    "park": true
-  },
-  {
     "label": "surabaya-airlangga",
     "name": "Airlangga",
     "city": "Surabaya",
@@ -130,6 +119,17 @@
     "streetWays": 275,
     "pathShare": 0.06,
     "park": true
+  },
+  {
+    "label": "bandung-garuda",
+    "name": "Garuda",
+    "city": "Bandung",
+    "latDeg": -6.9083,
+    "lonDeg": 107.577,
+    "pedestrianM": 4958,
+    "streetWays": 145,
+    "pathShare": 0.791,
+    "park": false
   },
   {
     "label": "cirebon-kejaksan",
@@ -143,17 +143,6 @@
     "park": true
   },
   {
-    "label": "yogyakarta-kampung-pathuk",
-    "name": "Kampung Pathuk",
-    "city": "Yogyakarta",
-    "latDeg": -7.7945,
-    "lonDeg": 110.3505,
-    "pedestrianM": 4872,
-    "streetWays": 146,
-    "pathShare": 0.151,
-    "park": false
-  },
-  {
     "label": "surabaya-jagir",
     "name": "Jagir",
     "city": "Surabaya",
@@ -165,25 +154,14 @@
     "park": true
   },
   {
-    "label": "mataram-lingk-gapuk-utara",
-    "name": "Lingk. Gapuk Utara",
-    "city": "Mataram",
-    "latDeg": -8.5768,
-    "lonDeg": 116.0946,
-    "pedestrianM": 4730,
-    "streetWays": 108,
-    "pathShare": 0.927,
-    "park": true
-  },
-  {
-    "label": "cirebon-kesepuhan",
-    "name": "Kesepuhan",
-    "city": "Cirebon",
-    "latDeg": -6.7292,
-    "lonDeg": 108.5806,
-    "pedestrianM": 4604,
-    "streetWays": 120,
-    "pathShare": 1,
+    "label": "depok-depok-jaya",
+    "name": "Depok Jaya",
+    "city": "Depok",
+    "latDeg": -6.386,
+    "lonDeg": 106.8085,
+    "pedestrianM": 4807,
+    "streetWays": 257,
+    "pathShare": 0.946,
     "park": false
   },
   {
@@ -198,6 +176,17 @@
     "park": true
   },
   {
+    "label": "bekasi-pondok-kopi",
+    "name": "Pondok Kopi",
+    "city": "Bekasi",
+    "latDeg": -6.2348,
+    "lonDeg": 106.9414,
+    "pedestrianM": 4293,
+    "streetWays": 200,
+    "pathShare": 0,
+    "park": false
+  },
+  {
     "label": "bogor-kebon-pedes",
     "name": "Kebon Pedes",
     "city": "Bogor",
@@ -206,6 +195,17 @@
     "pedestrianM": 4108,
     "streetWays": 171,
     "pathShare": 0.018,
+    "park": true
+  },
+  {
+    "label": "palu-lasoani",
+    "name": "Lasoani",
+    "city": "Palu",
+    "latDeg": -0.896,
+    "lonDeg": 119.9107,
+    "pedestrianM": 3941,
+    "streetWays": 71,
+    "pathShare": 0.997,
     "park": true
   },
   {
@@ -242,6 +242,17 @@
     "park": false
   },
   {
+    "label": "magelang-cacaban",
+    "name": "Cacaban",
+    "city": "Magelang",
+    "latDeg": -7.4839,
+    "lonDeg": 110.2098,
+    "pedestrianM": 3696,
+    "streetWays": 70,
+    "pathShare": 0.271,
+    "park": false
+  },
+  {
     "label": "yogyakarta-pogung-baru",
     "name": "Pogung Baru",
     "city": "Yogyakarta",
@@ -250,6 +261,28 @@
     "pedestrianM": 3692,
     "streetWays": 238,
     "pathShare": 0.091,
+    "park": true
+  },
+  {
+    "label": "jakarta-pasar-manggis",
+    "name": "Pasar Manggis",
+    "city": "Jakarta",
+    "latDeg": -6.2068,
+    "lonDeg": 106.8451,
+    "pedestrianM": 3665,
+    "streetWays": 186,
+    "pathShare": 0.472,
+    "park": true
+  },
+  {
+    "label": "kediri-paron",
+    "name": "Paron",
+    "city": "Kediri",
+    "latDeg": -7.8158,
+    "lonDeg": 112.0624,
+    "pedestrianM": 3623,
+    "streetWays": 52,
+    "pathShare": 0,
     "park": true
   },
   {
@@ -308,6 +341,50 @@
     "park": false
   },
   {
+    "label": "jember-jember",
+    "name": "Jember",
+    "city": "Jember",
+    "latDeg": -8.1685,
+    "lonDeg": 113.7025,
+    "pedestrianM": 3305,
+    "streetWays": 116,
+    "pathShare": 0.006,
+    "park": true
+  },
+  {
+    "label": "yogyakarta-tamantirto",
+    "name": "Tamantirto",
+    "city": "Yogyakarta",
+    "latDeg": -7.8294,
+    "lonDeg": 110.3295,
+    "pedestrianM": 3245,
+    "streetWays": 112,
+    "pathShare": 0,
+    "park": false
+  },
+  {
+    "label": "singkawang-singkawang",
+    "name": "Singkawang",
+    "city": "Singkawang",
+    "latDeg": 0.908,
+    "lonDeg": 108.9877,
+    "pedestrianM": 3166,
+    "streetWays": 121,
+    "pathShare": 0,
+    "park": true
+  },
+  {
+    "label": "parepare-ujung-bulu",
+    "name": "Ujung Bulu",
+    "city": "Parepare",
+    "latDeg": -4.0144,
+    "lonDeg": 119.6295,
+    "pedestrianM": 3130,
+    "streetWays": 91,
+    "pathShare": 1,
+    "park": true
+  },
+  {
     "label": "medan-kampung-madras",
     "name": "Kampung Madras",
     "city": "Medan",
@@ -352,6 +429,28 @@
     "park": true
   },
   {
+    "label": "pekanbaru-pelita-pantai",
+    "name": "Pelita Pantai",
+    "city": "Pekanbaru",
+    "latDeg": 0.5351,
+    "lonDeg": 101.4436,
+    "pedestrianM": 2760,
+    "streetWays": 150,
+    "pathShare": 0.013,
+    "park": true
+  },
+  {
+    "label": "tanjungpinang-sei-jang",
+    "name": "Sei Jang",
+    "city": "Tanjungpinang",
+    "latDeg": 0.9019,
+    "lonDeg": 104.4669,
+    "pedestrianM": 2695,
+    "streetWays": 110,
+    "pathShare": 1,
+    "park": true
+  },
+  {
     "label": "surakarta-jebres",
     "name": "Jebres",
     "city": "Surakarta",
@@ -361,6 +460,39 @@
     "streetWays": 107,
     "pathShare": 0,
     "park": false
+  },
+  {
+    "label": "cirebon-kalijaga",
+    "name": "Kalijaga",
+    "city": "Cirebon",
+    "latDeg": -6.7604,
+    "lonDeg": 108.5402,
+    "pedestrianM": 2601,
+    "streetWays": 146,
+    "pathShare": 0.37,
+    "park": false
+  },
+  {
+    "label": "denpasar-ubung",
+    "name": "Ubung",
+    "city": "Denpasar",
+    "latDeg": -8.634,
+    "lonDeg": 115.2057,
+    "pedestrianM": 2571,
+    "streetWays": 154,
+    "pathShare": 0.15,
+    "park": false
+  },
+  {
+    "label": "salatiga-pancuran",
+    "name": "Pancuran",
+    "city": "Salatiga",
+    "latDeg": -7.3269,
+    "lonDeg": 110.5064,
+    "pedestrianM": 2564,
+    "streetWays": 113,
+    "pathShare": 0.314,
+    "park": true
   },
   {
     "label": "medan-pasar-merah-barat",
@@ -385,6 +517,17 @@
     "park": true
   },
   {
+    "label": "tanjungpinang-bukit-cermin",
+    "name": "Bukit Cermin",
+    "city": "Tanjungpinang",
+    "latDeg": 0.923,
+    "lonDeg": 104.4438,
+    "pedestrianM": 2378,
+    "streetWays": 75,
+    "pathShare": 0.993,
+    "park": false
+  },
+  {
     "label": "banjarmasin-pangeran",
     "name": "Pangeran",
     "city": "Banjarmasin",
@@ -394,6 +537,28 @@
     "streetWays": 88,
     "pathShare": 0.866,
     "park": false
+  },
+  {
+    "label": "palangkaraya-menteng",
+    "name": "Menteng",
+    "city": "Palangka Raya",
+    "latDeg": -2.2149,
+    "lonDeg": 113.9,
+    "pedestrianM": 2368,
+    "streetWays": 156,
+    "pathShare": 0.011,
+    "park": true
+  },
+  {
+    "label": "madiun-klegen",
+    "name": "Klegen",
+    "city": "Madiun",
+    "latDeg": -7.6334,
+    "lonDeg": 111.5314,
+    "pedestrianM": 2289,
+    "streetWays": 114,
+    "pathShare": 0,
+    "park": true
   },
   {
     "label": "banda-aceh-kampungbaru",
@@ -407,6 +572,17 @@
     "park": true
   },
   {
+    "label": "banjarmasin-telawang",
+    "name": "Telawang",
+    "city": "Banjarmasin",
+    "latDeg": -3.33,
+    "lonDeg": 114.5836,
+    "pedestrianM": 2187,
+    "streetWays": 75,
+    "pathShare": 0.874,
+    "park": false
+  },
+  {
     "label": "mataram-lingk-pagesangan-selatan",
     "name": "Lingk. Pagesangan Selatan",
     "city": "Mataram",
@@ -416,6 +592,17 @@
     "streetWays": 88,
     "pathShare": 1,
     "park": false
+  },
+  {
+    "label": "bengkulu-kandang-limun",
+    "name": "Kandang Limun",
+    "city": "Bengkulu",
+    "latDeg": -3.7596,
+    "lonDeg": 102.2741,
+    "pedestrianM": 2021,
+    "streetWays": 65,
+    "pathShare": 0.058,
+    "park": true
   },
   {
     "label": "ubud-sayan",
@@ -451,17 +638,6 @@
     "park": false
   },
   {
-    "label": "jayapura-hamadi",
-    "name": "Hamadi",
-    "city": "Jayapura",
-    "latDeg": -2.5621,
-    "lonDeg": 140.7175,
-    "pedestrianM": 1904,
-    "streetWays": 70,
-    "pathShare": 0,
-    "park": true
-  },
-  {
     "label": "manado-banjer",
     "name": "Banjer",
     "city": "Manado",
@@ -481,6 +657,28 @@
     "pedestrianM": 1886,
     "streetWays": 37,
     "pathShare": 0.994,
+    "park": false
+  },
+  {
+    "label": "bengkulu-penurunan",
+    "name": "Penurunan",
+    "city": "Bengkulu",
+    "latDeg": -3.8063,
+    "lonDeg": 102.2609,
+    "pedestrianM": 1860,
+    "streetWays": 104,
+    "pathShare": 0.497,
+    "park": true
+  },
+  {
+    "label": "kendari-korumba",
+    "name": "Korumba",
+    "city": "Kendari",
+    "latDeg": -3.977,
+    "lonDeg": 122.5211,
+    "pedestrianM": 1838,
+    "streetWays": 124,
+    "pathShare": 0.568,
     "park": false
   },
   {
@@ -517,6 +715,28 @@
     "park": true
   },
   {
+    "label": "mataram-lingk-seganteng-karang-gebang",
+    "name": "Lingk. Seganteng Karang Gebang",
+    "city": "Mataram",
+    "latDeg": -8.5922,
+    "lonDeg": 116.1384,
+    "pedestrianM": 1748,
+    "streetWays": 48,
+    "pathShare": 0.881,
+    "park": true
+  },
+  {
+    "label": "pekanbaru-pekanbaru",
+    "name": "Pekanbaru",
+    "city": "Pekanbaru",
+    "latDeg": 0.5296,
+    "lonDeg": 101.4949,
+    "pedestrianM": 1739,
+    "streetWays": 57,
+    "pathShare": 1,
+    "park": false
+  },
+  {
     "label": "banda-aceh-bandarbaru",
     "name": "Bandarbaru",
     "city": "Banda Aceh",
@@ -550,6 +770,39 @@
     "park": false
   },
   {
+    "label": "pekanbaru-pasar-loket",
+    "name": "Pasar Loket",
+    "city": "Pekanbaru",
+    "latDeg": 0.5117,
+    "lonDeg": 101.4525,
+    "pedestrianM": 1639,
+    "streetWays": 111,
+    "pathShare": 0.015,
+    "park": true
+  },
+  {
+    "label": "gorontalo-tapa",
+    "name": "Tapa",
+    "city": "Gorontalo",
+    "latDeg": 0.5784,
+    "lonDeg": 123.049,
+    "pedestrianM": 1627,
+    "streetWays": 80,
+    "pathShare": 1,
+    "park": false
+  },
+  {
+    "label": "palangkaraya-panarung",
+    "name": "Panarung",
+    "city": "Palangka Raya",
+    "latDeg": -2.2406,
+    "lonDeg": 113.9302,
+    "pedestrianM": 1616,
+    "streetWays": 86,
+    "pathShare": 0,
+    "park": true
+  },
+  {
     "label": "samarinda-harapan-baru",
     "name": "Harapan Baru",
     "city": "Samarinda",
@@ -561,6 +814,17 @@
     "park": false
   },
   {
+    "label": "tanjungpinang-kampung-bugis",
+    "name": "Kampung Bugis",
+    "city": "Tanjungpinang",
+    "latDeg": 0.9427,
+    "lonDeg": 104.4435,
+    "pedestrianM": 1553,
+    "streetWays": 32,
+    "pathShare": 0.262,
+    "park": false
+  },
+  {
     "label": "manado-kairagi-ii",
     "name": "Kairagi II",
     "city": "Manado",
@@ -568,6 +832,17 @@
     "lonDeg": 124.8896,
     "pedestrianM": 1542,
     "streetWays": 100,
+    "pathShare": 1,
+    "park": false
+  },
+  {
+    "label": "parepare-cappagalung",
+    "name": "Cappagalung",
+    "city": "Parepare",
+    "latDeg": -4.0294,
+    "lonDeg": 119.6281,
+    "pedestrianM": 1538,
+    "streetWays": 33,
     "pathShare": 1,
     "park": false
   }
