@@ -7,6 +7,7 @@ import { LOCALES, d, isLocale, type Locale } from '@/lib/i18n'
 import { loadManifest } from '@/lib/data'
 import { NavLink } from '@/components/nav/NavLink'
 import { Mark } from '@/components/brand/Mark'
+import { MakerSignature } from '@/components/brand/MakerSignature'
 
 /*
  * DESIGN.md §7. Self-hosted: next/font fetches at build time and serves the
@@ -216,18 +217,29 @@ export default function LocaleLayout({
             stated wherever a number is, and they are stated again here.
           */}
           <footer
-            className="mt-16 border-t border-rule-strong py-6 font-mono text-xs leading-prose"
-            aria-label={locale === 'id' ? 'Sumber data dan parameter' : 'Data source and parameters'}
+            className="mt-16 border-t border-rule-strong py-6"
+            aria-label={locale === 'id' ? 'Kolofon' : 'Colophon'}
           >
-            <p>{manifest.attribution}</p>
-            <p>
-              {manifest.method.citation} DOI {manifest.method.doi}
-            </p>
-            <p>
-              r = {manifest.radiusM} m · {manifest.binCount} bin · mapping “{manifest.mappingId}” ·
-              extract {manifest.extractVersion}
-            </p>
-            <p className="mt-2">{d('describesNotScores', locale)}</p>
+            {/*
+              Two blocks under one rule. The attribution is the legal layer and
+              the signature is a personal credit, so they stay separate — but
+              they share the footer's existing seam rather than adding another:
+              opposite ends of the bar on a wide screen, stacked on a phone.
+            */}
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <div className="font-mono text-xs leading-prose">
+                <p>{manifest.attribution}</p>
+                <p>
+                  {manifest.method.citation} DOI {manifest.method.doi}
+                </p>
+                <p>
+                  r = {manifest.radiusM} m · {manifest.binCount} bin · mapping “{manifest.mappingId}”
+                  · extract {manifest.extractVersion}
+                </p>
+                <p className="mt-2">{d('describesNotScores', locale)}</p>
+              </div>
+              <MakerSignature />
+            </div>
           </footer>
         </div>
       </body>
