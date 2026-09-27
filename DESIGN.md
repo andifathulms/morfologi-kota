@@ -128,6 +128,22 @@ Nothing else earns this. A drawing may not distinguish by road class, by site ty
 
 **The plate** is a grid of site cards: network drawing, rose, metric column. All sites visible at once, sortable by any metric — patterns across the set appear by re-sorting, which is what small multiples are for.
 
+### The plate's reading order
+
+```
+the opening        one disc — Kendara / Jalan kaki / Selisih — and its readout
+the caveat         ⚑ the coverage finding, in full, ahead of every figure
+the gap figure     two marks per site on one axis; thin sites in their own block
+the toolbar        sticky: sort menu, direction, density, coverage filter
+the cards
+```
+
+**The page shows the claim before it explains it.** Until the 2026 pass about 3,700 px of argument, calibration networks and legend stood ahead of the first card. The argument's findings are now the gap figure; the calibration, the legend and the method notes are on the method page under *Cara membaca lempeng*, linked from the toolbar. The coverage caveat did not move, because PRD §4 fixes where it goes.
+
+### 6c. The gap figure
+
+One row per site, a solid drive square and an outlined walk square on one axis, so the line between them is the gap — the 24-row table it replaced said the same thing in numbers a reader had to subtract. It carries the ruler's guards (§6a): sorted and saying so, no ramp, no third hue. **Thin sites are shown in their own block, under a heading that says they are not compared, with hollow marks and a broken line** — interleaving them would compare them and dropping them would hide the data's first finding. Three metrics switch with radios; each is a list of real text, and the full table sits beneath as its text equivalent (§10).
+
 ### The card is ranked, not merely complete
 
 Every element the card has ever carried is still on it. What is fixed is that it now has an order of arrival and a hierarchy of weight, because a card where the appendix outweighs the evidence makes the reader do the editing:
@@ -140,6 +156,8 @@ rose + its numbers           ← H at headline size, φ beside it, ΔH under bot
 metric column                ← the apparatus, at caption size
 note · rose table · radius
 ```
+
+**Since the 2026 pass the rose sits beside its numbers, and the metric column is one table carrying both modes** — each metric named once, drive and walk side by side, the same rows and formats as every other column. The coverage line is a meter: a bar from 0 to 50% with both thresholds marked, ink on `--well`, describing the data and not the place. The disc is the link to the pair.
 
 **Coverage is stated before the drawing, not under the metric column.** Nine of sixteen sites are flagged and the flag bounds every number beneath it. Arriving after ten rows of metrics, it reaches the reader after they have already drawn a conclusion from the gap. A thin site takes the ink rule the asides use for a caveat — typographic, never chromatic; §3 still holds and nothing here is an error.
 
@@ -171,6 +189,8 @@ The name sort marks nothing. The alphabet is not a finding.
 ### The control is a control
 
 Sorting is the plate's main verb, so it is set as one. Three named groups — **the site**, **per mode**, **between modes** — because that is the only distinction that matters when choosing a sort: the third is the product's subject, the second is a figure for one network, and the first is not a measurement at all. Eleven chips of equal weight, wrapping into two rows, is a tag cloud.
+
+**It is a sticky toolbar.** The sort is a menu (`<details>` holding the same radios, grouped the same way) whose summary always names the current sort, so a reader on the ninth card still knows what the grid is an ordering of. Direction, density and a coverage filter are segmented controls beside it. The bar sits on `--well`. The coverage filter hides the thin cards only when the reader asks; the default is every site.
 
 **Direction is its own control.** Each metric starts largest-first and the name starts at A; *Reversed* turns that around, and says so, instead of hiding the direction inside each metric where a reader cannot see it.
 
@@ -278,6 +298,8 @@ It is the only place uppercase or letter-spacing appears. Headings are never upp
 ## 8. Motion
 
 **The orchestrated moment: bearings accumulating.** Selecting a site draws the network while the rose fills bin by bin, so the histogram is visibly *derived from* the drawing rather than appearing beside it. About 600ms.
+
+**It opens the plate.** The opening disc switches between the driving network, the walking network and *Selisih* — the walk-only edges in ink over the shared network in `--rule-strong` (§5's one permitted distinction). Choosing *Selisih* redraws the walk-only edges, because an animation restarts when its element is rendered again. Radios and `:has()`, no script; the difference is the resting state.
 
 In the paired view both modes draw simultaneously — the gap opening as it happens.
 

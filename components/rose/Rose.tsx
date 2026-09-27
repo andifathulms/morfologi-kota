@@ -233,13 +233,16 @@ export function Rose({
   return (
     <figure
       className={
-        headline === undefined ? 'm-0' : 'm-0 flex flex-wrap items-start gap-x-4 gap-y-2'
+        headline === undefined
+          ? 'm-0'
+          : 'm-0 grid grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] items-center gap-x-4 gap-y-2'
       }
     >
       <svg
         viewBox={`${-VIEW} ${-VIEW} ${VIEW * 2} ${VIEW * 2}`}
-        width={size}
-        height={size}
+        width={headline === undefined ? size : undefined}
+        height={headline === undefined ? size : undefined}
+        className={headline === undefined ? undefined : 'h-auto w-full'}
         /* Isolated, so the inks multiply with the sheet and each other and not
            with whatever the page has painted behind the figure. */
         style={series.length > 1 ? { isolation: 'isolate' } : undefined}
@@ -328,23 +331,33 @@ export function Rose({
           reader who wanted the gap had to subtract two figures set in the
           same weight as median segment length.
         */
-        <figcaption className="tabular font-mono">
+        /*
+          Name and φ on one line, H under them at headline size, the ruler
+          under H. The name used to share H's line, which fitted beside a
+          196 px rose on a wide card and wrapped "Jalan kaki" onto two lines
+          everywhere else; stacked, the caption fits beside the rose at any
+          card width the plate produces.
+        */
+        <figcaption className="tabular min-w-0 font-mono">
           {series.map((s) => {
             const name = nameFor(s.kind, locale)
             return (
-              <span key={s.kind} className="mt-2 block first:mt-0">
+              <span key={s.kind} className="mt-3 block first:mt-0">
+                <span className="flex items-baseline justify-between gap-2">
+                  <span className="inline-flex items-center gap-2 whitespace-nowrap font-sans text-2xs font-semibold uppercase tracking-wide text-ink-subtle">
+                    <SeriesSwatch kind={s.kind} />
+                    {name}
+                  </span>
+                  <span className="whitespace-nowrap text-xs text-ink-subtle">
+                    φ {fixed(s.orientationOrder, 2)}
+                  </span>
+                </span>
                 <span
                   data-metric={s.kind === 'walk' ? headline.metricKeys?.walk : headline.metricKeys?.drive}
-                  className="flex items-baseline gap-2"
+                  className="block text-lg leading-tight"
+                  style={{ color: inkFor(s.kind) }}
                 >
-                  <SeriesSwatch kind={s.kind} />
-                  {name === undefined ? null : (
-                    <span className="text-2xs uppercase tracking-wide text-ink-subtle">{name}</span>
-                  )}
-                  <span className="text-lg leading-none" style={{ color: inkFor(s.kind) }}>
-                    {fixed(s.orientationEntropy, 3)}
-                  </span>
-                  <span className="text-xs text-ink-subtle">φ {fixed(s.orientationOrder, 2)}</span>
+                  {fixed(s.orientationEntropy, 3)}
                 </span>
                 {headline.scale?.[s.kind]}
               </span>
@@ -353,13 +366,13 @@ export function Rose({
           {delta === undefined ? null : (
             <span
               data-metric={headline.metricKeys?.delta}
-              className="mt-2 flex items-baseline gap-2 border-t border-rule pt-2"
+              className="mt-3 flex items-baseline justify-between gap-2 border-t border-rule pt-2"
             >
-              <span className="text-2xs uppercase tracking-wide text-ink-subtle">ΔH</span>
-              <span className="text-lg leading-none">{signed(delta, 3)}</span>
+              <span className="font-sans text-2xs font-semibold uppercase tracking-wide text-ink-subtle">ΔH</span>
+              <span className="text-md leading-none">{signed(delta, 3)}</span>
             </span>
           )}
-          <span className="mt-1 block text-xs text-ink-subtle">
+          <span className="mt-1 block font-sans text-xs leading-note text-ink-subtle">
             H · nat · 36 bin{headline.note === undefined ? null : ` · ${headline.note}`}
           </span>
         </figcaption>

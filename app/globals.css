@@ -84,6 +84,8 @@
   --text-xl: 28px;
   --text-2xl: 36px;
   --text-3xl: 46px;
+  /* Display: the two page openers only — the plate and the pair. */
+  --text-4xl: 60px;
 
   /* Space — DESIGN.md §1. 4px base. */
   --space-1: 4px;
@@ -264,6 +266,364 @@ li {
        is indistinguishable from the outlines and hides both series; two
        tints make a warm grey that is neither. DESIGN.md §3. */
     fill-opacity: 0.5;
+  }
+}
+
+/*
+ * The segmented control.
+ *
+ * A radio group set as one object: a hairline ink frame on the raised ground,
+ * the chosen segment filled with ink. It is how the plate's opening chooses a
+ * network and how the toolbar chooses an order, a density and a coverage
+ * filter. The radio is the element before its label, visually hidden, so the
+ * whole control keeps working with scripting off and stays a radio group to a
+ * screen reader.
+ */
+.seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 3px;
+  border: 0.5px solid var(--ink);
+  border-radius: 2px;
+  background: var(--sheet);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: var(--text-base);
+  line-height: 1.2;
+}
+
+.seg label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: 7px 12px;
+  border-radius: 1px;
+  color: var(--ink-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-fast) var(--ease-house),
+    color var(--dur-fast) var(--ease-house);
+}
+
+.seg input:checked + label {
+  background: var(--ink);
+  color: var(--plate);
+}
+
+.seg input:focus-visible + label {
+  outline: 3px solid var(--ink);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .seg input:not(:checked) + label:hover {
+    background: var(--well);
+    color: var(--ink);
+  }
+}
+
+.seg-sm label {
+  padding: 5px 10px;
+  font-size: var(--text-xs);
+}
+
+/*
+ * The sort menu — a `<details>` holding the plate's sort radios, grouped as
+ * the chips were (DESIGN.md §6). Its summary always names the current sort.
+ */
+.sort-menu > summary {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  list-style: none;
+  cursor: pointer;
+}
+.sort-menu > summary::-webkit-details-marker {
+  display: none;
+}
+.sort-current {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: 6px 10px;
+  border: 0.5px solid var(--ink);
+  border-radius: 2px;
+  background: var(--sheet);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: var(--text-xs);
+  font-weight: 600;
+}
+.sort-caret {
+  font-size: var(--text-2xs);
+  transition: transform var(--dur-fast) var(--ease-house);
+}
+.sort-menu[open] .sort-caret {
+  transform: rotate(180deg);
+}
+.sort-panel {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  left: 0;
+  width: min(22rem, calc(100vw - 2rem));
+  max-height: min(70vh, 34rem);
+  overflow-y: auto;
+  padding: var(--space-2) 0;
+  border: 0.5px solid var(--ink);
+  border-radius: 2px;
+  background: var(--sheet);
+}
+.sort-note {
+  margin: 0 var(--space-4) var(--space-2);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: var(--text-xs);
+  line-height: var(--lead-note);
+  color: var(--ink-muted);
+}
+.sort-group {
+  padding: var(--space-3) var(--space-4) var(--space-1);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-subtle);
+}
+.sort-item {
+  display: block;
+  padding: 7px var(--space-4);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: var(--text-xs);
+  cursor: pointer;
+  transition: background-color var(--dur-fast) var(--ease-house);
+}
+input:checked + .sort-item {
+  background: var(--ink);
+  color: var(--plate);
+}
+input:focus-visible + .sort-item {
+  outline: 3px solid var(--ink);
+  outline-offset: -3px;
+}
+@media (hover: hover) {
+  input:not(:checked) + .sort-item:hover {
+    background: var(--well);
+  }
+}
+
+/*
+ * The plate's opening figure — one disc, three readings (components/plate/
+ * PlateHero). The difference is the resting state, so a browser without
+ * `:has()` shows the figure the page is about and loses only the switch.
+ *
+ * `display: revert` hands an element back to its own default box rather than
+ * to a guessed one, which is why nothing with `data-view` carries a display
+ * utility of its own.
+ */
+.plate-hero [data-view]:not([data-view~='diff']) {
+  display: none;
+}
+.plate-hero:has(#hero-drive:checked) [data-view],
+.plate-hero:has(#hero-walk:checked) [data-view] {
+  display: none;
+}
+.plate-hero:has(#hero-drive:checked) [data-view~='drive'],
+.plate-hero:has(#hero-walk:checked) [data-view~='walk'] {
+  display: revert;
+}
+
+.plate-hero [data-layer='drive'] {
+  display: none;
+}
+.plate-hero [data-layer='shared'] {
+  stroke: var(--rule-strong);
+  transition: stroke var(--dur-state) var(--ease-house);
+}
+.plate-hero:has(#hero-drive:checked) [data-layer='drive'] {
+  display: inline;
+}
+.plate-hero:has(#hero-drive:checked) [data-layer='shared'],
+.plate-hero:has(#hero-drive:checked) [data-layer='walk-only'] {
+  display: none;
+}
+.plate-hero:has(#hero-walk:checked) [data-layer='shared'] {
+  stroke: var(--ink);
+}
+
+/*
+ * The gap figure (components/plate/GapFigure) — two marks per site on one
+ * axis. HTML rows rather than one scaled SVG, so the names stay at their real
+ * size on a phone instead of shrinking with the drawing.
+ */
+.gap-figure [data-gap]:not([data-gap='length']) {
+  display: none;
+}
+.gap-figure:has(#gap-density:checked) [data-gap],
+.gap-figure:has(#gap-deadEnd:checked) [data-gap] {
+  display: none;
+}
+.gap-figure:has(#gap-density:checked) [data-gap='density'],
+.gap-figure:has(#gap-deadEnd:checked) [data-gap='deadEnd'] {
+  display: block;
+}
+
+.gap-row {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr) 6.5rem;
+  align-items: center;
+  column-gap: var(--space-4);
+  min-height: 26px;
+}
+
+.gap-name {
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: var(--text-xs);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gap-city {
+  color: var(--ink-subtle);
+  font-size: var(--text-2xs);
+}
+
+.gap-track {
+  position: relative;
+  height: 26px;
+  background: linear-gradient(to right, var(--rule-faint) 1px, transparent 1px) 0 0 / var(--gap-step, 10%) 100%;
+}
+
+.gap-axis .gap-track {
+  background: none;
+  height: 20px;
+}
+
+.gap-tick {
+  position: absolute;
+  top: 0;
+  transform: translateX(-50%);
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-2xs);
+  color: var(--ink-subtle);
+}
+
+.gap-link {
+  position: absolute;
+  top: 50%;
+  height: 2px;
+  transform: translateY(-50%);
+  background: var(--ink-subtle);
+}
+
+.gap-mark {
+  position: absolute;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  transform: translate(-50%, -50%);
+}
+
+.gap-drive {
+  background: var(--drive);
+}
+
+.gap-walk {
+  border: 2.5px solid var(--walk);
+  background: color-mix(in srgb, var(--walk) 30%, var(--plate));
+}
+
+.gap-delta {
+  font-family: var(--font-mono), ui-monospace, monospace;
+  font-size: var(--text-xs);
+  text-align: right;
+  white-space: nowrap;
+}
+
+.gap-axis .gap-delta {
+  color: var(--ink-subtle);
+  font-size: var(--text-2xs);
+}
+
+.gap-row[data-thin] .gap-name a {
+  color: var(--ink-subtle);
+}
+.gap-row[data-thin] .gap-link {
+  height: 0;
+  background: none;
+  border-top: 2px dashed var(--rule);
+}
+.gap-row[data-thin] .gap-drive {
+  background: var(--plate);
+  border: 1.5px solid var(--drive);
+}
+.gap-row[data-thin] .gap-walk {
+  background: var(--plate);
+}
+.gap-row[data-thin] .gap-delta {
+  color: var(--ink-subtle);
+}
+
+.gap-thin-head {
+  margin: var(--space-6) 0 var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 0.5px solid var(--rule-strong);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: var(--text-2xs);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-subtle);
+}
+
+@media (max-width: 639px) {
+  .gap-row {
+    grid-template-columns: minmax(0, 1fr) 5.5rem;
+    row-gap: 0;
+    padding-block: 2px;
+  }
+  .gap-name {
+    grid-column: 1 / -1;
+  }
+  .gap-axis > span:first-child {
+    display: none;
+  }
+}
+
+/*
+ * The plate card's disc is its link to the pair. The tag rises on hover and
+ * on keyboard focus. No hue: DESIGN.md §3 allows the two inks outside a
+ * figure in the mark and nowhere else, so the hover is ink.
+ */
+
+.card-open {
+  position: absolute;
+  right: 0;
+  bottom: var(--space-1);
+  padding: 5px 9px;
+  border-radius: 2px;
+  background: var(--ink);
+  color: var(--plate);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  opacity: 0;
+  transform: translateY(4px);
+  transition:
+    opacity var(--dur-fast) var(--ease-house),
+    transform var(--dur-fast) var(--ease-house);
+  pointer-events: none;
+}
+
+.card-disc:focus-visible .card-open {
+  opacity: 1;
+  transform: none;
+}
+
+@media (hover: hover) {
+  .card-disc:hover .card-open {
+    opacity: 1;
+    transform: none;
   }
 }
 

@@ -55,6 +55,8 @@ export interface SortableSite {
   readonly slug: string
   readonly name: string
   readonly values: Readonly<Record<string, number>>
+  /** Thin footway coverage — the coverage filter's handle (PRD §4). */
+  readonly thin: boolean
 }
 
 /**
@@ -81,6 +83,14 @@ type Order = (typeof ORDERS)[number]
 /** How much of each card is drawn. Full, without the columns, or discs only. */
 const DENSITIES = ['penuh', 'ringkas', 'kontak'] as const
 type Density = (typeof DENSITIES)[number]
+
+/**
+ * Which sites are drawn: all of them, or only those whose coverage allows the
+ * comparison. Hiding the thin sites is the reader's choice and never the
+ * default — the thin flag is itself a finding about the data (PRD §4).
+ */
+const COVERAGES = ['semua', 'memadai'] as const
+type CoverageFilter = (typeof COVERAGES)[number]
 
 function groupLabel(group: SortGroup, locale: Locale): string {
   switch (group) {
@@ -138,8 +148,8 @@ function orderFor(
   return positions
 }
 
-/** The radios for one group, followed by the chips they drive. */
-function ChipGroup({
+/** A radio group set as a segmented control (the `.seg` rule in globals.css). */
+function Segmented({
   legend,
   name,
   idPrefix,
@@ -153,36 +163,41 @@ function ChipGroup({
   readonly checked: string
 }) {
   return (
-    <fieldset className="m-0 border-0 p-0">
-      <legend className="p-0 font-mono text-2xs uppercase tracking-wide text-ink-subtle">
+    <fieldset className="m-0 flex items-center gap-2 border-0 p-0">
+      <legend className="float-left mr-2 p-0 font-sans text-2xs font-semibold uppercase tracking-wide text-ink-subtle">
         {legend}
       </legend>
-      {/* Inside the fieldset, before the chips: `~` needs them to precede the
-          labels they highlight, and the legend needs them to be its own. */}
-      {items.map((item) => (
-        <input
-          key={item.key}
-          type="radio"
-          name={name}
-          id={`${idPrefix}${item.key}`}
-          defaultChecked={item.key === checked}
-          className="sr-only"
-        />
-      ))}
-      <div className="plate-chips mt-2 flex flex-wrap gap-2">
+      <div className="seg seg-sm">
         {items.map((item) => (
-          <label
-            key={item.key}
-            htmlFor={`${idPrefix}${item.key}`}
-            className="cursor-pointer border border-rule-strong px-2 py-1 font-mono text-xs transition-colors duration-fast ease-house"
-          >
-            {item.label}
-          </label>
+          <span key={item.key} className="contents">
+            <input
+              type="radio"
+              name={name}
+              id={`${idPrefix}${item.key}`}
+              defaultChecked={item.key === checked}
+              className="sr-only"
+            />
+            <label htmlFor={`${idPrefix}${item.key}`}>{item.label}</label>
+          </span>
         ))}
       </div>
     </fieldset>
   )
 }
+
+/**
+ * Closes the sort menu once a sort is chosen, and on Escape.
+ *
+ * Progressive enhancement in the pattern `UrlState` set: one inline script, no
+ * client component. Without it the menu still works and closes from its own
+ * summary; this only saves the reader the second click.
+ */
+const MENU_SCRIPT = `(function(){
+document.addEventListener('change',function(e){var t=e.target;if(!t||t.name!=='plate-sort')return;
+var m=t.closest('details');if(m){m.open=false;var s=m.querySelector('summary');if(s)s.focus()}});
+document.addEventListener('keydown',function(e){if(e.key!=='Escape')return;
+var m=document.querySelector('details.sort-menu[open]');if(!m)return;m.open=false;var s=m.querySelector('summary');if(s)s.focus()});
+})();`
 
 export function PlateGrid({
   sites,
@@ -193,6 +208,7 @@ export function PlateGrid({
   nameLabel,
   note,
   sheetLegend,
+  readingLink,
 }: {
   readonly sites: readonly SortableSite[]
   readonly options: readonly SortOption[]
@@ -208,6 +224,8 @@ export function PlateGrid({
    * figure rather than sixteen times inside it (DESIGN.md §6, §9).
    */
   readonly sheetLegend?: string
+  /** Where the plate's legend and method notes are explained in full. */
+  readonly readingLink?: { readonly href: string; readonly label: string }
 }) {
   const all: SortOption[] = [
     { key: NAME_KEY, label: nameLabel, descending: false, group: 'identity' },
@@ -239,15 +257,22 @@ export function PlateGrid({
     }),
   )
 
-  /* The chips are siblings of their own radios, so these stay on `~`. */
+  /*
+   * The menu's summary names the current sort. The label for every option is
+   * in the summary and only the checked one is drawn, so the toolbar — which
+   * stays on screen while the grid scrolls — always says what the cards are
+   * an ordering of (DESIGN.md §6).
+   */
   const chipRules = [
-    ...all.map((option) => `sort-${option.key}`),
-    ...ORDERS.map((order) => `order-${order}`),
-    ...DENSITIES.map((density) => `density-${density}`),
-  ].flatMap((id) => [
-    `#${id}:checked~.plate-chips label[for="${id}"]{background:var(--ink);color:var(--plate)}`,
-    `#${id}:focus-visible~.plate-chips label[for="${id}"]{outline:3px solid var(--ink);outline-offset:2px}`,
-  ])
+    `.plate [data-sort-label]{display:none}`,
+    ...all.map(
+      (option) =>
+        `.plate:has(#sort-${option.key}:checked) [data-sort-label="${option.key}"]{display:inline}`,
+    ),
+  ]
+
+  /* Coverage: drop the thin cards from the grid when the reader asks. */
+  const coverageRules = `.plate:has(#cakupan-memadai:checked) .plate-grid>[data-thin]{display:none}`
 
   /*
    * Density.
@@ -311,45 +336,73 @@ export function PlateGrid({
     ])
 
   const rules =
-    [...orderRules, ...chipRules, ...highlightRules, ...sortedMarkRules].join('') + densityRules
+    [...orderRules, ...chipRules, ...highlightRules, ...sortedMarkRules].join('') +
+    densityRules +
+    coverageRules
+  const thinCount = sites.filter((site) => site.thin).length
 
   return (
     <div className="plate">
       <style dangerouslySetInnerHTML={{ __html: rules }} />
 
       {/*
-        The control announces itself as a control. It used to open with a
-        legend set in the same size and weight as body prose, immediately above
-        ten chips reading `φ — Kendara` and `ΔH — Jalan kaki − Kendara`, which
-        is the first thing many readers met on the page. The note says what
-        re-sorting is for before the jargon arrives — and says the thing the
-        source comment has always said and the page never did (PRD §4).
+        The toolbar.
+
+        It used to be eleven chips in two rows at the top of the grid, and it
+        scrolled away with them: by the ninth card a reader had lost what the
+        grid was sorted by. It is now one bar that stays on screen — the sort
+        as a grouped menu whose summary names the current order, and
+        direction, density and coverage as segmented controls. The groups,
+        the per-mode suffixes and the radios are the ones the chips used, so
+        every ordering rule above works unchanged (DESIGN.md §6).
       */}
-      <fieldset className="plate-controls m-0 mb-6 border-0 p-0">
-        <legend className="p-0 font-sans text-base font-semibold">{sortLabel}</legend>
-        {note !== undefined ? (
-          <p className="m-0 mb-4 mt-1 max-w-prose font-sans text-base leading-note text-ink-subtle">
-            {note}
-          </p>
-        ) : null}
+      <div className="plate-controls plate-toolbar -mx-4 mb-4 border-y border-rule-strong bg-well px-4 py-3 md:sticky md:top-0 md:z-20">
+        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+          <details className="sort-menu relative">
+            <summary className="select-none">
+              <span className="font-sans text-2xs font-semibold uppercase tracking-wide text-ink-subtle">
+                {sortLabel}
+              </span>
+              <span className="sort-current">
+                {all.map((option) => (
+                  <span key={option.key} data-sort-label={option.key}>
+                    {option.label}
+                  </span>
+                ))}
+                <span aria-hidden="true" className="sort-caret">
+                  ▾
+                </span>
+              </span>
+            </summary>
+            <div className="sort-panel">
+              {note !== undefined ? <p className="sort-note">{note}</p> : null}
+              {GROUPS.map((group) => {
+                const items = all.filter((option) => option.group === group)
+                if (items.length === 0) return null
+                return (
+                  <fieldset key={group} className="m-0 border-0 p-0">
+                    <legend className="sort-group">{groupLabel(group, locale)}</legend>
+                    {items.map((option) => (
+                      <span key={option.key} className="contents">
+                        <input
+                          type="radio"
+                          name="plate-sort"
+                          id={`sort-${option.key}`}
+                          defaultChecked={option.key === NAME_KEY}
+                          className="sr-only"
+                        />
+                        <label htmlFor={`sort-${option.key}`} className="sort-item">
+                          {option.label}
+                        </label>
+                      </span>
+                    ))}
+                  </fieldset>
+                )
+              })}
+            </div>
+          </details>
 
-        <div className="flex flex-wrap gap-x-8 gap-y-4">
-          {GROUPS.map((group) => {
-            const items = all.filter((option) => option.group === group)
-            if (items.length === 0) return null
-            return (
-              <ChipGroup
-                key={group}
-                legend={groupLabel(group, locale)}
-                name="plate-sort"
-                idPrefix="sort-"
-                checked={NAME_KEY}
-                items={items.map((option) => ({ key: option.key, label: option.label }))}
-              />
-            )
-          })}
-
-          <ChipGroup
+          <Segmented
             legend={d('orderHeading', locale)}
             name="plate-order"
             idPrefix="order-"
@@ -357,7 +410,7 @@ export function PlateGrid({
             items={ORDERS.map((order) => ({ key: order, label: orderLabel(order, locale) }))}
           />
 
-          <ChipGroup
+          <Segmented
             legend={d('densityHeading', locale)}
             name="plate-density"
             idPrefix="density-"
@@ -367,12 +420,35 @@ export function PlateGrid({
               label: densityLabel(density, locale),
             }))}
           />
-        </div>
 
-        <p className="m-0 mt-3 max-w-prose font-sans text-base leading-note text-ink-subtle">
-          {d('controlNote', locale)}
-        </p>
-      </fieldset>
+          {thinCount > 0 ? (
+            <Segmented
+              legend={d('coverage', locale)}
+              name="plate-coverage"
+              idPrefix="cakupan-"
+              checked="semua"
+              items={COVERAGES.map((coverage: CoverageFilter) => ({
+                key: coverage,
+                label:
+                  coverage === 'semua'
+                    ? locale === 'id'
+                      ? `Semua (${sites.length})`
+                      : `All (${sites.length})`
+                    : locale === 'id'
+                      ? `Memadai (${sites.length - thinCount})`
+                      : `Adequate (${sites.length - thinCount})`,
+              }))}
+            />
+          ) : null}
+
+          {readingLink === undefined ? null : (
+            <a href={readingLink.href} className="font-sans text-xs text-ink-muted lg:ml-auto">
+              {readingLink.label} →
+            </a>
+          )}
+        </div>
+      </div>
+      <script dangerouslySetInnerHTML={{ __html: MENU_SCRIPT }} />
 
       {/* After the radios, before the grid: the radio is set before a single
           card has parsed, so a shared link opens already sorted rather than
@@ -398,6 +474,13 @@ export function PlateGrid({
         keys={[...DENSITIES]}
         defaultKey="penuh"
       />
+      <UrlState
+        param="cakupan"
+        name="plate-coverage"
+        idPrefix="cakupan-"
+        keys={[...COVERAGES]}
+        defaultKey="semua"
+      />
 
       {/*
         Rows are further apart than columns, and deliberately so. The cards
@@ -412,11 +495,11 @@ export function PlateGrid({
         </p>
       )}
 
-      <div className="plate-grid grid grid-cols-1 gap-x-6 gap-y-12 md:grid-cols-2 xl:grid-cols-4">
+      <div className="plate-grid grid grid-cols-1 gap-x-8 gap-y-16 md:grid-cols-2 xl:grid-cols-4">
         {children.map((child, index) => {
           const site = sites[index]
           return (
-            <div key={site?.slug ?? index} data-slug={site?.slug}>
+            <div key={site?.slug ?? index} data-slug={site?.slug} data-thin={site?.thin === true ? '' : undefined}>
               {child}
             </div>
           )

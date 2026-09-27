@@ -59,6 +59,7 @@ const config: Config = {
       xl: ['var(--text-xl)', '1.25'],
       '2xl': ['var(--text-2xl)', '1.15'],
       '3xl': ['var(--text-3xl)', '1.1'],
+      '4xl': ['var(--text-4xl)', '1'],
     },
     /*
      * All three faces are variable now. Atkinson Hyperlegible Next and Mono

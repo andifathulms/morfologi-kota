@@ -1,12 +1,14 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { loadManifest, loadSurvey } from '@/lib/data'
+import { loadManifest, loadReference, loadSurvey } from '@/lib/data'
+import { ModeKey } from '@/components/legend/ModeKey'
+import { ReferenceStrip } from '@/components/reference/ReferenceStrip'
 import { alternatesFor, openGraphUrl } from '@/lib/metadata'
 import { LOCALES, SITE_TYPE_LABEL, d, isLocale, t, type Locale, type Bilingual } from '@/lib/i18n'
 import { DEFAULT_TAG_MAPPING } from '@/lib/tags'
 import { GOOD_COVERAGE_THRESHOLD, THIN_COVERAGE_THRESHOLD } from '@/lib/morphology'
-import { percent } from '@/lib/format'
+import { kilometres, percent, signedPercent } from '@/lib/format'
 import { manifestDataPath, siteDataPath, surveyDataPath } from '@/lib/paths'
 
 export function generateStaticParams(): { locale: Locale }[] {
@@ -160,6 +162,30 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
     perumahanShares.length === 0
       ? '—'
       : `${percent(Math.min(...perumahanShares))}–${percent(Math.max(...perumahanShares))}`
+  /*
+   * The findings summary the plate used to print above its table, moved here
+   * with the rest of the reading guide. Computed from the manifest, so a
+   * re-survey or a new site moves every sentence with it.
+   */
+  const reference = loadReference()
+  const readable = manifest.sites
+    .filter((site) => site.coverage.confidence.type !== 'thin')
+    .map((site) => ({
+      site,
+      extraLengthM: site.walk.totalLengthM - site.drive.totalLengthM,
+      deadEndChange: site.walk.degrees.proportions.deadEnd - site.drive.degrees.proportions.deadEnd,
+    }))
+  const kampung = readable.filter((row) => row.site.type === 'kampung')
+  const planned = readable.filter(
+    (row) => row.site.type === 'perumahan' || row.site.type === 'kota-baru',
+  )
+  const smallTown = readable.filter((row) => row.site.type === 'kota-kecil')
+  const colonial = readable.filter((row) => row.site.type === 'kolonial')
+  const range = (rows: typeof readable, pick: (row: (typeof readable)[number]) => number) => ({
+    min: Math.min(...rows.map(pick)),
+    max: Math.max(...rows.map(pick)),
+  })
+
   const limitations = limitationsFor(
     manifest.sites.filter((site) => site.coverage.confidence.type === 'thin').length,
     manifest.sites.length,
@@ -194,6 +220,45 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
             ? 'Boeing mengukur morfologi jaringan jalan seratus kota memakai OpenStreetMap: entropi arah jalan, panjang ruas tipikal, circuity rata-rata, derajat simpul rata-rata, serta proporsi simpang empat dan jalan buntu — ditambah indikator keteraturan φ. Yang dikerjakan di sini bukan sekadar menerapkan metode itu ke Indonesia, melainkan menghitung dua jaringan untuk tempat yang sama dan menampilkan selisihnya.'
             : 'Boeing measures the street network morphology of a hundred cities using OpenStreetMap: the entropy of street bearings, typical segment length, average circuity, average node degree, and the proportions of four-way intersections and dead-ends — plus the orientation-order indicator φ. What is done here is not simply applying that method to Indonesia; it is computing both networks for the same place and showing the gap.'}
         </p>
+      </section>
+
+      {/*
+        How to read the plate. It used to be printed on the plate itself, four
+        screens of it ahead of the first card; the plate now links here from
+        its toolbar, and everything it said is said here in the same words.
+      */}
+      <section id="cara-membaca" className="mt-12 max-w-prose scroll-mt-6">
+        <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
+          {locale === 'id' ? 'Cara membaca lempeng' : 'How to read the plate'}
+        </h2>
+        <ModeKey locale={locale} className="mt-4" />
+        <p className="mt-4 font-sans text-base leading-note text-ink-muted">{d('rulerNote', locale)}</p>
+        <p className="mt-3 font-sans text-base leading-note text-ink-muted">
+          {d('roseMethod', locale)} {d('roseSymmetryNote', locale)}{' '}
+          <span className="font-mono text-xs">Boeing 2019 §3</span>
+        </p>
+        <p className="mt-3 font-sans text-base leading-note text-ink-muted">{d('controlNote', locale)}</p>
+        {kampung.length > 0 && planned.length > 0 ? (
+          <>
+            <h3 className="m-0 mt-8 font-serif text-md font-semibold">
+              {locale === 'id'
+                ? `Selisihnya, pada ${readable.length} lokasi yang cakupannya memadai`
+                : `The gap, at the ${readable.length} sites where coverage allows it`}
+            </h3>
+            <p className="mt-2 font-serif text-md leading-prose">
+              {locale === 'id'
+                ? `Di antara lokasi-lokasi ini, ${kampung.length} kampung memperoleh ${kilometres(range(kampung, (r) => r.extraLengthM).min)}–${kilometres(range(kampung, (r) => r.extraLengthM).max)} jaringan tambahan saat berjalan kaki, dan proporsi jalan buntunya turun ${percent(Math.abs(range(kampung, (r) => r.deadEndChange).max), 1)}–${percent(Math.abs(range(kampung, (r) => r.deadEndChange).min), 1)}. ${planned.length} lokasi terencana memperoleh ${kilometres(range(planned, (r) => r.extraLengthM).min)}–${kilometres(range(planned, (r) => r.extraLengthM).max)}, dengan proporsi jalan buntu bergerak ${signedPercent(range(planned, (r) => r.deadEndChange).min)} sampai ${signedPercent(range(planned, (r) => r.deadEndChange).max)}.`
+                : `Among these, the ${kampung.length} kampung gain ${kilometres(range(kampung, (r) => r.extraLengthM).min)}–${kilometres(range(kampung, (r) => r.extraLengthM).max)} of network on foot, and their dead-end proportion falls by ${percent(Math.abs(range(kampung, (r) => r.deadEndChange).max), 1)}–${percent(Math.abs(range(kampung, (r) => r.deadEndChange).min), 1)}. The ${planned.length} planned sites gain ${kilometres(range(planned, (r) => r.extraLengthM).min)}–${kilometres(range(planned, (r) => r.extraLengthM).max)}, with their dead-end proportion moving ${signedPercent(range(planned, (r) => r.deadEndChange).min)} to ${signedPercent(range(planned, (r) => r.deadEndChange).max)}.`}
+            </p>
+            {smallTown.length > 0 || colonial.length > 0 ? (
+              <p className="mt-2 font-serif text-md leading-prose">
+                {locale === 'id'
+                  ? `Sisanya — ${smallTown.length} kota kecil dan ${colonial.length} petak kolonial — tidak masuk dua kelompok di atas, dan angkanya berdiri sendiri. Yang perlu dicatat: pada kota kecil, sebagian jaringan pejalan kakinya bertanda path, yaitu jalan setapak sawah dan tangga umum, bukan gang di antara rumah. Cakupan gang tidak dapat membedakan keduanya, dan kartu masing-masing lokasi menyebutkannya.`
+                  : `The rest — ${smallTown.length} small town${smallTown.length === 1 ? '' : 's'} and ${colonial.length} colonial grid${colonial.length === 1 ? '' : 's'} — belong to neither group above and their figures stand on their own. One thing to know about the small towns: part of their walking network is tagged path — rice-field tracks and public stairs — rather than gang between houses. Footway coverage cannot tell the two apart, and each site's card says so.`}
+              </p>
+            ) : null}
+          </>
+        ) : null}
       </section>
 
       <section className="mt-12 max-w-prose">
@@ -255,6 +320,12 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
             : 'There is no data oracle, but networks with known properties can be constructed. A perfect grid must give four populated bins and minimum entropy; the same grid rotated 29° must give identical entropy with shifted bins; a random geometric graph must approach maximum entropy; a pure tree must give its constructed dead-end proportion exactly. Every histogram must be 180°-symmetric — if it is not, the bearing computation is wrong. Circuity must be ≥ 1 on every sampled pair. All of it gates the build.'}
         </p>
       </section>
+
+      {/* Calibration: the three networks whose answers are known in advance,
+          measured by the same pipeline. Moved from the plate. */}
+      <div id="kalibrasi" className="scroll-mt-6">
+        <ReferenceStrip reference={reference} locale={locale} />
+      </div>
 
       <section className="mt-12 max-w-prose">
         <h2 className="m-0 font-serif text-lg font-medium tracking-heading">

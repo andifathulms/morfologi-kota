@@ -2,8 +2,8 @@ import Link from 'next/link'
 import type { ManifestEntry } from '@/data/sites'
 import { NetworkDrawing } from '@/components/network/NetworkDrawing'
 import { Rose } from '@/components/rose/Rose'
-import { MetricColumn } from '@/components/metrics/MetricColumn'
-import { CoverageBadge } from '@/components/metrics/CoverageBadge'
+import { PairMetricTable } from '@/components/metrics/PairMetricTable'
+import { CoverageMeter } from '@/components/metrics/CoverageBadge'
 import { RoseTable } from '@/components/table/RoseTable'
 import { DistributionRuler, type DistributionPoint } from '@/components/metrics/DistributionRuler'
 import { SITE_TYPE_LABEL, d, t, type Locale } from '@/lib/i18n'
@@ -34,6 +34,12 @@ import type { Mode } from '@/lib/tags'
  * The card is bounded by a rule at the top rather than a box on four sides —
  * a box makes sixteen documents, and a top rule makes one plate of sixteen
  * figures, which is what small multiples are for.
+ *
+ * The 2026 pass kept that order: the rose sits beside its numbers rather than
+ * above them, and the metric column became one table carrying both modes,
+ * each metric named once — twice the figures in less height, about 1,140 px
+ * against 1,270 at four to a row. The disc is the link to the pair, because it
+ * is the thing a reader wants to open.
  */
 export function SiteCard({
   entry,
@@ -57,8 +63,6 @@ export function SiteCard({
     readonly max: number
   }
 }) {
-  const metrics = mode === 'drive' ? entry.drive : entry.walk
-
   /*
    * One axis for both rulers, so the distance between the two marks is ΔH.
    * Independently scaled rulers would put the two figures on two different
@@ -102,13 +106,13 @@ export function SiteCard({
         : `spread of ${entropyScale.drive.length} sites`
 
   return (
-    <article className="flex h-full flex-col gap-3 border-t-2 border-ink pt-3">
+    <article className="site-card flex h-full flex-col gap-3 border-t-2 border-ink pt-3">
       <header>
         {/* An h3: the card sits inside the plate, which has its own h2. As an
             h2 the sixteen cards were siblings of the introduction's sections,
             so the outline ran from the last paragraph of prose straight into
             an unannounced list of place names. */}
-        <h3 className="m-0 font-serif text-md font-semibold leading-tight">
+        <h3 className="m-0 font-serif text-lg font-medium leading-tight tracking-heading">
           <Link href={`/${locale}/lokasi/${entry.slug}`} className="no-underline">
             {entry.name}
           </Link>
@@ -121,15 +125,26 @@ export function SiteCard({
       {/* Ahead of the drawing, not under the metric column. Nine of sixteen
           sites are flagged, and the flag bounds every number beneath it
           (PRD §4). A reader meets the qualifier before the thing qualified. */}
-      <CoverageBadge coverage={entry.coverage} locale={locale} metric="coverage" />
+      <CoverageMeter coverage={entry.coverage} locale={locale} metric="coverage" />
 
-      <NetworkDrawing
-        geometry={geometry}
-        radiusM={entry.radiusM}
-        size={320}
-        responsive
-        label={`${entry.name} — ${d(mode === 'drive' ? 'drive' : 'walk', locale)}`}
-      />
+      {/* The disc opens the pair. Named with the site, so a links list reads
+          as sixteen destinations rather than sixteen copies of one phrase. */}
+      <Link
+        href={`/${locale}/lokasi/${entry.slug}`}
+        className="card-disc relative block no-underline"
+        aria-label={`${d('openPair', locale)} — ${entry.name}`}
+      >
+        <NetworkDrawing
+          geometry={geometry}
+          radiusM={entry.radiusM}
+          size={360}
+          responsive
+          label={`${entry.name} — ${d(mode === 'drive' ? 'drive' : 'walk', locale)}`}
+        />
+        <span className="card-open" aria-hidden="true">
+          {locale === 'id' ? 'Buka pasangan →' : 'Open the pair →'}
+        </span>
+      </Link>
 
       {/* The rose and its numbers, at headline weight — the rose's caption is
           the card's headline, so H is stated once rather than twice
@@ -141,7 +156,7 @@ export function SiteCard({
       <div data-card="rose">
       <Rose
         locale={locale}
-        size={196}
+        size={150}
         method={false}
         headline={{
           scale,
@@ -169,7 +184,7 @@ export function SiteCard({
       </div>
 
       <div data-card="metrics">
-        <MetricColumn metrics={metrics} mode={mode} locale={locale} headlined />
+        <PairMetricTable drive={entry.drive} walk={entry.walk} locale={locale} label={entry.name} />
       </div>
 
       {/* DESIGN.md §10 — every rose has a table equivalent, always available.
@@ -205,18 +220,23 @@ export function SiteCard({
 
       {/* DESIGN.md §9 — the legend contract, on every card. The coverage half
           of it is stated at the top, where it can still change a reading. */}
-      <footer data-card="footer" className="tabular mt-auto border-t border-rule pt-2 font-mono text-xs">
-        <p className="m-0">
+      <footer
+        data-card="footer"
+        className="tabular mt-auto flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 border-t border-rule pt-2"
+      >
+        <p className="m-0 font-mono text-xs text-ink-subtle">
           {d('radius', locale)} {entry.radiusM} m · 36 bin
         </p>
         {/* Named with the site. Sixteen cards each carried the same link text,
             which reads fine inside a card and is useless in the links list
             many readers navigate by. WCAG 2.4.9. */}
-        <p className="mt-1">
-          <Link href={`/${locale}/lokasi/${entry.slug}`}>
-            {d('openPair', locale)} — {entry.name}
-          </Link>
-        </p>
+        <Link
+          href={`/${locale}/lokasi/${entry.slug}`}
+          className="font-sans text-xs font-semibold underline decoration-1 underline-offset-4"
+        >
+          {locale === 'id' ? 'Pasangan' : 'The pair'}
+          <span className="sr-only"> — {entry.name}</span> →
+        </Link>
       </footer>
     </article>
   )

@@ -252,3 +252,88 @@ export function NetworkDifferenceDrawing({
     </svg>
   )
 }
+
+/**
+ * One disc, several layers, each addressable by CSS.
+ *
+ * The plate's opening figure switches between the driving network, the
+ * walking network and the difference between them with radio inputs and
+ * `:has()` — no script, and no second copy of any geometry per state. Each
+ * layer is a group carrying `data-layer`; the stylesheet decides which are
+ * drawn and in which ink. Layers that carry `animate` redraw whenever they
+ * return from `display: none`, because an animation restarts when its element
+ * is rendered again — which is what makes the walk-only edges draw in each
+ * time the difference is chosen (DESIGN.md §8).
+ *
+ * The inks are the drawing's own: ink and the shared network in `--rule-strong`
+ * where it recedes. No hue enters a network drawing (DESIGN.md §5).
+ */
+export function LayeredNetworkDrawing({
+  layers,
+  radiusM,
+  size = 520,
+  label,
+  instanceId,
+  buckets = 8,
+}: {
+  readonly layers: readonly {
+    readonly id: string
+    readonly geometry: readonly (readonly (readonly [number, number])[])[]
+    readonly animate?: boolean
+  }[]
+  readonly radiusM: number
+  readonly size?: number
+  readonly label: string
+  readonly instanceId: string
+  readonly buckets?: number
+}) {
+  const clipId = `clip-layers-${instanceId}`
+  const stroke = ((2 * radiusM) / size) * 0.9
+  const strokeWidth = `calc(${stroke.toFixed(2)} * var(--ink-weight, 1))`
+
+  return (
+    <svg
+      viewBox={`${-radiusM} ${-radiusM} ${radiusM * 2} ${radiusM * 2}`}
+      style={{ width: '100%', maxWidth: size, height: 'auto' }}
+      role="img"
+      aria-label={label}
+    >
+      <defs>
+        <clipPath id={clipId}>
+          <circle cx={0} cy={0} r={radiusM} />
+        </clipPath>
+      </defs>
+      <circle cx={0} cy={0} r={radiusM} fill="none" stroke="var(--rule)" style={{ strokeWidth }} />
+      {layers.map((layer) => {
+        const grouped: string[] = Array.from({ length: buckets }, () => '')
+        layer.geometry.forEach((line, index) => {
+          const bucket = index % buckets
+          grouped[bucket] = (grouped[bucket] ?? '') + subpath(line)
+        })
+        return (
+          <g
+            key={layer.id}
+            data-layer={layer.id}
+            clipPath={`url(#${clipId})`}
+            fill="none"
+            stroke="var(--ink)"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            style={{ strokeWidth }}
+          >
+            {grouped.map((d, index) =>
+              d === '' ? null : (
+                <path
+                  key={index}
+                  d={d}
+                  pathLength={1}
+                  className={layer.animate === true ? 'network-ink' : undefined}
+                />
+              ),
+            )}
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
