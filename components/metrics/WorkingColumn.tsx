@@ -51,8 +51,8 @@ export function WorkingColumn({
       <dl className="tabular m-0 grid grid-cols-[1fr_auto] gap-x-4">
         {rows.map((row) => (
           <div key={row.label} className="contents">
-            <dt className="border-b border-rule-faint py-px text-ink-subtle">{row.label}</dt>
-            <dd className="m-0 border-b border-rule-faint py-px text-right">{row.value}</dd>
+            <dt className="border-b border-rule-faint py-1 font-sans text-ink-muted">{row.label}</dt>
+            <dd className="m-0 border-b border-rule-faint py-1 text-right">{row.value}</dd>
           </div>
         ))}
       </dl>

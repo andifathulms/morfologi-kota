@@ -118,7 +118,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
        */}
       <div className="xl:grid xl:grid-cols-2 xl:items-start xl:gap-x-12">
       <section className="max-w-prose xl:col-start-1 xl:row-start-1">
-        <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">
+        <h1 className="m-0 font-serif text-2xl font-medium leading-tight tracking-display">
           {locale === 'id' ? 'Asumsi' : 'Assumptions'}
         </h1>
         <p className="mt-4 font-serif text-md leading-prose">
@@ -134,7 +134,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
       </section>
 
       <section className="mt-12 max-w-prose xl:col-start-2 xl:row-start-1 xl:mt-0">
-        <h2 className="m-0 font-serif text-lg font-semibold">
+        <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
           {locale === 'id' ? 'Apa yang bertahan, apa yang tidak' : 'What survives, and what does not'}
         </h2>
         <p className="mt-2 font-serif text-md leading-prose">
@@ -167,7 +167,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
       </div>
 
       <section className="mt-12">
-        <h2 className="m-0 mb-4 font-serif text-lg font-semibold">
+        <h2 className="m-0 mb-4 font-serif text-lg font-medium tracking-heading">
           {locale === 'id' ? 'Pemetaan tag' : 'The tag mapping'}
         </h2>
         <style dangerouslySetInnerHTML={{ __html: rules }} />
@@ -471,7 +471,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
         leaving.
       */}
       <section className="mt-16">
-        <h2 className="m-0 font-serif text-lg font-semibold">
+        <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
           {d('mappingDrawingHeading', locale)}
         </h2>
         <p className="mt-2 max-w-prose font-serif text-md leading-prose">
@@ -554,7 +554,7 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
       </section>
 
       <section className="mt-16">
-        <h2 className="m-0 font-serif text-lg font-semibold">
+        <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
           {locale === 'id' ? 'Cakupan gang per lokasi' : 'Footway coverage per site'}
         </h2>
         <p className="mt-2 max-w-prose font-serif text-md leading-prose">

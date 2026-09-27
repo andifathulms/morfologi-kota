@@ -11,9 +11,9 @@ import { fixed, percent, signed } from '@/lib/format'
  * cardinal ticks, and a hairline circle at the maximum so bar lengths are
  * readable against a bound (DESIGN.md §4).
  *
- * Overlaid series overprint. Both inks multiply against the sheet and against
- * each other, so where the two networks run the same way the wedge is the
- * colour the two inks make together — produced rather than declared, and the
+ * Overlaid series overprint. Both inks, at half strength, multiply against the
+ * sheet and against each other, so where the two networks run the same way the
+ * wedge is the colour the two tints make together — produced rather than declared, and the
  * same operation a two-colour press performs. Blend order does not matter,
  * because multiply is commutative; the sort below survives for the fallback
  * path, where it still does.
@@ -169,7 +169,9 @@ function nameFor(kind: RoseSeriesKind, locale: Locale): string | undefined {
 function overlaid(kind: RoseSeriesKind): { fillOpacity: number; strokeWidth: number } {
   // Only ever reached with two series, and a reference network is never one of
   // a pair — it is a single fixture standing on its own.
-  return kind === 'walk' ? { fillOpacity: 0.14, strokeWidth: 2 } : { fillOpacity: 0.6, strokeWidth: 0.5 }
+  // Drive's edge is 0.9, not a hairline: with both fills at half strength the
+  // outline is what holds the bar's edge against the tint of the other series.
+  return kind === 'walk' ? { fillOpacity: 0.14, strokeWidth: 2 } : { fillOpacity: 0.6, strokeWidth: 0.9 }
 }
 
 /**

@@ -72,7 +72,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
         derived from, not a subsection of the walking one. As an h3 the
         document outline filed the product's central figure underneath "walk".
       */}
-      <h2 className="m-0 font-serif text-lg font-semibold">{d('differenceHeading', locale)}</h2>
+      <h2 className="m-0 font-serif text-lg font-medium tracking-heading">{d('differenceHeading', locale)}</h2>
       <div className="mt-2">
         <NetworkDifferenceDrawing
           geometry={walk.geometry}
@@ -146,7 +146,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
           className="pair-panes flex snap-x snap-mandatory gap-8 overflow-x-auto border-b border-rule-strong pb-4 md:contents"
         >
           <section className="w-pane min-w-pane shrink-0 snap-center md:col-start-1 md:row-start-1 md:w-auto md:min-w-0">
-            <h2 className="m-0 font-serif text-lg font-semibold" style={{ color: 'var(--drive)' }}>
+            <h2 className="m-0 font-serif text-lg font-medium tracking-heading" style={{ color: 'var(--drive)' }}>
               {d('drive', locale)}
             </h2>
             {/* A numbered figure, because this page's figures are fixed and a
@@ -187,7 +187,7 @@ export function PairView({ bundle, locale }: { readonly bundle: SiteBundle; read
           </section>
 
           <section className="w-pane min-w-pane shrink-0 snap-center md:col-start-3 md:row-start-1 md:w-auto md:min-w-0">
-            <h2 className="m-0 font-serif text-lg font-semibold" style={{ color: 'var(--walk)' }}>
+            <h2 className="m-0 font-serif text-lg font-medium tracking-heading" style={{ color: 'var(--walk)' }}>
               {d('walk', locale)}
             </h2>
             <figure className="m-0">

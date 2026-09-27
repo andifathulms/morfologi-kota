@@ -34,7 +34,7 @@ export function ReferenceStrip({
 
   return (
     <section className="mt-12" aria-labelledby="skala">
-      <h2 id="skala" className="m-0 max-w-prose font-serif text-lg font-semibold">
+      <h2 id="skala" className="m-0 max-w-prose font-serif text-lg font-medium tracking-heading">
         {d('referenceHeading', locale)}
       </h2>
       <p className="mt-2 max-w-prose font-serif text-md leading-prose">

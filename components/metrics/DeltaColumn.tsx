@@ -69,8 +69,8 @@ export function DeltaColumn({
                 columns either side, but each pane carries a drawing and a rose
                 above its column, so nothing lines up and a bare number would
                 be unreadable. */}
-            <dt className="border-b border-rule-faint py-px text-ink-subtle">{row.label}</dt>
-            <dd className="m-0 border-b border-rule-faint py-px text-right">{row.value}</dd>
+            <dt className="border-b border-rule-faint py-1 font-sans text-ink-muted">{row.label}</dt>
+            <dd className="m-0 border-b border-rule-faint py-1 text-right">{row.value}</dd>
           </div>
         ))}
       </dl>

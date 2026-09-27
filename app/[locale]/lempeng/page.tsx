@@ -258,7 +258,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
        */}
       <div className="xl:grid xl:grid-cols-[minmax(0,32rem)_minmax(0,1fr)] xl:grid-rows-[auto_1fr] xl:items-start xl:gap-x-12">
       <section className="mb-12 max-w-prose xl:col-start-1 xl:row-start-1 xl:mb-8">
-        <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">
+        <h1 className="m-0 font-serif text-2xl font-medium leading-tight tracking-display">
           {locale === 'id'
             ? 'Lingkungan yang sama, dua kota berbeda'
             : 'The same neighbourhood, two different cities'}
@@ -391,7 +391,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
             heading of its own, rather than as the third paragraph of the
             introduction. */}
         <aside className="mt-4 border-l-2 border-ink-subtle pl-4" aria-labelledby="peringatan">
-          <h2 id="peringatan" className="m-0 font-serif text-lg font-semibold">
+          <h2 id="peringatan" className="m-0 font-serif text-lg font-medium tracking-heading">
             {d('caveatHeading', locale)}
           </h2>
           <p className="mt-2 font-serif text-md leading-prose">
@@ -415,7 +415,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
 
       {readable.length > 0 && kampung.length > 0 && planned.length > 0 ? (
         <section className="mb-12">
-          <h2 className="m-0 max-w-prose font-serif text-lg font-semibold">
+          <h2 className="m-0 max-w-prose font-serif text-lg font-medium tracking-heading">
             {locale === 'id'
               ? `Selisihnya, pada ${readable.length} lokasi yang cakupannya memadai`
               : `The gap, at the ${readable.length} sites where coverage allows it`}
@@ -507,7 +507,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
       {/* The plate gets a heading of its own. It is the page's main content
           and it had none: the outline went from the introduction's last
           section directly to sixteen site names. */}
-      <h2 className="m-0 font-serif text-lg font-semibold">
+      <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
         {locale === 'id'
           ? `Lempeng — ${manifest.sites.length} lokasi, r = ${manifest.radiusM} m`
           : `The plate — ${manifest.sites.length} sites, r = ${manifest.radiusM} m`}

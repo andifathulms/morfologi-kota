@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
-import { Atkinson_Hyperlegible, IBM_Plex_Mono, Newsreader } from 'next/font/google'
+import { Newsreader } from 'next/font/google'
+import localFont from 'next/font/local'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import '../globals.css'
@@ -29,28 +30,41 @@ const serif = Newsreader({
 })
 
 /*
- * Atkinson Hyperlegible, drawn by the Braille Institute for readers with low
- * vision. It is here for one reason: this product is made of place names and
- * three-decimal figures, and its letterforms are drawn so that the characters
- * that normally collapse into each other stay apart — l against I against 1,
- * 0 against O, 6 against 8, and the mirrored pairs b/d and p/q.
+ * Atkinson Hyperlegible Next, drawn by the Braille Institute for readers with
+ * low vision. It is here for one reason: this product is made of place names
+ * and three-decimal figures, and its letterforms are drawn so that the
+ * characters that normally collapse into each other stay apart — l against I
+ * against 1, 0 against O, 6 against 8, and the mirrored pairs b/d and p/q.
  *
- * Two weights, not three. There is no 600, so `font-semibold` on a sans
- * element resolves to 700: the label voice is a shade heavier than it was,
- * which is a real change and is the price of the face.
+ * Next, not the 2019 original: the original shipped 400 and 700 only, so a
+ * semibold label rounded up to 700. Next is variable 200–800.
+ *
+ * Self-hosted from `app/fonts` (OFL 1.1, licence beside the files) rather than
+ * through `next/font/google`, whose font list in Next 14 predates both
+ * families. Latin subset, the same coverage the Google loader requested.
  */
-const sans = Atkinson_Hyperlegible({
-  subsets: ['latin'],
-  weight: ['400', '700'],
+const sans = localFont({
+  src: '../fonts/AtkinsonHyperlegibleNext-Variable.woff2',
+  weight: '200 800',
+  style: 'normal',
   variable: '--font-sans',
   display: 'swap',
+  fallback: ['Atkinson Hyperlegible', 'system-ui', 'sans-serif'],
 })
 
-const mono = IBM_Plex_Mono({
-  subsets: ['latin'],
-  weight: ['400', '600'],
+/*
+ * Atkinson Hyperlegible Mono, for every figure. It replaces IBM Plex Mono so
+ * the legibility argument above covers the figures too — which is where most
+ * of the digits in this product are — and so labels and numbers read as one
+ * voice. Tabular by construction.
+ */
+const mono = localFont({
+  src: '../fonts/AtkinsonHyperlegibleMono-Variable.woff2',
+  weight: '200 800',
+  style: 'normal',
   variable: '--font-mono',
   display: 'swap',
+  fallback: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace'],
 })
 
 export function generateStaticParams(): { locale: Locale }[] {
@@ -66,7 +80,7 @@ export function generateStaticParams(): { locale: Locale }[] {
  * switch to.
  */
 export const viewport: Viewport = {
-  themeColor: '#F7F4EC',
+  themeColor: '#F4F3EE',
   colorScheme: 'light',
 }
 

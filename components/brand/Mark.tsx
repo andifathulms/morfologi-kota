@@ -13,9 +13,9 @@
  * The exported tile has a 22% corner radius and §1 allows 2px and nothing else,
  * so the tile is dropped and the glyph stands on the sheet — which is what the
  * masthead is anyway. And the exported palette is close to this product's but
- * not it: the brand blue is #3E5C74 against `--drive` #1F4E6B, the rust
- * #A34A28 against `--walk` #A3431F, the ground #F4F0E6 against `--plate`
- * #F7F4EC. Close enough to look like a mistake rather than a decision when the
+ * not it: the brand blue is #3E5C74 against `--drive` #1B4F78, the rust
+ * #A34A28 against `--walk` #A8431C, the ground #F4F0E6 against `--plate`
+ * #F4F3EE. Close enough to look like a mistake rather than a decision when the
  * two sit together on one page, and the ratios written beside the tokens in §3
  * were measured for the tokens. So the mark asks for the same three inks the
  * rest of the page asks for, and moves with them — including under

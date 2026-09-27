@@ -119,13 +119,13 @@ export function MetricColumn({
           <div key={row.label} className="contents">
             <dt
               data-metric={headlined ? row.metric : undefined}
-              className="border-b border-rule-faint py-px text-ink-subtle"
+              className="border-b border-rule-faint py-1 font-sans text-ink-muted"
             >
               {row.label}
             </dt>
             <dd
               data-metric={headlined ? row.metric : undefined}
-              className="m-0 border-b border-rule-faint py-px text-right"
+              className="m-0 border-b border-rule-faint py-1 text-right"
             >
               {row.value}
               {row.hint ? <span className="ml-1 text-ink-subtle">{row.hint}</span> : null}

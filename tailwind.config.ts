@@ -19,6 +19,9 @@ const config: Config = {
       transparent: 'transparent',
       current: 'currentColor',
       plate: 'var(--plate)',
+      // Grounds, not rungs: raised and sunk surfaces. DESIGN.md §3.
+      sheet: 'var(--sheet)',
+      well: 'var(--well)',
       ink: 'var(--ink)',
       'ink-muted': 'var(--ink-muted)',
       'ink-subtle': 'var(--ink-subtle)',
@@ -58,11 +61,11 @@ const config: Config = {
       '3xl': ['var(--text-3xl)', '1.1'],
     },
     /*
-     * `semibold` is 600, and the sans has no 600. Atkinson Hyperlegible ships
-     * 400 and 700, so a semibold label resolves to 700 — deliberate, stated,
-     * and the reason the label voice is a shade heavier than it was.
+     * All three faces are variable now. Atkinson Hyperlegible Next and Mono
+     * run 200–800, so `semibold` is a real 600 rather than a rounded-up 700,
+     * and `medium` exists for display headings, which read heavy at 600.
      */
-    fontWeight: { normal: '400', semibold: '600' },
+    fontWeight: { normal: '400', medium: '500', semibold: '600', bold: '700' },
     /* DESIGN.md §7 — two leadings, because prose and captions are two jobs. */
     lineHeight: {
       none: '1',
@@ -83,6 +86,9 @@ const config: Config = {
         mono: ['var(--font-mono)', 'ui-monospace', 'monospace'],
       },
       transitionTimingFunction: { house: 'cubic-bezier(0.2,0,0,1)' },
+      /* Display headings only: tighter at 46 px and above, where the serif's
+         default fit opens up. */
+      letterSpacing: { display: '-0.025em', heading: '-0.01em' },
       transitionDuration: { fast: '120ms', state: '240ms', draw: '600ms' },
       /*
        * `figure` is the width a paired figure reads at: two discs side by side

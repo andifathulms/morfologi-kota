@@ -31,8 +31,8 @@ const shell: Record<string, React.CSSProperties> = {
    * (DESIGN.md §3, §7).
    */
   body: {
-    backgroundColor: '#F7F4EC',
-    color: '#16140F',
+    backgroundColor: '#F4F3EE',
+    color: '#15161A',
     colorScheme: 'light',
     fontFamily: 'Georgia, serif',
     lineHeight: 1.55,

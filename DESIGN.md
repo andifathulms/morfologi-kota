@@ -37,18 +37,22 @@ That register also does real work. §4 forbids scoring kampung against perumahan
 ## 3. Colour — two inks on a sheet
 
 ```
---plate        #F7F4EC   uncoated stock
---ink          #141209   network lines, text, rose outlines      17.1:1
---ink-muted    #3B372F   long-form prose                         10.8:1
---ink-subtle   #544F45   labels, captions, units                  7.4:1
---rule-strong  #6E675A   structural: card rules, section edges     5.1:1
---rule         #928A78   informative: sampling circle, rose ring   3.1:1
---rule-faint   #C4BDAE   decorative: row separators                1.7:1
+--plate        #F4F3EE   the sheet — the page
+--sheet        #FBFAF7   raised ground: menus, figure panels, the pair spread
+--well         #E8E6DF   sunk ground: sticky toolbar, running head
+--ink          #15161A   network lines, text, rose outlines      16.3:1
+--ink-muted    #383A40   long-form prose                         10.2:1
+--ink-subtle   #52545B   labels, captions, units                  6.8:1
+--rule-strong  #6C6E74   structural: card rules, section edges     4.6:1
+--rule         #86878C   informative: sampling circle, rose ring   3.2:1
+--rule-faint   #D6D4CD   decorative: row separators                1.3:1
 ```
 
 The networks are drawn in ink on plate. Nothing else. A street network rendered in colour becomes decoration; rendered in black it stays evidence.
 
-The ground is warm because neither ink is one a press would put on bright white. Every text role clears AA on it and the measured ratio is written beside the token, in `globals.css` as well as here — a muted step whose contrast nobody wrote down is how `text-ink/50` once shipped at 3.5:1.
+**The stock moved in the 2026 design pass.** It was a warm cream (#F7F4EC), and the cream read as an old scan rather than a current study and dulled the printing blue. The sheet is now a cooler, less yellow off-white; it is still not bright white, because neither ink is one a press would put on bright white. Every text role clears AA on it and the measured ratio is written beside the token, in `globals.css` as well as here — a muted step whose contrast nobody wrote down is how `text-ink/50` once shipped at 3.5:1.
+
+**Three grounds, not one.** `sheet` is raised and `well` is sunk. They separate the surfaces a reader operates (the toolbar, a menu) from the plate the figures sit on, without a drop shadow anywhere in the product. They are grounds, not rungs: every text rung, the structural rule and both hues are asserted at their thresholds on all three.
 
 ### The neutrals are a ladder, and every rung has a job
 
@@ -63,10 +67,12 @@ The sheet and the two hues have not moved. Everything between them has, because 
 ### The only two hues in the product
 
 ```
---drive        #1F4E6B   printing blue                            8.1:1
---walk         #A3431F   brick                                    5.7:1
---overprint    #13140D   drive × walk — not chosen                16.9:1
+--drive        #1B4F78   printing blue                            7.8:1
+--walk         #A8431C   brick                                    5.4:1
+--overprint    #635853   half-strength drive × walk — not chosen  6.2:1
 ```
+
+The blue is a little deeper and cooler than it was (#1F4E6B) so it separates from ink on a thin rose bar; the brick a little warmer (#A3431F) so it reads as brick rather than rust on the new stock.
 
 **These carry the entire semantic load**, because the drive/walk gap is the finding. Everything else being monochrome means the comparison is the only coloured thing on the page and cannot be missed.
 
@@ -80,7 +86,9 @@ draws in the tokens, not in the exported brand file's own near-miss palette, so
 it moves with the sheet under `prefers-contrast: more`. Nothing else may claim
 this exception.
 
-**They are two press inks, and where they overlap they overprint.** In the paired rose both series multiply, so the overlap is the colour the two inks make together — the operation a two-colour press performs, and the reason this palette belongs to this product rather than to any product. `--overprint` is declared only so a key can draw a swatch and so a browser without `mix-blend-mode` has something to fall back to; on the page it is produced, never painted.
+**They are two press inks, and where they overlap they overprint.** In the paired rose both series are filled at half strength and multiply, so the overlap is the colour the two tints make together — the operation a two-colour press performs, and the reason this palette belongs to this product rather than to any product. `--overprint` is declared only so a key can draw a swatch and so a browser without `mix-blend-mode` has something to fall back to; on the page it is produced, never painted.
+
+**Half strength, not full.** At full strength blue × brick is #14140D — indistinguishable from the ink outlines — so until this pass the paired rose read as a black shape with coloured fringes, and the gap the hues exist to show was the one thing it hid. At half strength the three regions are three visibly different tones, and the outlines, at full strength, still carry each bar's edge.
 
 **The overprint does not replace the shape cue, and must not be allowed to.** Blue and brick sit at 1.4:1 to each other — a figure the palette test records rather than tolerates — so they are not separable by luminance and never were. Overprint distinguishes the *overlap*; the heavy outline on walk distinguishes the *two networks*. A reader who separates neither hue still reads three regions. Removing the outline because the overlap now has a colour would quietly return the product to hue-only encoding.
 
@@ -209,24 +217,28 @@ A pair page is three figures, two metric columns and a difference drawing, and i
 ## 7. Type
 
 ```
-Newsreader              display, headings, prose — academic register
-Atkinson Hyperlegible   labels, controls, axis text
-IBM Plex Mono           all metrics, bearings, coordinates, citations
+Newsreader                   display, headings, prose — academic register
+Atkinson Hyperlegible Next   labels, controls, axis text, metric names
+Atkinson Hyperlegible Mono   all figures, bearings, coordinates, citations
 ```
 
-Self-hosted via `next/font`.
+Self-hosted: Newsreader via `next/font/google`, both Atkinson faces from `app/fonts` via `next/font/local` (OFL 1.1), because the Google loader in Next 14 predates them.
 
 **Newsreader is variable on `opsz`, and the axis is requested.** Source Serif 4 has the same axis and was loaded as two static weights, which meant the 36 px heading was set with the letterfit of 16 px body text and the body with the letterfit of a heading — exactly backwards, and invisible until you know to look for it. Optical sizing now follows the size, automatically, everywhere the serif appears.
 
 **Atkinson Hyperlegible is a decision, not a taste.** It was drawn by the Braille Institute for readers with low vision, and its letterforms are drawn so that the characters that normally collapse into one another stay apart: `l` against `I` against `1`, `0` against `O`, `6` against `8`, `b/d`, `p/q`. This product is made of place names and three-decimal figures. That is the whole argument.
 
-Its cost is stated rather than discovered: **there is no 600.** The face ships 400 and 700, so `font-semibold` on a sans element resolves to 700 and the label voice is a shade heavier than it used to be.
+**The argument now covers the figures too.** Since 2025 the Braille Institute ships *Next*, variable 200–800 — which ends the missing 600 the original imposed — and a *Mono* with the same disambiguated forms. The mono replaced IBM Plex Mono, so the digits, which are most of the text in a metric column, get the legibility the sans was chosen for, and labels and figures read as one voice.
+
+**Metric names are sans; only figures are mono.** A column where the label and the number were both monospace read like a terminal, and the figure lost its emphasis to its own label.
+
+**Display headings are 500, tracked −2.5%.** 600 at 36 px and above was heavy for a journal, and the serif's default fit opens up at display sizes.
 
 ```
 13  15  16  18  22  28  36  46      1.25 ratio, with two roles below the floor
 ```
 
-Light ground, so no dark-mode weight correction. Body 400, headings 600.
+Light ground, so no dark-mode weight correction. Body 400, display headings 500, small headings and labels 600.
 
 **Body floor is 16.** A sentence a reader is expected to read is 16 or larger, including the ones that feel secondary: the standing description in the masthead and the thin-coverage warning are both arguments, not annotations.
 
@@ -245,7 +257,7 @@ One value used to do both, so a nine-line argument and a two-line site note were
 
 ### The label role
 
-`font-mono · 14 · uppercase · tracking-wide` marks a **standing label** — an element that names a mode or a destination rather than saying anything: the language switch, a section marker over a figure. Uppercase is what stops these reading as prose at a size where prose is not allowed.
+`13 · uppercase · tracking-wide` marks a **standing label** — an element that names a mode or a destination rather than saying anything: the language switch, a section marker over a figure. Uppercase is what stops these reading as prose at a size where prose is not allowed.
 
 It is the only place uppercase or letter-spacing appears. Headings are never uppercase; neither is anything with a verb in it.
 

@@ -13,6 +13,11 @@
  * clearing the threshold for the job it does, in strictly descending order.
  * One rung sits below 3:1 on purpose and is named here, so that adding a
  * second one is a test failure rather than a habit.
+ *
+ * Three grounds, not one. `sheet` (raised) and `well` (sunk) are surfaces a
+ * rung is read on, not rungs themselves, so they carry no ratio of their own —
+ * and every text rung and both hues are measured on each of them, because a
+ * label that clears on the page and fails in the toolbar is still a failure.
  */
 
 import { describe, expect, it } from 'vitest'
@@ -70,7 +75,11 @@ const root = block(':root {')
 const contrastMore = block('@media (prefers-contrast: more)')
 const base = tokens(root)
 const more = tokens(contrastMore)
-const PLATE = base.get('plate') ?? '#f7f4ec'
+const PLATE = base.get('plate') ?? '#f4f3ee'
+
+/* The grounds a rung can sit on. Not rungs: they have no ratio of their own. */
+const GROUNDS = ['plate', 'sheet', 'well'] as const
+const isGround = (name: string): boolean => (GROUNDS as readonly string[]).includes(name)
 
 /* The ladder, and the threshold each rung is used at. DESIGN.md §3. */
 const LADDER: readonly { token: string; least: number; role: string }[] = [
@@ -82,16 +91,16 @@ const LADDER: readonly { token: string; least: number; role: string }[] = [
 ]
 
 describe('the declared ratios', () => {
-  it('are written beside every colour but the sheet itself', () => {
+  it('are written beside every colour but the grounds', () => {
     for (const [name, value] of base) {
-      if (name === 'plate') continue
+      if (isGround(name)) continue
       expect(declared(root, name), `--${name} (${value}) has no measured ratio`).toBeDefined()
     }
   })
 
   it('are what the colours actually measure', () => {
     for (const [name, value] of base) {
-      if (name === 'plate') continue
+      if (isGround(name)) continue
       const written = declared(root, name)
       if (written === undefined) continue
       const measured = contrast(value, PLATE)
@@ -127,10 +136,48 @@ describe('the neutral ladder', () => {
 
   it('has exactly one rung below 3:1, and it is the decorative one', () => {
     const quiet = [...base.entries()]
-      .filter(([name]) => name !== 'plate')
+      .filter(([name]) => !isGround(name))
       .filter(([, value]) => contrast(value, PLATE) < 3)
       .map(([name]) => name)
     expect(quiet).toEqual(['rule-faint'])
+  })
+})
+
+describe('the grounds', () => {
+  it('are all declared', () => {
+    for (const ground of GROUNDS) expect(base.get(ground), `--${ground} is missing`).toBeDefined()
+  })
+
+  /*
+   * `rule` is left out on purpose: it draws the sampling circle and the rose's
+   * ring, and neither is ever set on the sunk well. Everything that is —
+   * toolbar labels, chips, the running head — is text or a structural rule.
+   */
+  it('carry every text rung, the structural rule and both hues at their thresholds', () => {
+    const onEveryGround: readonly { token: string; least: number }[] = [
+      { token: 'ink', least: 4.5 },
+      { token: 'ink-muted', least: 4.5 },
+      { token: 'ink-subtle', least: 4.5 },
+      { token: 'rule-strong', least: 3 },
+      { token: 'drive', least: 4.5 },
+      { token: 'walk', least: 4.5 },
+    ]
+    for (const ground of GROUNDS) {
+      const surface = base.get(ground) ?? PLATE
+      for (const rung of onEveryGround) {
+        const value = base.get(rung.token) ?? surface
+        expect(
+          contrast(value, surface),
+          `--${rung.token} on --${ground} must clear ${rung.least}:1`,
+        ).toBeGreaterThanOrEqual(rung.least)
+      }
+    }
+  })
+
+  it('keep the informative rule at 3:1 on the grounds a figure is drawn on', () => {
+    for (const ground of ['plate', 'sheet'] as const) {
+      expect(contrast(base.get('rule') ?? PLATE, base.get(ground) ?? PLATE)).toBeGreaterThanOrEqual(3)
+    }
   })
 })
 

@@ -177,12 +177,12 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
      * needs — prose keeps it, tables and lists do not.
      */
     <div>
-      <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">
+      <h1 className="m-0 font-serif text-2xl font-medium leading-tight tracking-display">
         {locale === 'id' ? 'Metode' : 'Method'}
       </h1>
 
       <section className="mt-8 max-w-prose">
-        <h2 className="m-0 font-serif text-lg font-semibold">
+        <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
           {locale === 'id' ? 'Rujukan metode' : 'Method reference'}
         </h2>
         <p className="mt-2 font-mono text-xs leading-prose">
@@ -197,7 +197,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
       </section>
 
       <section className="mt-12 max-w-prose">
-        <h2 className="m-0 font-serif text-lg font-semibold">
+        <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
           {locale === 'id' ? 'Parameter' : 'Parameters'}
         </h2>
         <dl className="tabular mt-2 grid grid-cols-[auto_1fr] gap-x-6 font-mono text-xs">
@@ -220,7 +220,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
       </section>
 
       <section className="mt-12">
-        <h2 className="m-0 font-serif text-lg font-semibold">
+        <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
           {locale === 'id' ? 'Definisi' : 'Definitions'}
         </h2>
         {/*
@@ -246,7 +246,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
       </section>
 
       <section className="mt-12 max-w-prose">
-        <h2 className="m-0 font-serif text-lg font-semibold">
+        <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
           {locale === 'id' ? 'Bagaimana angkanya diuji' : 'How the numbers are tested'}
         </h2>
         <p className="mt-2 font-serif text-md leading-prose">
@@ -257,7 +257,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
       </section>
 
       <section className="mt-12 max-w-prose">
-        <h2 className="m-0 font-serif text-lg font-semibold">
+        <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
           {locale === 'id' ? 'Batasan' : 'Limitations'}
         </h2>
         {limitations.map((limitation, index) => (
@@ -278,7 +278,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
        * so a sceptical reader had no way to check either. Here they are.
        */}
       <section className="mt-12">
-        <h2 id="pemilihan" className="m-0 font-serif text-lg font-semibold">
+        <h2 id="pemilihan" className="m-0 font-serif text-lg font-medium tracking-heading">
           {d('selectionHeading', locale)}
         </h2>
         <p className="mt-2 max-w-prose font-serif text-md leading-prose">
@@ -385,7 +385,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
       </section>
 
       <section className="mt-12">
-        <h2 className="m-0 font-serif text-lg font-semibold">
+        <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
           {locale === 'id' ? 'Data dan lisensi' : 'Data and licence'}
         </h2>
         <div className="max-w-prose">

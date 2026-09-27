@@ -90,7 +90,7 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
       */}
       <div className="mt-6 lg:grid lg:grid-cols-[minmax(0,68ch)_minmax(0,18rem)] lg:items-start lg:gap-x-12">
         <header>
-          <h1 className="m-0 font-serif text-2xl font-semibold leading-tight">{site.name}</h1>
+          <h1 className="m-0 font-serif text-2xl font-medium leading-tight tracking-display">{site.name}</h1>
           {/* The caption tier. The same datum is set at 14 on all sixteen plate
               cards, and the same datum should not be set two ways — it names the
               place and its type, which is a caption rather than a sentence
@@ -148,7 +148,7 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
 
       {editorial.length > 0 ? (
         <section className="mt-12 max-w-prose">
-          <h2 className="m-0 font-serif text-lg font-semibold">
+          <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
             {locale === 'id' ? 'Catatan' : 'Note'}
           </h2>
           {editorial.map((paragraph, index) => (

@@ -17,52 +17,50 @@
   /*
    * Colour — DESIGN.md §3. Monochrome plus exactly two hues. Ratios on plate.
    *
-   * Two inks on an uncoated stock. The two hues are the same two the product
-   * has always had, taken to press weights: drive is a printing blue, walk a
-   * brick, and the ground is the warm sheet neither of them would print on if
-   * it were bright white.
+   * Two inks on a sheet. Drive is a printing blue, walk a brick. The sheet was
+   * a warm cream until the 2026 design pass; it is now a cooler, less yellow
+   * stock, because the cream read as an old scan and dulled the blue.
    *
-   * The neutrals are a ladder and every rung has a job. The sheet and the two
-   * hues are unchanged; what moved is everything between them, because three
-   * of the rungs used to do nearly the same thing and two of them could not
-   * draw a boundary a reader could see:
+   * Three grounds, not one. `plate` is the page; `sheet` is raised (menus,
+   * figure panels, the pair spread); `well` is sunk (the sticky toolbar, the
+   * running head). They separate surfaces without a drop shadow, and they are
+   * grounds rather than rungs: the palette test measures every text rung on
+   * all three of them.
    *
-   *   ink          17.1  text
-   *   ink-muted    10.8  long-form prose
-   *   ink-subtle    7.4  labels, units, captions
-   *   rule-strong   5.1  structural — a card's rule, a section boundary
-   *   rule          3.1  informative — the sampling circle, the rose's bound
-   *   rule-faint    1.7  decorative — row separators, and nothing else
+   * The neutrals are a ladder and every rung has a job:
    *
-   * `rule` carries information: the sampling circle is the edge of the sample
-   * and the rose's ring is the bound its bars are read against, so it clears
-   * the 3:1 that WCAG asks of a graphic a reader needs. It used to sit at
-   * 2.0, which is a line you can only see if you already know it is there.
+   *   ink          16.3  text
+   *   ink-muted    10.2  long-form prose
+   *   ink-subtle    6.8  labels, units, captions
+   *   rule-strong   4.6  structural — a card's rule, a section boundary
+   *   rule          3.2  informative — the sampling circle, the rose's bound
+   *   rule-faint    1.3  decorative — row separators, and nothing else
    *
-   * `rule-faint` is below 3:1 deliberately and is the only token that is. It
-   * separates rows in a column whose figures are already aligned and whose
-   * labels are already there; nothing in the table depends on seeing it, and
-   * a row rule that competes with its own numbers is how ten metrics became
-   * a grey block twice the weight of the drawing above them.
+   * `rule` carries information, so it clears 3:1. `rule-faint` is below 3:1
+   * deliberately and is the only rung that is.
    *
    * Every ratio here is asserted rather than written down and hoped for —
    * `tests/unit/palette.test.ts` recomputes each one from the hex beside it
    * and fails if the comment and the colour have drifted apart.
    *
-   * `--overprint` is not chosen. It is drive multiplied by walk, which is what
-   * the two inks make where they overlap — computed once here so a swatch can
-   * be drawn, and produced for real by `mix-blend-mode` in the rose.
+   * `--overprint` is not chosen. It is what the two rose fills make where they
+   * overlap — each ink at half strength, multiplied — computed once here so a
+   * key can draw a swatch, and produced for real by `mix-blend-mode`. At full
+   * strength the two inks multiplied to #14140d, which could not be told from
+   * the ink outline, so the overlap hid both series.
    */
-  --plate: #f7f4ec;
-  --ink: #141209; /* 17.1:1 */
-  --ink-muted: #3b372f; /* 10.8:1 — long-form secondary prose */
-  --ink-subtle: #544f45; /*  7.4:1 — labels, captions, units, quote bars */
-  --rule-strong: #6e675a; /*  5.1:1 — structural: card rules, section boundaries */
-  --rule: #928a78; /*  3.1:1 — informative hairlines: rings, sampling circles */
-  --rule-faint: #c4bdae; /*  1.7:1 — row separators inside a bordered table */
-  --drive: #1f4e6b; /*  8.1:1 */
-  --walk: #a3431f; /*  5.7:1 */
-  --overprint: #13140d; /* 16.9:1 — drive × walk, where both networks run */
+  --plate: #f4f3ee;
+  --sheet: #fbfaf7; /* ground — raised: menus, figure panels */
+  --well: #e8e6df; /* ground — sunk: toolbar, running head */
+  --ink: #15161a; /* 16.3:1 */
+  --ink-muted: #383a40; /* 10.2:1 — long-form secondary prose */
+  --ink-subtle: #52545b; /*  6.8:1 — labels, captions, units, quote bars */
+  --rule-strong: #6c6e74; /*  4.6:1 — structural: card rules, section boundaries */
+  --rule: #86878c; /*  3.2:1 — informative hairlines: rings, sampling circles */
+  --rule-faint: #d6d4cd; /*  1.3:1 — row separators inside a bordered table */
+  --drive: #1b4f78; /*  7.8:1 */
+  --walk: #a8431c; /*  5.4:1 */
+  --overprint: #635853; /*  6.2:1 — half-strength drive × walk, where both networks run */
 
   /*
    * Type — DESIGN.md §7. One scale, 1.25 ratio, floor 16px for body.
@@ -253,7 +251,7 @@ li {
  * Progressive enhancement with no script. The wedges carry fill-opacity as an
  * SVG presentation attribute, which loses to any stylesheet rule, so a browser
  * without `mix-blend-mode` keeps the older transparency treatment and one with
- * it gets full-strength ink.
+ * it gets half-strength inks that overprint.
  *
  * The shape cue is not replaced by this. Blue and rust sit at 1.4:1 to each
  * other, so walk keeps the heavy outline it has: overprint distinguishes the
@@ -262,7 +260,10 @@ li {
 @supports (mix-blend-mode: multiply) {
   .rose-ink {
     mix-blend-mode: multiply;
-    fill-opacity: 1;
+    /* Half strength, not full. Two full inks multiply to near-black, which
+       is indistinguishable from the outlines and hides both series; two
+       tints make a warm grey that is neither. DESIGN.md §3. */
+    fill-opacity: 0.5;
   }
 }
 
@@ -369,8 +370,8 @@ li {
  * DESIGN.md §3 fixes the palette, and this does not replace it: it is the same
  * two hues taken darker, plus the hairlines made visible, for a reader who has
  * asked their system for more contrast. Measured on plate — walk goes from
- * 5.7:1 to 8.1:1, drive from 8.1:1 to 10.7:1, the structural rule from 5.1:1
- * to 8.4:1, and the informative hairline from 3.1:1 to 5.4:1. Every step is
+ * 5.4:1 to 8.0:1, drive from 7.8:1 to 10.6:1, the structural rule from 4.6:1
+ * to 7.7:1, and the informative hairline from 3.2:1 to 5.3:1. Every step is
  * asserted to be a step up, in the same test that checks the base ladder.
  *
  * Redefining the tokens is now the whole of it. The utility classes resolve to
@@ -380,14 +381,14 @@ li {
  */
 @media (prefers-contrast: more) {
   :root {
-    --ink-muted: #2b2822;
-    --ink-subtle: #3a362f;
-    --rule-strong: #4e4739;
-    --rule: #6b6354;
-    --rule-faint: #8b8375;
+    --ink-muted: #26272c;
+    --ink-subtle: #35373d;
+    --rule-strong: #4a4c52;
+    --rule: #62646a;
+    --rule-faint: #85878c;
     --drive: #173b52;
     --walk: #7e3316;
-    --overprint: #0b0b07;
+    --overprint: #3b302b;
   }
 
   /*
