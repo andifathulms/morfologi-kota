@@ -163,8 +163,8 @@ function Segmented({
   readonly checked: string
 }) {
   return (
-    <fieldset className="m-0 flex items-center gap-2 border-0 p-0">
-      <legend className="float-left mr-2 p-0 font-sans text-2xs font-semibold uppercase tracking-wide text-ink-subtle">
+    <fieldset className="m-0 border-0 p-0">
+      <legend className="mb-1 p-0 font-sans text-2xs font-semibold uppercase tracking-wide text-ink-subtle">
         {legend}
       </legend>
       <div className="seg seg-sm">
@@ -357,7 +357,7 @@ export function PlateGrid({
         every ordering rule above works unchanged (DESIGN.md §6).
       */}
       <div className="plate-controls plate-toolbar -mx-4 mb-4 border-y border-rule-strong bg-well px-4 py-3 md:sticky md:top-0 md:z-20">
-        <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+        <div className="flex flex-wrap items-end gap-x-6 gap-y-3">
           <details className="sort-menu relative">
             <summary className="select-none">
               <span className="font-sans text-2xs font-semibold uppercase tracking-wide text-ink-subtle">
@@ -442,7 +442,7 @@ export function PlateGrid({
           ) : null}
 
           {readingLink === undefined ? null : (
-            <a href={readingLink.href} className="font-sans text-xs text-ink-muted lg:ml-auto">
+            <a href={readingLink.href} className="pb-2 font-sans text-xs text-ink-muted lg:ml-auto">
               {readingLink.label} →
             </a>
           )}
@@ -499,7 +499,12 @@ export function PlateGrid({
         {children.map((child, index) => {
           const site = sites[index]
           return (
-            <div key={site?.slug ?? index} data-slug={site?.slug} data-thin={site?.thin === true ? '' : undefined}>
+            <div
+              key={site?.slug ?? index}
+              data-slug={site?.slug}
+              data-thin={site?.thin === true ? '' : undefined}
+              className="plate-cell"
+            >
               {child}
             </div>
           )

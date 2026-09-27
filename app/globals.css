@@ -357,8 +357,9 @@ li {
  */
 .sort-menu > summary {
   display: inline-flex;
-  align-items: center;
-  gap: var(--space-3);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
   list-style: none;
   cursor: pointer;
 }
@@ -369,7 +370,10 @@ li {
   display: inline-flex;
   align-items: center;
   gap: var(--space-3);
-  padding: 6px 10px;
+  min-width: 12rem;
+  justify-content: space-between;
+  padding: 7px 12px;
+  line-height: 1.2;
   border: 0.5px solid var(--ink);
   border-radius: 2px;
   background: var(--sheet);
@@ -611,6 +615,42 @@ input:focus-visible + .sort-item {
   }
   .gap-axis > span:first-child {
     display: none;
+  }
+}
+
+/*
+ * Small multiples line up.
+ *
+ * A thin site's card carries a sentence under its coverage meter, so its disc
+ * sat lower than its neighbours' and the row stopped being a row: the eye
+ * could not sweep across four discs, four roses or four tables at one height,
+ * which is the whole reason for small multiples. Each card spans the same
+ * eight row tracks of the plate — header, coverage, disc, rose, metrics, rose
+ * table, note, footer — through subgrid, so every part of every card in a row
+ * starts where its neighbours' do. A density mode that hides parts leaves
+ * those tracks empty on every card alike. Without subgrid the cards simply
+ * stack their parts as before.
+ */
+@supports (grid-template-rows: subgrid) {
+  /* The plate's row gap would sit between every one of a card's eight tracks
+     — and survive when a density mode empties four of them — so the tracks
+     take the card's own gap and the space between cards moves to the cell. */
+  .plate-grid {
+    row-gap: var(--space-3);
+  }
+  .plate-grid > .plate-cell {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 8;
+    row-gap: var(--space-3);
+    padding-bottom: var(--space-12);
+  }
+  .plate-grid > .plate-cell > .site-card {
+    display: grid;
+    grid-template-rows: subgrid;
+    grid-row: span 8;
+    row-gap: var(--space-3);
+    align-content: start;
   }
 }
 

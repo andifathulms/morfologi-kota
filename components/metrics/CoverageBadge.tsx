@@ -91,12 +91,14 @@ export function CoverageMeter({
 
   return (
     <div className={thin ? 'border-l-2 border-ink pl-3' : undefined}>
-      <p data-metric={metric} className="tabular m-0 flex items-baseline justify-between gap-2 font-sans text-xs">
-        <span className="text-ink-muted">
+      {/* Two units that wrap as units: on a narrow card the value drops to
+          its own line, right-aligned, rather than breaking mid-phrase. */}
+      <p data-metric={metric} className="tabular m-0 flex flex-wrap items-baseline gap-x-2 font-sans text-xs">
+        <span className="whitespace-nowrap text-ink-muted">
           {thin ? <span aria-hidden="true">⚑ </span> : null}
           {d('coverage', locale)}
         </span>
-        <span className="font-mono">
+        <span className="ml-auto whitespace-nowrap font-mono">
           {percent(coverage.pedestrianShare)} · {label}
         </span>
       </p>

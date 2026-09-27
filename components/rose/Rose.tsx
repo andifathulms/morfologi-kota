@@ -235,7 +235,7 @@ export function Rose({
       className={
         headline === undefined
           ? 'm-0'
-          : 'm-0 grid grid-cols-[minmax(0,0.8fr)_minmax(0,1fr)] items-center gap-x-4 gap-y-2'
+          : 'm-0 grid grid-cols-2 items-center gap-x-4 gap-y-2'
       }
     >
       <svg

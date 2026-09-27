@@ -27,7 +27,7 @@ export function generateMetadata({ params }: { params: { locale: string } }): Me
 const LON_MIN = 94.5
 const LON_MAX = 141.5
 const LAT_MAX = 3
-const LAT_MIN = -10.5
+const LAT_MIN = -11
 const WIDTH = 1000
 const HEIGHT = 280
 
@@ -104,7 +104,14 @@ export default function SitesPage({ params }: { params: { locale: string } }) {
           ))}
           {groups.map(({ group, sites: members }) => {
             const lon = members.reduce((sum, site) => sum + site.centreLonDeg, 0) / members.length
-            const lat = Math.max(...members.map((site) => site.centreLatDeg))
+            const meanLat = members.reduce((sum, site) => sum + site.centreLatDeg, 0) / members.length
+            /* Java and Bali sit along the bottom of the frame and against
+               each other, so their labels go under their points; the rest
+               go above. */
+            const below = meanLat < -6
+            const labelY = below
+              ? y(Math.min(...members.map((site) => site.centreLatDeg))) + 26
+              : y(Math.max(...members.map((site) => site.centreLatDeg))) - 14
             /* Anchored toward the middle near either edge, so a label at
                the far east or west of the archipelago is not clipped. */
             const anchor = x(lon) > WIDTH * 0.85 ? 'end' : x(lon) < WIDTH * 0.15 ? 'start' : 'middle'
@@ -112,10 +119,16 @@ export default function SitesPage({ params }: { params: { locale: string } }) {
               <text
                 key={group}
                 x={anchor === 'end' ? x(lon) + 6 : anchor === 'start' ? x(lon) - 6 : x(lon)}
-                y={y(lat) - 14}
+                y={labelY}
                 textAnchor={anchor}
                 fontSize={13}
                 fill="var(--ink-subtle)"
+                /* A halo in the sheet's colour, so a latitude line or a
+                   neighbouring point never runs through the text. */
+                stroke="var(--sheet)"
+                strokeWidth={5}
+                strokeLinejoin="round"
+                paintOrder="stroke"
                 className="font-sans"
               >
                 {t(ISLAND_LABEL[group], locale)} · {members.length}
