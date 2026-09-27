@@ -4,7 +4,8 @@ import localFont from 'next/font/local'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import '../globals.css'
-import { LOCALES, d, isLocale, type Locale } from '@/lib/i18n'
+import { LOCALES, d, isLocale, t, type Locale } from '@/lib/i18n'
+import { DEFAULT_TAG_MAPPING } from '@/lib/tags'
 import { loadManifest } from '@/lib/data'
 import { NavLink } from '@/components/nav/NavLink'
 import { Mark } from '@/components/brand/Mark'
@@ -180,43 +181,66 @@ export default function LocaleLayout({
             takes the second, on its own measure, where it reads as the
             standing description it is rather than as a caption to the name.
           */}
-          <header className="border-b-2 border-ink py-6">
-            <div className="flex flex-wrap items-baseline justify-between gap-x-8 gap-y-3">
-              <div className="flex items-start gap-3">
-                <Mark size={34} className="mt-1 shrink-0" />
+          {/*
+            One row since the 2026 pass: identity, the three sections, the
+            modelling choice every number depends on, and the language. The
+            standing description stays under it — a reader landing on any page
+            is still told in one sentence what this measures — at caption size,
+            because the plate's opening now says it at full size.
+
+            Three sections, each with one job: the plate shows, Lokasi finds,
+            Metode explains. Asumsi is a tab of Metode, and the tag mapping is
+            a chip on every page rather than a nav item on one — the mapping
+            changes every number, so it is more visible here, not less
+            (CLAUDE.md, Invariants §3).
+          */}
+          <header className="border-b-2 border-ink pb-3 pt-4">
+            <div className="flex flex-wrap items-center justify-between gap-x-8 gap-y-3">
+              <div className="flex items-center gap-3">
+                <Mark size={30} className="shrink-0" />
                 <Link
                   href={`/${locale}/lempeng`}
-                  className="font-serif text-xl font-semibold leading-tight no-underline"
+                  className="font-serif text-xl font-semibold leading-none no-underline"
                 >
                   {d('siteTitle', locale)}
                 </Link>
               </div>
-              {/* One utility row: where you can go, and in which language. */}
-              <div className="flex flex-wrap items-baseline gap-x-6 gap-y-2">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
                 <nav
                   aria-label={locale === 'id' ? 'Bagian utama' : 'Sections'}
-                  className="flex items-baseline gap-6 font-sans text-base"
+                  className="flex items-center gap-1 font-sans text-base"
                 >
-                  <NavLink href={`/${locale}/lempeng`}>{d('navPlate', locale)}</NavLink>
-                  <NavLink href={`/${locale}/asumsi`}>{d('navAssumptions', locale)}</NavLink>
-                  <NavLink href={`/${locale}/metode`}>{d('navMethod', locale)}</NavLink>
+                  <NavLink href={`/${locale}/lempeng`} className="nav-item">
+                    {d('navPlate', locale)}
+                  </NavLink>
+                  <NavLink href={`/${locale}/lokasi`} className="nav-item">
+                    {locale === 'id' ? 'Lokasi' : 'Sites'}
+                  </NavLink>
+                  <NavLink href={`/${locale}/metode`} also={[`/${locale}/asumsi`]} className="nav-item">
+                    {d('navMethod', locale)}
+                  </NavLink>
                 </nav>
+                <Link
+                  href={`/${locale}/asumsi`}
+                  data-print="hide"
+                  className="inline-flex items-center gap-2 border border-rule-strong px-2 py-1 font-sans text-xs text-ink-muted no-underline"
+                >
+                  {d('tagMapping', locale)}{' '}
+                  <span className="font-semibold text-ink">{t(DEFAULT_TAG_MAPPING.label, locale)}</span>
+                </Link>
                 <Link
                   href={`/${other}/lempeng`}
                   lang={other}
                   hrefLang={other}
                   data-print="hide"
-                  /* Not the 13 px label role: this one is a link. A standing
-                     label names a thing and a control is pressed, and the
-                     smallest type in the product is the wrong size for
-                     anything a reader has to hit. */
+                  /* Not the 13 px label role: this one is a link. */
                   className="font-mono text-xs uppercase tracking-wide"
                 >
                   {other === 'en' ? 'English' : 'Bahasa Indonesia'}
                 </Link>
               </div>
             </div>
-            <p className="m-0 mt-3 max-w-prose font-sans text-base leading-note text-ink-subtle">
+            <p className="m-0 mt-2 max-w-prose font-sans text-xs leading-note text-ink-subtle">
               {d('tagline', locale)}
             </p>
           </header>

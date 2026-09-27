@@ -23,6 +23,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   const paths = LOCALES.flatMap((locale) => [
     routePath(locale, 'lempeng'),
+    routePath(locale, 'lokasi'),
     routePath(locale, 'asumsi'),
     routePath(locale, 'metode'),
     ...SITES.map((site) => routePath(locale, `lokasi/${site.slug}`)),

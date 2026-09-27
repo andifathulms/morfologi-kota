@@ -244,7 +244,7 @@ export default function PlatePage({ params }: { params: { locale: string } }) {
       {/* The caveat, ahead of every figure it qualifies (PRD §4). Set at the
           size of the argument it is, not as a parameter. */}
       <aside
-        className="mb-16 max-w-figure border-l-2 border-ink bg-sheet px-6 py-5"
+        className="mb-16 max-w-figure border-l-2 border-ink bg-sheet px-6 py-4"
         aria-labelledby="peringatan"
       >
         <h2 id="peringatan" className="m-0 font-serif text-lg font-medium tracking-heading">

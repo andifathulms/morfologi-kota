@@ -178,14 +178,14 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
       </div>
 
       {thin ? (
-        <p className="mb-6 mt-8 max-w-prose border-l-2 border-ink bg-sheet px-5 py-4 font-serif text-md leading-prose">
+        <p className="mb-6 mt-8 max-w-prose border-l-2 border-ink bg-sheet px-6 py-4 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Bacalah kedua kolom di bawah ini sebagai dua pembacaan dari data yang sama, bukan sebagai selisih yang sudah dapat disimpulkan. Gang di lokasi ini belum terpetakan cukup rapat untuk itu.'
             : 'Read the two columns below as two readings of the same data rather than as a gap that can yet be concluded from. The gang here are not mapped densely enough for that.'}
         </p>
       ) : null}
 
-      <div className="mt-10">
+      <div className="mt-12">
         <PairView bundle={bundle} locale={locale} set={manifest.sites} />
       </div>
 

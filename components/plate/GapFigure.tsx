@@ -232,7 +232,7 @@ export function GapFigure({
             ? `Tabel yang sama sebagai teks — ${entries.length} lokasi`
             : `The same as a table — ${entries.length} sites`}
         </summary>
-        <div className="mt-3 overflow-x-auto">
+        <div className="relative mt-3 overflow-x-auto">
           <table className="tabular w-full max-w-table border-collapse text-xs">
             <caption className="sr-only">
               {locale === 'id'

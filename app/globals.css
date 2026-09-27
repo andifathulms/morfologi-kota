@@ -270,6 +270,30 @@ li {
 }
 
 /*
+ * The masthead's sections. The current one takes an ink rule under it — the
+ * underline the nav always used, drawn as a border so it sits on the same
+ * baseline for every item whether or not it is current.
+ */
+.nav-item {
+  padding: 6px 10px;
+  border-bottom: 2px solid transparent;
+  text-decoration: none;
+  transition: border-color var(--dur-fast) var(--ease-house);
+}
+.nav-item.nav-current {
+  border-bottom-color: var(--ink);
+}
+@media (hover: hover) {
+  .nav-item:hover {
+    text-decoration: none;
+    border-bottom-color: var(--rule);
+  }
+  .nav-item.nav-current:hover {
+    border-bottom-color: var(--ink);
+  }
+}
+
+/*
  * The segmented control.
  *
  * A radio group set as one object: a hairline ink frame on the raised ground,

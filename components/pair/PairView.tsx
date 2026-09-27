@@ -172,7 +172,7 @@ export function PairView({
           tabIndex={0}
           role="group"
           aria-label={d('pairPanes', locale)}
-          className="pair-panes flex snap-x snap-mandatory gap-8 overflow-x-auto border-b border-rule-strong pb-4 md:contents"
+          className="pair-panes relative flex snap-x snap-mandatory gap-8 overflow-x-auto border-b border-rule-strong pb-4 md:contents"
         >
           {pane('drive')}
           {pane('walk')}
@@ -190,7 +190,7 @@ export function PairView({
             ? 'Garis tipis: setiap lokasi dalam set, kedua moda. Tanda: lokasi ini. Posisi, bukan nilai — tidak ada ujung yang lebih baik.'
             : 'Hairlines: every site in the set, both modes. Marks: this site. A position, not a value — neither end is better.'}
         </p>
-        <div className="mt-4 overflow-x-auto">
+        <div className="relative mt-4 overflow-x-auto">
           <ComparisonTable
             drive={drive.metrics}
             walk={walk.metrics}

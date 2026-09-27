@@ -49,15 +49,17 @@ pnpm lint
 ```
 app/
   [locale]/                 # id (default), en
-    lempeng/                # the plate — small multiples
-    lokasi/[slug]/          # the pair — drive vs walk
-    asumsi/                 # tag mapping + sensitivity
-    metode/                 # citation, definitions, ODbL, limitations
+    lempeng/                # the plate — opening disc, gap figure, small multiples
+    lokasi/                 # the index — sites by island group
+    lokasi/[slug]/          # the pair — drive vs walk, as a spread
+    asumsi/                 # tag mapping + sensitivity (a tab of Metode)
+    metode/                 # reading guide, citation, definitions, calibration, ODbL, limitations
 components/
   card/                     # network drawing + rose + metric column
   rose/                     # 36-bin polar histogram
   network/                  # ink hairline drawing, circular clip
-  pair/                     # side-by-side drive/walk + deltas
+  pair/                     # side-by-side drive/walk + comparison table
+  plate/                    # opening disc, gap figure, toolbar + grid
   metrics/                  # monospace tabular column
   table/                    # rose's text equivalent
 lib/
@@ -160,6 +162,12 @@ tests/
 The site cites Boeing 2019 for the method, states the sampling radius and tag mapping on every card, reports footway coverage per site, and says plainly that it describes urban form rather than rating it. OpenStreetMap is attributed under ODbL and the derived data is offered under the same terms. No OIKN or government branding anywhere, including on the IKN card.
 
 ## Current state
+
+**The 2026 design pass is four commits and DESIGN.md holds its reasoning** — §3 (the cooler stock, `sheet` and `well`, the half-strength overprint), §7 (Atkinson Hyperlegible Next and Mono, self-hosted from `app/fonts`), §6 and §6c (the plate's reading order, the opening disc, the gap figure, the sticky toolbar, the card's two-mode table and coverage meter), §6b (the pair as a spread with one comparison table), §6d (three sections, the mapping chip, the Lokasi index). Three things to know before changing it:
+
+- **The opening disc, the gap figure's metric switch, the toolbar and the coverage filter are all radios and `:has()`**, like the sort always was. The only script added is an inline one that closes the sort menu on choice, in `UrlState`'s pattern. Still one client component.
+- **The argument, calibration and legend moved from the plate to Metode** (`#cara-membaca`, `#kalibrasi`), linked from the toolbar. The coverage caveat did not move and must not: it stays ahead of every figure it qualifies.
+- **Screen-reader text inside a horizontal scroller needs a positioned ancestor.** `sr-only` is absolute, and an unpositioned `overflow-x-auto` wrapper does not clip it, so the page scrolls sideways on a phone. The wrappers carry `relative` for that reason.
 
 **M0–M6 shipped, plus a design pass across the plate and the pair.** Measures, pipeline, plate, pair, assumptions and method are all in place; 33 sites at r = 800 m, both modes, 3 tag mappings, 577 tests green.
 

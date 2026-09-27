@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { loadManifest, loadReference, loadSurvey } from '@/lib/data'
 import { ModeKey } from '@/components/legend/ModeKey'
+import { MethodTabs } from '@/components/nav/MethodTabs'
 import { ReferenceStrip } from '@/components/reference/ReferenceStrip'
 import { alternatesFor, openGraphUrl } from '@/lib/metadata'
 import { LOCALES, SITE_TYPE_LABEL, d, isLocale, t, type Locale, type Bilingual } from '@/lib/i18n'
@@ -203,9 +204,20 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
      * needs — prose keeps it, tables and lists do not.
      */
     <div>
-      <h1 className="m-0 font-serif text-2xl font-medium leading-tight tracking-display">
+      <h1 className="m-0 font-serif text-3xl font-medium leading-none tracking-display md:text-4xl">
         {locale === 'id' ? 'Metode' : 'Method'}
       </h1>
+      <MethodTabs
+        locale={locale}
+        contents={[
+          { id: 'cara-membaca', label: locale === 'id' ? 'Cara membaca lempeng' : 'Reading the plate' },
+          { id: 'parameter', label: locale === 'id' ? 'Parameter' : 'Parameters' },
+          { id: 'definisi', label: locale === 'id' ? 'Definisi' : 'Definitions' },
+          { id: 'kalibrasi', label: locale === 'id' ? 'Kalibrasi' : 'Calibration' },
+          { id: 'batasan', label: locale === 'id' ? 'Batasan' : 'Limitations' },
+          { id: 'pemilihan', label: locale === 'id' ? 'Pemilihan lokasi' : 'Site selection' },
+        ]}
+      />
 
       <section className="mt-8 max-w-prose">
         <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
@@ -262,7 +274,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
       </section>
 
       <section className="mt-12 max-w-prose">
-        <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
+        <h2 id="parameter" className="m-0 scroll-mt-6 font-serif text-lg font-medium tracking-heading">
           {locale === 'id' ? 'Parameter' : 'Parameters'}
         </h2>
         <dl className="tabular mt-2 grid grid-cols-[auto_1fr] gap-x-6 font-mono text-xs">
@@ -285,7 +297,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
       </section>
 
       <section className="mt-12">
-        <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
+        <h2 id="definisi" className="m-0 scroll-mt-6 font-serif text-lg font-medium tracking-heading">
           {locale === 'id' ? 'Definisi' : 'Definitions'}
         </h2>
         {/*
@@ -328,7 +340,7 @@ export default function MethodPage({ params }: { params: { locale: string } }) {
       </div>
 
       <section className="mt-12 max-w-prose">
-        <h2 className="m-0 font-serif text-lg font-medium tracking-heading">
+        <h2 id="batasan" className="m-0 scroll-mt-6 font-serif text-lg font-medium tracking-heading">
           {locale === 'id' ? 'Batasan' : 'Limitations'}
         </h2>
         {limitations.map((limitation, index) => (

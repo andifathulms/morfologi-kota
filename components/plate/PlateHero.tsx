@@ -119,7 +119,7 @@ export function PlateHero({
 
   return (
     <section className="plate-hero pb-12 pt-4 lg:pb-16 lg:pt-8" aria-labelledby="judul">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:gap-16">
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)] lg:items-center lg:gap-16">
         <div>
           <p className="tabular m-0 font-mono text-xs text-ink-subtle">
             {locale === 'id' ? 'Morfologi jaringan jalan' : 'Street network morphology'} · {count}{' '}
@@ -162,7 +162,7 @@ export function PlateHero({
             </div>
           </fieldset>
 
-          <dl className="tabular m-0 mt-8 grid grid-cols-2 gap-x-8 gap-y-5 sm:grid-cols-3">
+          <dl className="tabular m-0 mt-8 grid grid-cols-2 gap-x-8 gap-y-6 sm:grid-cols-3">
             {readout.map((row) => (
               <div key={row.key}>
                 <dt className="font-sans text-2xs font-semibold uppercase tracking-wide text-ink-subtle">
@@ -185,7 +185,7 @@ export function PlateHero({
             is preferable; they are the two limits of the measure (PRD §4).
           */}
           <figure className="m-0 mt-8 max-w-md">
-            <svg viewBox="0 0 100 12" preserveAspectRatio="none" className="block h-5 w-full" aria-hidden="true">
+            <svg viewBox="0 0 100 12" preserveAspectRatio="none" className="block h-6 w-full" aria-hidden="true">
               <line className="ruler-axis" x1={0} y1={8} x2={100} y2={8} />
               <line className="ruler-axis" x1={0.2} y1={4} x2={0.2} y2={12} />
               <line className="ruler-axis" x1={99.8} y1={4} x2={99.8} y2={12} />

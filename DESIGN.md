@@ -240,6 +240,19 @@ A pair page is three figures, two metric columns and a difference drawing, and i
 
 **Every card carries its radius and coverage confidence.** Not in a tooltip — printed on the card.
 
+### 6d. Three places, each with one job
+
+```
+Lempeng   shows      the claim, the gap at every site, the cards
+Lokasi    finds      the set by island group, and every pair page
+Metode    explains   reading the plate, parameters, definitions, calibration,
+                     limitations, site selection — and Asumsi as its second tab
+```
+
+**The masthead is one row**: the mark and wordmark, the three sections, a chip naming the active tag mapping, and the language. The chip is on every page and links to *Asumsi* — the mapping changes every number, so it is stated where every number is rather than behind one nav item (CLAUDE.md, Invariants §3). The standing description stays under the row at caption size; the plate's opening says it at full size.
+
+**The Lokasi index groups by island**, which is a fact about location and never a classification of form: it tints nothing and orders nothing but the alphabet within a group. It opens with the site centres plotted by longitude and latitude and no basemap — the archipelago appears from the points alone, and so does how unevenly the set covers it. Thin-coverage centres are hollow, as in the gap figure. Each entry carries the overlaid rose with its H and φ set beside it (§4, Invariants §12).
+
 ## 7. Type
 
 ```

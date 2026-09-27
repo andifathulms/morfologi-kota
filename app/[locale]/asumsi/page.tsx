@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
+import { MethodTabs } from '@/components/nav/MethodTabs'
 import Link from 'next/link'
 import { loadBundle, loadManifest } from '@/lib/data'
 import { alternatesFor, openGraphUrl } from '@/lib/metadata'
@@ -116,12 +117,13 @@ export default function AssumptionsPage({ params }: { params: { locale: string }
        *
        * Placement is explicit, so reading order is unchanged.
        */}
-      <div className="xl:grid xl:grid-cols-2 xl:items-start xl:gap-x-12">
+      <h1 className="m-0 font-serif text-3xl font-medium leading-none tracking-display md:text-4xl">
+        {locale === 'id' ? 'Asumsi' : 'Assumptions'}
+      </h1>
+      <MethodTabs locale={locale} />
+      <div className="mt-8 xl:grid xl:grid-cols-2 xl:items-start xl:gap-x-12">
       <section className="max-w-prose xl:col-start-1 xl:row-start-1">
-        <h1 className="m-0 font-serif text-2xl font-medium leading-tight tracking-display">
-          {locale === 'id' ? 'Asumsi' : 'Assumptions'}
-        </h1>
-        <p className="mt-4 font-serif text-md leading-prose">
+        <p className="m-0 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Nilai tag mana yang dihitung sebagai dapat dikendarai dan mana yang dapat dijalani kaki adalah pilihan pemodelan, bukan fakta. Pilihan itu mengubah setiap angka dalam produk ini, jadi ia ditampilkan sebagai kendali — bukan disembunyikan sebagai konstanta.'
             : 'Which tag values count as drivable and which as walkable is a modelling choice, not a fact. It changes every number in this product, so it is exposed as a control rather than buried as a constant.'}
