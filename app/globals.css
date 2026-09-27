@@ -628,6 +628,38 @@ input:focus-visible + .sort-item {
 }
 
 /*
+ * The pair's comparison table (components/pair/ComparisonTable). Its last
+ * column reuses the gap figure's marks on a per-metric axis, with one faint
+ * tick per site per mode — the distribution ruler's form (§6a).
+ */
+.compare-table {
+  min-width: 40rem;
+}
+.compare-col {
+  width: 34%;
+}
+.compare-track {
+  display: block;
+  height: 22px;
+  background: none;
+}
+.compare-axis {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  border-top: 0.5px solid var(--rule-strong);
+}
+.compare-tick {
+  position: absolute;
+  top: 50%;
+  width: 0;
+  height: 8px;
+  border-left: 1px solid var(--rule);
+  transform: translateY(-50%);
+}
+
+/*
  * The distribution ruler — DESIGN.md §6a.
  *
  * Every stroke here is declared once instead of on each element. There is one

@@ -377,11 +377,13 @@ export function Rose({
           </span>
         </figcaption>
       ) : caption ? (
+        /* One series per line: two series side by side wrapped mid-name in
+           any column narrower than the pair's, which is most of them. */
         <figcaption className="tabular mt-1 font-mono text-xs">
           {series.map((s) => {
             const name = nameFor(s.kind, locale)
             return (
-              <span key={s.kind} className="mr-4 inline-flex items-center gap-1">
+              <span key={s.kind} className="flex flex-wrap items-center gap-x-1">
                 {/* On every rose, not only the overlaid one. A single-series
                     rose named in `--drive` and nothing else is a name carried
                     by hue alone, which is the thing §10 forbids — and the two

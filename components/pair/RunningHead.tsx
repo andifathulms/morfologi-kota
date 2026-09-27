@@ -51,7 +51,7 @@ export function RunningHead({
        * as a running head instead of a stray line of type. The ground is
        * painted, or the figures beneath would scroll through it.
        */
-      className="tabular sticky top-0 z-10 -mx-4 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ink bg-plate px-4 py-2 font-mono text-xs"
+      className="tabular sticky top-0 z-10 -mx-4 flex flex-wrap items-baseline justify-between gap-x-6 gap-y-1 border-b border-ink bg-well px-4 py-2 font-mono text-xs"
     >
       <p className="m-0">
         <span className="font-semibold">{name}</span>

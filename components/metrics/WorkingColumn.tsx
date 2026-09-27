@@ -22,11 +22,17 @@ export function WorkingColumn({
   mode,
   radiusM,
   locale,
+  paired = false,
 }: {
   readonly metrics: ModeMetrics
   readonly mode: Mode
   readonly radiusM: number
   readonly locale: Locale
+  /**
+   * Titled by its mode rather than by "where these numbers come from", and
+   * without the note, where the page sets both once over two columns.
+   */
+  readonly paired?: boolean
 }) {
   const areaKm2 = (Math.PI * radiusM * radiusM) / 1_000_000
 
@@ -46,7 +52,7 @@ export function WorkingColumn({
   return (
     <div className="font-mono text-xs">
       <p className="m-0 mb-1 font-sans text-base font-semibold" style={{ color: `var(--${mode})` }}>
-        {d('workingHeading', locale)}
+        {paired ? d(mode, locale) : d('workingHeading', locale)}
       </p>
       <dl className="tabular m-0 grid grid-cols-[1fr_auto] gap-x-4">
         {rows.map((row) => (
@@ -56,9 +62,11 @@ export function WorkingColumn({
           </div>
         ))}
       </dl>
-      <p className="mt-2 max-w-prose font-sans text-base leading-note text-ink-muted">
-        {d('workingNote', locale)} {d('edgeCircuityNote', locale)}
-      </p>
+      {paired ? null : (
+        <p className="mt-2 max-w-prose font-sans text-base leading-note text-ink-muted">
+          {d('workingNote', locale)} {d('edgeCircuityNote', locale)}
+        </p>
+      )}
     </div>
   )
 }

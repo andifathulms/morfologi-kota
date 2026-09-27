@@ -228,6 +228,12 @@ A pair page is three figures, two metric columns and a difference drawing, and i
 
 **Figures are numbered here and nowhere else.** The pair's three figures are fixed and in a fixed order, so a number means something and gives a reader something to point at. The plate's cards are deliberately unnumbered: they re-sort, and a number that moves names nothing.
 
+**The opening is the two discs and the gap between them.** Since the 2026 pass the discs take the width of their columns and the middle column carries the gap at headline size — kilometres reachable only on foot, then the change in intersection density, dead-ends and H, then the overlaid rose. A site's finding is a number like +23.7 km and it was a row in a table.
+
+**One comparison table replaced three metric columns.** Every metric is named once; drive, walk and their difference sit side by side (so it is still never a vertical stack), and a last column places both values in the set on the distribution ruler's terms (§6a) — every site's tick in both modes, a solid drive square, an outlined walk square, no preferred end. The notes the columns each printed are stated once under it.
+
+**Previous and next walk the set by name.** Never by a metric: a *next* that meant *next best* would be the ranking PRD §4 forbids.
+
 **The method paragraph is stated once per page.** It printed under all three roses — the same eighty words, three times, on a page whose subject is the difference between two of them.
 
 **No initial capital on the opening paragraph.** The site notes are one sentence; a three-line drop cap on a two-line paragraph is a broken figure rather than an editorial one. The opening takes its weight from size and measure instead.

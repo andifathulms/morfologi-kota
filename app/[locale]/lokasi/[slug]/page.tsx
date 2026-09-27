@@ -58,6 +58,17 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
   const editorial = editorialFor(site.slug)
   const thin = bundle.coverage.confidence.type === 'thin'
 
+  /*
+   * Previous and next, in the plate's default order — by name. A reader can
+   * walk the set from here without returning to the grid. By name and not by
+   * any metric: a "next" that meant "next best" would be the ranking PRD §4
+   * forbids, and the alphabet is not a finding.
+   */
+  const byName = [...manifest.sites].sort((a, b) => a.name.localeCompare(b.name, locale))
+  const position = byName.findIndex((entry) => entry.slug === site.slug)
+  const previous = byName[(position - 1 + byName.length) % byName.length]
+  const next = byName[(position + 1) % byName.length]
+
   return (
     <article>
       <RunningHead
@@ -69,9 +80,37 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
         locale={locale}
       />
 
-      <p className="m-0 mt-4 font-sans text-xs">
+      <nav
+        aria-label={locale === 'id' ? 'Lokasi lain' : 'Other sites'}
+        className="mt-4 flex flex-wrap items-center justify-between gap-x-6 gap-y-2 font-sans text-xs"
+      >
         <Link href={`/${locale}/lempeng`}>{d('backToPlate', locale)}</Link>
-      </p>
+        <span className="flex flex-wrap items-center gap-2">
+          <span className="text-ink-subtle">
+            {locale === 'id'
+              ? `${position + 1} dari ${byName.length} menurut nama`
+              : `${position + 1} of ${byName.length} by name`}
+          </span>
+          {previous === undefined ? null : (
+            <Link
+              href={`/${locale}/lokasi/${previous.slug}`}
+              rel="prev"
+              className="border border-rule-strong px-3 py-1 no-underline"
+            >
+              ← {previous.name}
+            </Link>
+          )}
+          {next === undefined ? null : (
+            <Link
+              href={`/${locale}/lokasi/${next.slug}`}
+              rel="next"
+              className="border border-rule-strong px-3 py-1 no-underline"
+            >
+              {next.name} →
+            </Link>
+          )}
+        </span>
+      </nav>
 
       {/*
         The opening, set as a spread (DESIGN.md §6b).
@@ -90,12 +129,14 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
       */}
       <div className="mt-6 lg:grid lg:grid-cols-[minmax(0,68ch)_minmax(0,18rem)] lg:items-start lg:gap-x-12">
         <header>
-          <h1 className="m-0 font-serif text-2xl font-medium leading-tight tracking-display">{site.name}</h1>
+          <h1 className="m-0 font-serif text-3xl font-medium leading-none tracking-display md:text-4xl">
+            {site.name}
+          </h1>
           {/* The caption tier. The same datum is set at 14 on all sixteen plate
               cards, and the same datum should not be set two ways — it names the
               place and its type, which is a caption rather than a sentence
               (DESIGN.md §7). */}
-          <p className="m-0 font-sans text-xs text-ink-subtle">
+          <p className="m-0 mt-3 font-sans text-xs text-ink-subtle">
             {site.city} · {t(SITE_TYPE_LABEL[site.type] ?? { id: site.type, en: site.type }, locale)}
           </p>
           <p className="mt-4 max-w-prose font-serif text-lg leading-prose">
@@ -137,14 +178,16 @@ export default function SitePage({ params }: { params: { locale: string; slug: s
       </div>
 
       {thin ? (
-        <p className="mb-6 mt-8 max-w-prose border-l-2 border-ink-subtle pl-4 font-serif text-md leading-prose">
+        <p className="mb-6 mt-8 max-w-prose border-l-2 border-ink bg-sheet px-5 py-4 font-serif text-md leading-prose">
           {locale === 'id'
             ? 'Bacalah kedua kolom di bawah ini sebagai dua pembacaan dari data yang sama, bukan sebagai selisih yang sudah dapat disimpulkan. Gang di lokasi ini belum terpetakan cukup rapat untuk itu.'
             : 'Read the two columns below as two readings of the same data rather than as a gap that can yet be concluded from. The gang here are not mapped densely enough for that.'}
         </p>
       ) : null}
 
-      <PairView bundle={bundle} locale={locale} />
+      <div className="mt-10">
+        <PairView bundle={bundle} locale={locale} set={manifest.sites} />
+      </div>
 
       {editorial.length > 0 ? (
         <section className="mt-12 max-w-prose">
